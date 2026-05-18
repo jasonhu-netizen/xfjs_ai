@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>学风建设 · 三端高保真原型</title>
+<style>
+  :root{
+    --primary:#3087CC;
+    --primary-light:#E3F1F9;
+    --primary-dark:#006DAD;
+    --primary-50:#F4FAFE;
+    --text-1:#3C444F;
+    --text-2:#696F7D;
+    --text-3:#9096A2;
+    --text-4:#ABB0BA;
+    --border:#E5E8EE;
+    --border-light:#EFF1F5;
+    --bg:#F4F6FA;
+    --warning:#F29100;
+    --success:#1BB975;
+    --danger:#DF2027;
+    --purple:#7C5BC1;
+    --shadow-sm:0 1px 3px rgba(15,32,55,.05);
+    --shadow-md:0 6px 20px rgba(15,32,55,.06);
+    --shadow-lg:0 16px 36px rgba(15,32,55,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;color:var(--text-1);background:linear-gradient(180deg,#F4F6FA 0%,#E3F1F9 50%,#F4F6FA 100%);font-size:14px;-webkit-font-smoothing:antialiased;min-height:100vh;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+  svg{display:block;}
+  ul{list-style:none;}
+
+  .nav{max-width:1340px;margin:0 auto;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#3087CC,#006DAD);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 18px rgba(48,135,204,.28);}
+  .brand h1{font-size:16px;font-weight:600;}
+  .brand p{font-size:11px;color:var(--text-3);margin-top:2px;}
+  .meta{display:flex;align-items:center;gap:8px;}
+  .pill{padding:5px 12px;background:#fff;border:1px solid var(--border-light);border-radius:999px;font-size:11px;color:var(--text-2);font-weight:500;}
+
+  .container{max-width:1340px;margin:0 auto;padding:20px 28px 80px;}
+
+  /* Hero */
+  .hero{background:linear-gradient(135deg,#0c2c4d,#0e3d6c 50%,#1a5b96);color:#fff;border-radius:24px;padding:50px 44px;text-align:center;margin-bottom:40px;position:relative;overflow:hidden;box-shadow:0 24px 48px rgba(15,32,55,.18);}
+  .hero::before{content:"";position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(48,135,204,.45),transparent 60%);right:-160px;top:-200px;}
+  .hero::after{content:"";position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(255,213,143,.3),transparent 60%);left:-120px;bottom:-150px;}
+  .hero .tag-h{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);padding:6px 14px;border-radius:999px;font-size:11px;font-weight:500;border:1px solid rgba(255,255,255,.18);position:relative;}
+  .hero h2{font-size:42px;font-weight:700;margin-top:18px;line-height:1.2;position:relative;}
+  .hero h2 strong{background:linear-gradient(90deg,#FFD68F,#FFAA33);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p{font-size:15px;color:rgba(255,255,255,.85);margin-top:14px;line-height:1.7;position:relative;}
+  .hero-stats{margin-top:28px;display:flex;justify-content:center;gap:50px;flex-wrap:wrap;position:relative;}
+  .hero-stats .item strong{font-size:28px;font-weight:700;display:block;}
+  .hero-stats .item span{font-size:11px;opacity:.7;letter-spacing:.5px;}
+
+  /* 3-card grid */
+  .three-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:40px;}
+  @media (max-width:1180px){.three-grid{grid-template-columns:1fr;}.hero{padding:40px 30px;}.hero h2{font-size:32px;}}
+  .card-3{background:#fff;border-radius:18px;padding:24px;box-shadow:var(--shadow-md);border:1px solid var(--border-light);transition:all .22s;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+  .card-3:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+  .card-3 .label-c{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;align-self:flex-start;margin-bottom:14px;}
+  .label-pc{background:linear-gradient(135deg,#E3F1F9,#BFDDF6);color:var(--primary-dark);}
+  .label-stu{background:linear-gradient(135deg,#FFF8E1,#FFE0B3);color:#9A6500;}
+  .label-mob{background:linear-gradient(135deg,#FCE8EA,#F6BCBE);color:#B91C1C;}
+  .card-3 h3{font-size:20px;font-weight:600;}
+  .card-3 .desc{font-size:12px;color:var(--text-3);margin-top:6px;line-height:1.6;min-height:32px;}
+
+  /* Frame visual */
+  .frame{margin:18px 0;border-radius:14px;overflow:hidden;height:200px;background:linear-gradient(135deg,#F4FAFE,#E3F1F9);position:relative;border:1px solid var(--border-light);cursor:pointer;transition:box-shadow .2s;}
+  .frame:hover{box-shadow:0 8px 24px rgba(48,135,204,.12);}
+  .frame .inner{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);}
+  .pc-frame{width:300px;height:170px;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 8px 24px rgba(15,32,55,.1);display:flex;}
+  .pc-frame .sb{width:62px;background:#0E3D6C;padding:10px 8px;}
+  .pc-frame .sb .lg{width:32px;height:8px;background:#3087CC;border-radius:2px;margin-bottom:10px;}
+  .pc-frame .sb .it{height:6px;background:rgba(255,255,255,.15);margin-bottom:5px;border-radius:2px;}
+  .pc-frame .sb .it.active{background:#3087CC;}
+  .pc-frame .ct{flex:1;padding:10px;background:#F4F6FA;}
+  .pc-frame .ct .tb{height:14px;background:#fff;border-radius:3px;margin-bottom:8px;}
+  .pc-frame .ct .row{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:8px;}
+  .pc-frame .ct .cc{height:34px;background:#fff;border-radius:5px;border-left:2px solid #3087CC;}
+  .pc-frame .ct .cc:nth-child(2){border-left-color:#F29100;}
+  .pc-frame .ct .cc:nth-child(3){border-left-color:#1BB975;}
+  .pc-frame .ct .cc:nth-child(4){border-left-color:#7C5BC1;}
+  .pc-frame .ct .pn{display:grid;grid-template-columns:1.4fr 1fr;gap:5px;}
+  .pc-frame .ct .pn .pp{height:60px;background:#fff;border-radius:5px;}
+  .pc-frame .ct .pn .ll{display:flex;flex-direction:column;gap:3px;}
+  .pc-frame .ct .pn .ll .rr{height:8px;background:#fff;border-radius:2px;}
+  .stu-frame{width:300px;height:170px;background:#F4F6FA;border-radius:8px;overflow:hidden;box-shadow:0 8px 24px rgba(15,32,55,.1);display:flex;}
+  .stu-frame .sb{width:50px;padding:10px 6px;}
+  .stu-frame .sb .lg{width:28px;height:8px;background:#3087CC;border-radius:2px;margin-bottom:10px;}
+  .stu-frame .sb .it{height:6px;background:rgba(48,135,204,.15);margin-bottom:5px;border-radius:2px;}
+  .stu-frame .sb .it.active{background:#3087CC;}
+  .stu-frame .ct{flex:1;padding:8px;display:flex;flex-direction:column;gap:5px;}
+  .stu-frame .ct .ban{height:36px;background:linear-gradient(135deg,#3087CC,#006DAD);border-radius:5px;}
+  .stu-frame .ct .row2{display:grid;grid-template-columns:1.4fr 1fr;gap:5px;flex:1;}
+  .stu-frame .ct .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;}
+  .stu-frame .ct .grid .gi{height:18px;background:#fff;border-radius:4px;}
+  .stu-frame .ct .pp{background:#fff;border-radius:5px;padding:5px;display:flex;flex-direction:column;gap:3px;}
+  .stu-frame .ct .pp .row{height:8px;background:#F4F6FA;border-radius:2px;}
+  .mob-frame{width:130px;height:230px;background:#1F2733;border-radius:18px;padding:6px;box-shadow:0 12px 28px rgba(15,32,55,.18);}
+  .mob-frame .scr{width:100%;height:100%;background:#fff;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;}
+  .mob-frame .top{background:linear-gradient(135deg,#3087CC,#006DAD);color:#fff;padding:14px 10px;}
+  .mob-frame .top .grt{font-size:8px;font-weight:600;}
+  .mob-frame .top .sub{font-size:6px;opacity:.85;margin-top:2px;}
+  .mob-frame .star{margin:6px;background:linear-gradient(135deg,#FFFBF0,#FFE0B3);border-radius:6px;padding:5px;}
+  .mob-frame .star .h{font-size:10px;font-weight:700;color:#9A6500;}
+  .mob-frame .star .pb{height:3px;background:rgba(242,145,0,.2);border-radius:2px;margin-top:3px;}
+  .mob-frame .star .pb .fl{height:100%;width:91%;background:linear-gradient(90deg,#FFD68F,#F29100);border-radius:2px;}
+  .mob-frame .qq{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:0 6px 4px;}
+  .mob-frame .qq .qa{background:#F4F6FA;border-radius:4px;padding:4px;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .mob-frame .qq .qa .ic{width:14px;height:14px;border-radius:3px;background:var(--primary);}
+  .mob-frame .qq .qa .ic.o{background:#F29100;}
+  .mob-frame .qq .qa .ic.g{background:#1BB975;}
+  .mob-frame .qq .qa .ic.p{background:#7C5BC1;}
+  .mob-frame .qq .qa span{font-size:5px;color:var(--text-3);}
+  .mob-frame .lst{padding:0 6px;display:flex;flex-direction:column;gap:3px;flex:1;}
+  .mob-frame .lst .row{background:#fff;border:1px solid var(--border-light);border-radius:5px;padding:4px;display:flex;align-items:center;gap:4px;}
+  .mob-frame .lst .row .ic{width:14px;height:14px;border-radius:3px;background:var(--primary);}
+  .mob-frame .lst .row .ic.o{background:#F29100;}
+  .mob-frame .lst .row .ic.g{background:#1BB975;}
+  .mob-frame .lst .row .text{flex:1;}
+  .mob-frame .lst .row .text .h{height:5px;background:#F4F6FA;border-radius:1px;margin-bottom:2px;}
+  .mob-frame .lst .row .text .s{height:4px;background:#F4F6FA;border-radius:1px;width:60%;}
+  .mob-frame .tb{background:#fff;border-top:1px solid var(--border-light);display:flex;justify-content:space-around;padding:4px;}
+  .mob-frame .tb .it{width:14px;height:14px;border-radius:3px;background:#F4F6FA;}
+  .mob-frame .tb .it.active{background:var(--primary);}
+  .mob-frame .tb .it.special{background:linear-gradient(135deg,#F29100,#FFAA33);}
+
+  /* Feature list */
+  .features{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:14px;}
+  .features a{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;background:var(--bg);transition:all .15s;}
+  .features a:hover{background:var(--primary-light);transform:translateX(4px);}
+  .features .ic{width:26px;height:26px;border-radius:7px;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .features .ic.o{background:#FFF5E5;color:#F29100;}
+  .features .ic.g{background:#E8FCF4;color:#1BB975;}
+  .features .ic.p{background:#F4F0FF;color:#7C5BC1;}
+  .features .ic.r{background:#FCE8EA;color:#DF2027;}
+  .features .text strong{font-size:12px;font-weight:600;display:block;}
+  .features .text span{font-size:10px;color:var(--text-3);}
+
+  /* CTA */
+  .cta{margin-top:auto;padding:14px 18px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;display:flex;align-items:center;justify-content:space-between;text-decoration:none;transition:all .18s;}
+  .cta-stu{background:linear-gradient(135deg,#F29100,#D67C00);}
+  .cta-mob{background:linear-gradient(135deg,#7C5BC1,#5B3CA1);}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(15,32,55,.14);}
+  .cta .info p:first-child{font-size:11px;opacity:.8;}
+  .cta .info p:last-child{font-size:14px;font-weight:600;margin-top:2px;}
+  .cta .arr{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.18);padding:7px 13px;border-radius:7px;font-size:12px;font-weight:500;transition:background .15s;}
+  .cta:hover .arr{background:rgba(255,255,255,.28);}
+
+  /* ========== Table Section ========== */
+  .table-section{background:#fff;border-radius:18px;padding:28px 30px;margin-bottom:30px;box-shadow:var(--shadow-md);overflow:hidden;}
+  .table-section h3{font-size:20px;font-weight:600;display:flex;align-items:center;gap:10px;}
+  .table-section h3 .sec-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:600;background:var(--primary-light);color:var(--primary-dark);}
+  .table-section .sub{font-size:12px;color:var(--text-3);margin-top:6px;line-height:1.6;}
+  .tbl-wrap{overflow-x:auto;margin-top:18px;border:1px solid var(--border-light);border-radius:12px;}
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:800px;}
+  .tbl thead th{background:linear-gradient(135deg,#F8FAFC,#F1F4F8);color:var(--text-2);font-weight:600;text-align:left;padding:12px 16px;font-size:12px;white-space:nowrap;border-bottom:2px solid var(--border-light);}
+  .tbl tbody td{padding:11px 16px;border-bottom:1px solid var(--border-light);color:var(--text-1);vertical-align:top;line-height:1.6;}
+  .tbl tbody tr:last-child td{border-bottom:none;}
+  .tbl tbody tr:hover{background:#FAFBFD;}
+  .tbl .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;white-space:nowrap;margin:1px 2px;}
+  .tbl .tag-pc{background:#E3F1F9;color:var(--primary-dark);}
+  .tbl .tag-stu{background:#FFF8E1;color:#9A6500;}
+  .tbl .tag-mob{background:#F4F0FF;color:#5B3CA1;}
+  .tbl .tag-success{background:#E8FCF4;color:#0F766E;}
+  .tbl .tag-warning{background:#FFF5E5;color:#9A6500;}
+  .tbl .tag-danger{background:#FCE8EA;color:#B91C1C;}
+  .tbl .tag-grey{background:#F1F2F3;color:#475569;}
+  .tbl .dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px;}
+  .tbl .dot-green{background:var(--success);}
+  .tbl .dot-blue{background:var(--primary);}
+  .tbl .dot-orange{background:var(--warning);}
+  .tbl .dot-red{background:var(--danger);}
+  .tbl .dot-grey{background:var(--text-4);}
+  .flow-arrow{color:var(--primary);font-weight:600;margin:0 4px;}
+
+  .footer{text-align:center;padding:24px 0;color:var(--text-3);font-size:11px;}
+
+  /* Animate on scroll */
+  .fade-up{opacity:0;transform:translateY(30px);transition:opacity .6s,transform .6s;}
+  .fade-up.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="brand">
+    <div class="logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+    </div>
+    <div>
+      <h1>学风建设 · 综合管理系统 v2.0</h1>
+      <p>SmartLeo · 中南大学智慧学工 · 三端高保真原型</p>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="pill">中南大学</div>
+    <div class="pill">三端架构</div>
+    <div class="pill">高保真原型</div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <span class="tag-h">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+      Pixel Perfect · PC管理 + PC学生 + 移动端三端联动
+    </span>
+    <h2>学风为本 · <strong>辅学有为</strong><br/>四大业务 · 全场景闭环</h2>
+    <p>覆盖辅学义工管理、知新选课（含场地预约）、即问即答、宝藏资料库 4 大核心业务，<br/>面向学生 / 义工 / 学院专干 / 知新馆指导老师 / 学工部管理员等多角色。</p>
+    <div class="hero-stats">
+      <div class="item"><strong>4</strong><span>业务模块</span></div>
+      <div class="item"><strong>45</strong><span>功能页面</span></div>
+      <div class="item"><strong>3</strong><span>端形态</span></div>
+      <div class="item"><strong>5</strong><span>角色权限</span></div>
+      <div class="item"><strong>1,248+</strong><span>在任辅学义工</span></div>
+    </div>
+  </section>
+
+  <!-- ==================== Three-end Cards ==================== -->
+  <section class="three-grid">
+
+    <!-- PC 管理端 -->
+    <div class="card-3 fade-up">
+      <span class="label-c label-pc">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        PC 管理后台
+      </span>
+      <h3>学风建设管理后台</h3>
+      <div class="desc">学院专干 / 知新馆指导老师 / 学工部管理员的多角色协同工作台，涵盖义工全生命周期管理、课程排课、数据分析等核心管理场景</div>
+      <a href="pc/dashboard.html" class="frame">
+        <div class="inner">
+          <div class="pc-frame">
+            <div class="sb"><div class="lg"></div><div class="it active"></div><div class="it"></div><div class="it"></div><div class="it"></div><div class="it"></div><div class="it"></div></div>
+            <div class="ct"><div class="tb"></div><div class="row"><div class="cc"></div><div class="cc"></div><div class="cc"></div><div class="cc"></div></div><div class="pn"><div class="pp"></div><div class="ll"><div class="rr"></div><div class="rr"></div><div class="rr"></div><div class="rr"></div></div></div></div>
+          </div>
+        </div>
+      </a>
+      <div class="features">
+        <a href="pc/dashboard.html"><div class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></div><div class="text"><strong>数据概览</strong><span>多维业务监控看板</span></div></a>
+        <a href="pc/volunteers.html"><div class="ic o"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg></div><div class="text"><strong>申请管理</strong><span>义工申请三级审批</span></div></a>
+        <a href="pc/hours.html"><div class="ic g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="text"><strong>时长与积分认定</strong><span>课表匹配 / 学生申报</span></div></a>
+        <a href="pc/stars.html"><div class="ic p"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg></div><div class="text"><strong>星级评定</strong><span>五级阶梯晋升</span></div></a>
+        <a href="pc/courses.html"><div class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div class="text"><strong>课程管理</strong><span>发布 / 排课 / 审核</span></div></a>
+        <a href="pc/volunteer-manage.html"><div class="ic o"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div><div class="text"><strong>义工管理</strong><span>移出 / 恢复 / 导出</span></div></a>
+        <a href="pc/library.html"><div class="ic r"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div class="text"><strong>资料库管理</strong><span>审核 / 分类 / 需求池</span></div></a>
+        <a href="pc/analytics.html"><div class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/></svg></div><div class="text"><strong>数据分析</strong><span>义工构成 / 趋势</span></div></a>
+      </div>
+      <a class="cta" href="pc/dashboard.html">
+        <div class="info"><p>24 个管理页面</p><p>立即体验 PC 管理后台</p></div>
+        <span class="arr">进入后台 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </a>
+    </div>
+
+    <!-- PC 学生端 -->
+    <div class="card-3 fade-up" style="transition-delay:.1s;">
+      <span class="label-c label-stu">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        PC 学生端
+      </span>
+      <h3>学风建设 · PC 学生端</h3>
+      <div class="desc">面向辅学义工与全校学生的 PC 网页端，支持义工申请、知新选课、即问即答、宝藏资料库、场地预约等核心场景</div>
+      <a href="pc-student/home.html" class="frame">
+        <div class="inner">
+          <div class="stu-frame">
+            <div class="sb"><div class="lg"></div><div class="it active"></div><div class="it"></div><div class="it"></div><div class="it"></div><div class="it"></div></div>
+            <div class="ct"><div class="ban"></div><div class="grid"><div class="gi"></div><div class="gi"></div><div class="gi"></div><div class="gi"></div></div><div class="row2"><div class="pp"><div class="row"></div><div class="row"></div><div class="row"></div></div><div class="pp"><div class="row"></div><div class="row"></div></div></div></div>
+          </div>
+        </div>
+      </a>
+      <div class="features">
+        <a href="pc-student/home.html"><div class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div><div class="text"><strong>首页</strong><span>个性化学习推荐</span></div></a>
+        <a href="pc-student/volunteer-apply.html"><div class="ic o"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div><div class="text"><strong>义工申请</strong><span>三级审核 · 五星阶梯</span></div></a>
+        <a href="pc-student/courses.html"><div class="ic g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg></div><div class="text"><strong>知新选课</strong><span>四大坊课程报名</span></div></a>
+        <a href="pc-student/qa.html"><div class="ic p"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="text"><strong>即问即答</strong><span>提问 / 追问 / 点赞</span></div></a>
+        <a href="pc-student/library.html"><div class="ic r"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div class="text"><strong>宝藏资料库</strong><span>上传 / 下载 / 提需求</span></div></a>
+        <a href="pc-student/venue-book.html"><div class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="text"><strong>场地预约</strong><span>多场地实时查看</span></div></a>
+        <a href="pc-student/profile.html"><div class="ic g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div><div class="text"><strong>个人中心</strong><span>星级 / 证书 / 时长</span></div></a>
+      </div>
+      <a class="cta cta-stu" href="pc-student/home.html">
+        <div class="info"><p>7 个核心场景</p><p>立即体验 PC 学生端</p></div>
+        <span class="arr">进入学生端 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </a>
+    </div>
+
+    <!-- 移动端 -->
+    <div class="card-3 fade-up" style="transition-delay:.2s;">
+      <span class="label-c label-mob">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        移动端 H5 / 小程序
+      </span>
+      <h3>辅学义工 · 移动端</h3>
+      <div class="desc">扫码即用，学生与义工随时随地完成课程报名、签到、问答、资料下载、时长申报等操作，适配手机浏览体验</div>
+      <a href="mobile/home.html" class="frame">
+        <div class="inner">
+          <div class="mob-frame">
+            <div class="scr">
+              <div class="top"><div class="grt">王诗韵 同学</div><div class="sub">距五星仅差 18h</div></div>
+              <div class="star"><div class="h">182<span style="font-size:6px;font-weight:400;color:rgba(154,101,0,.6);">/200 h</span></div><div class="pb"><div class="fl"></div></div></div>
+              <div class="qq"><div class="qa"><div class="ic"></div><span>选课</span></div><div class="qa"><div class="ic o"></div><span>问答</span></div><div class="qa"><div class="ic g"></div><span>资料</span></div><div class="qa"><div class="ic p"></div><span>申报</span></div></div>
+              <div class="lst"><div class="row"><div class="ic"></div><div class="text"><div class="h"></div><div class="s"></div></div></div><div class="row"><div class="ic o"></div><div class="text"><div class="h"></div><div class="s"></div></div></div></div>
+              <div class="tb"><div class="it active"></div><div class="it"></div><div class="it special"></div><div class="it"></div><div class="it"></div></div>
+            </div>
+          </div>
+        </div>
+      </a>
+      <div class="features">
+        <a href="mobile/home.html"><div class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div><div class="text"><strong>首页</strong><span>星级进度 / 快捷入口</span></div></a>
+        <a href="mobile/volunteer-apply.html"><div class="ic r"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div><div class="text"><strong>义工申请</strong><span>移动端申请流程</span></div></a>
+        <a href="mobile/courses.html"><div class="ic o"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg></div><div class="text"><strong>选课</strong><span>报名 / 签到</span></div></a>
+        <a href="mobile/qa.html"><div class="ic g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="text"><strong>即问即答</strong><span>即时提问与解答</span></div></a>
+        <a href="mobile/library.html"><div class="ic p"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div class="text"><strong>资料库</strong><span>搜索 / 下载 / 提需求</span></div></a>
+        <a href="mobile/profile.html"><div class="ic g"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div><div class="text"><strong>我的</strong><span>个人中心</span></div></a>
+      </div>
+      <a class="cta cta-mob" href="mobile/home.html">
+        <div class="info"><p>10 个核心页面</p><p>立即体验移动端</p></div>
+        <span class="arr">进入应用 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ==================== 角色权限表 ==================== -->
+  <section class="table-section fade-up">
+    <h3>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      角色权限矩阵 <span class="sec-badge">5 类角色 × 3 端</span>
+    </h3>
+    <p class="sub">系统根据不同角色分配操作权限，支持多终端协同工作</p>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:130px;">角色</th>
+            <th style="width:90px;">使用终端</th>
+            <th>核心权限</th>
+            <th style="width:200px;">可操作模块</th>
+            <th style="width:100px;">数据范围</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;">学工部负责人</td>
+            <td><span class="tag tag-pc">PC管理</span></td>
+            <td>义工申请终审（三审）、星级证书颁发、全维度数据看板、系统配置管理、义工移出/恢复</td>
+            <td>全部管理模块</td>
+            <td><span class="dot dot-green"></span>全校</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">知新馆指导老师</td>
+            <td><span class="tag tag-pc">PC管理</span></td>
+            <td>义工申请二审、课程发布与排课、分组管理、资料审核、场地预约管理、义工管理（移出/恢复/导出）</td>
+            <td>义工管理、知新选课、资料库、场地预约</td>
+            <td><span class="dot dot-blue"></span>知新馆</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">学院学风建设专干</td>
+            <td><span class="tag tag-pc">PC管理</span></td>
+            <td>义工申请初审（一审）、本学院学生课程需求审核、意见反馈处理</td>
+            <td>申请管理、意见反馈、课程管理（本院）</td>
+            <td><span class="dot dot-orange"></span>本学院</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">辅学义工</td>
+            <td><span class="tag tag-stu">PC学生</span> <span class="tag tag-mob">移动端</span></td>
+            <td>申报课程、时长申报、星级申报、回答问题、上传资料、场地预约、查看个人数据、意见反馈</td>
+            <td>义工申请、知新选课、即问即答、资料库、场地预约、个人中心</td>
+            <td><span class="dot dot-green"></span>个人</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">普通学生</td>
+            <td><span class="tag tag-stu">PC学生</span> <span class="tag tag-mob">移动端</span></td>
+            <td>申请成为义工、预约报名课程、提问、下载资料、提交资料需求、自主报课（提交需求）</td>
+            <td>义工申请、知新选课、即问即答、资料库</td>
+            <td><span class="dot dot-green"></span>个人</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== 三端页面功能清单 ==================== -->
+  <section class="table-section fade-up">
+    <h3>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      三端页面功能清单 <span class="sec-badge">45 个页面</span>
+    </h3>
+    <p class="sub">PC管理后台 24 页 + PC学生端 7 页 + 移动端 10+ 页，覆盖全部业务场景</p>
+    <div class="tbl-wrap">
+      <table class="tbl" style="min-width:1000px;">
+        <thead>
+          <tr>
+            <th style="width:80px;">终端</th>
+            <th style="width:120px;">业务模块</th>
+            <th style="width:150px;">页面名称</th>
+            <th>核心功能</th>
+            <th style="width:100px;">链接</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- PC管理端 -->
+          <tr><td rowspan="24"><span class="tag tag-pc">PC管理</span></td><td rowspan="1">首页</td><td>数据概览</td><td>四大业务实时趋势看板、待办汇总、星级冲刺提醒、热门下载榜</td><td><a href="pc/dashboard.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td rowspan="6">辅学义工</td><td>申请管理</td><td>义工申请三级审批（初审/二审/终审）、审批详情、去审核</td><td><a href="pc/volunteers.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>时长记录</td><td>课表自动匹配、学生申报时长审核、积分认定</td><td><a href="pc/hours.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>星级评定</td><td>一~五星阶梯晋升管理、星级审核、证书颁发</td><td><a href="pc/stars.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>分组管理</td><td>辅导组别管理（知新馆英语组/数学组等）、新增/编辑/删除分组</td><td><a href="pc/groups.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>意见反馈</td><td>反馈分类（时长/积分/星级/考勤/其他）、处理进度跟踪、回复</td><td><a href="pc/appeals.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>义工管理</td><td>义工信息列表、移出/恢复操作、批量导出、上课记录/回答问题/上传资料详情</td><td><a href="pc/volunteer-manage.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td rowspan="4">知新选课</td><td>课程管理</td><td>管理员发布课程（活动课程/单节课程）、课程详情（义工星级/奖励积分/义工类别/辅导组别）</td><td><a href="pc/courses.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>课程分类</td><td>答疑坊、荟知坊、志趣坊等课程类型管理</td><td><a href="pc/course-categories.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>场地预约</td><td>场地资源管理、预约审核、时段占用查看</td><td><a href="pc/venue-bookings.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>开屏海报</td><td>海报管理、首选设为展示中、非首选待展示</td><td><a href="pc/posters.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td rowspan="3">即问即答</td><td>内容管理</td><td>问答内容审核、置顶/删除、学科分类过滤</td><td><a href="pc/qa-content.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>学科分类</td><td>学科分类增删改查、排序</td><td><a href="pc/qa-categories.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>用户管理</td><td>用户列表（辅导组别）、禁言/封号/恢复、回答记录详情</td><td><a href="pc/qa-users.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td rowspan="4">宝藏资料库</td><td>资料库管理</td><td>资料审核（通过/驳回）、分类管理、下载统计</td><td><a href="pc/library.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>资料分类</td><td>课程辅学类/学涯规划类分类管理</td><td><a href="pc/library-categories.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>上传者管理</td><td>上传者列表、上传统计、资料质量评估</td><td><a href="pc/uploaders.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>反馈与需求池</td><td>学生资料需求收集、反馈管理</td><td><a href="pc/library-feedback.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td rowspan="2">系统配置</td><td>数据分析</td><td>义工类别构成分析、历年趋势、多维报表</td><td><a href="pc/analytics.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>系统配置</td><td>星级提醒、积分规则、消息通知配置</td><td><a href="pc/settings.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td rowspan="4">场地与分组</td><td>场地管理</td><td>教室/会议室场地信息维护</td><td><a href="pc/venues.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>新增分组</td><td>创建辅导组别</td><td><a href="pc/add-group.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>编辑分组</td><td>修改辅导组别信息</td><td><a href="pc/edit-group.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>成员管理</td><td>组内成员管理、调配</td><td><a href="pc/members-manage.html" style="color:var(--primary);">打开 →</a></td></tr>
+
+          <!-- PC学生端 -->
+          <tr><td rowspan="7"><span class="tag tag-stu">PC学生</span></td><td>首页</td><td>首页</td><td>个性化推荐课程、热门问答、义工招募通知、KPI 统计</td><td><a href="pc-student/home.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>辅学义工</td><td>义工申请</td><td>义工申请（含承诺书）、星级申报、时长进度、意见反馈</td><td><a href="pc-student/volunteer-apply.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>知新选课</td><td>知新选课</td><td>课程申报（关联活动课程/场地预约/冲突检测）、预约报名课程（答疑坊等）、自主报课需求提交</td><td><a href="pc-student/courses.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>即问即答</td><td>即问即答</td><td>提问（无指定义工）、回答、追问、点赞、热门义工</td><td><a href="pc-student/qa.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>资料库</td><td>宝藏资料库</td><td>上传资料、下载资料（次数限制）、提交资料需求</td><td><a href="pc-student/library.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>场地预约</td><td>场地预约</td><td>多场地实时查看、预约申请</td><td><a href="pc-student/venue-book.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>个人中心</td><td>个人中心</td><td>星级冲刺进度、问答记录（点赞数）、上传资料预览、义工证书、时长统计</td><td><a href="pc-student/profile.html" style="color:var(--primary);">打开 →</a></td></tr>
+
+          <!-- 移动端 -->
+          <tr><td rowspan="10"><span class="tag tag-mob">移动端</span></td><td>首页</td><td>首页</td><td>星级进度、快捷入口、推荐课程、通知</td><td><a href="mobile/home.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td rowspan="2">辅学义工</td><td>义工申请</td><td>移动端义工申请、时长申报（手动输入课程名称）、星级申报、意见反馈</td><td><a href="mobile/volunteer-apply.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>时长申报</td><td>时长记录查看、进度跟踪</td><td><a href="mobile/hour-report.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td rowspan="2">知新选课</td><td>选课</td><td>课程申报、预约报名（报名须知）、自主报课需求、详情查看</td><td><a href="mobile/courses.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>课程详情</td><td>课程信息、报名须知弹窗（3秒倒计时确认）</td><td><a href="mobile/course-detail.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>即问即答</td><td>即问即答</td><td>提问（无指定义工）、回答、热门义工、学科筛选</td><td><a href="mobile/qa.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>资料库</td><td>宝藏资料库</td><td>搜索、下载、提需求</td><td><a href="mobile/library.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>星级申报</td><td>星级申报</td><td>晋级申请、冲刺提醒</td><td><a href="mobile/star-apply.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>场地预约</td><td>场地预约</td><td>移动端场地查看与预约</td><td><a href="mobile/venue-book.html" style="color:var(--primary);">打开 →</a></td></tr>
+          <tr><td>个人中心</td><td>我的</td><td>个人资料、时长记录跳转、课程/问答/资料/证书、星级进度</td><td><a href="mobile/profile.html" style="color:var(--primary);">打开 →</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== 审核节点流程表 ==================== -->
+  <section class="table-section fade-up">
+    <h3>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      审核节点与业务流程 <span class="sec-badge">6 大流程</span>
+    </h3>
+    <p class="sub">涵盖义工申请、课程管理、资料审核、时长认定、星级评定、意见反馈六大核心审批链路</p>
+    <div class="tbl-wrap">
+      <table class="tbl" style="min-width:900px;">
+        <thead>
+          <tr>
+            <th style="width:130px;">业务流程</th>
+            <th style="width:110px;">发起方</th>
+            <th>审核链路（节点 → 节点）</th>
+            <th style="width:130px;">最终决策</th>
+            <th style="width:120px;">结果状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;">义工申请<br/><span style="font-size:11px;color:var(--text-3);">三级审批</span></td>
+            <td>学生/义工<br/><span class="tag tag-stu">PC学生</span><span class="tag tag-mob">移动端</span></td>
+            <td>
+              <span class="tag tag-grey">学生提交申请</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-warning">学院专干初审</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-pc">知新馆老师二审</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-success">学工部终审</span>
+            </td>
+            <td>学工部负责人</td>
+            <td><span class="tag tag-success">通过</span> / <span class="tag tag-danger">驳回</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">课程发布<br/><span style="font-size:11px;color:var(--text-3);">管理员发布</span></td>
+            <td>管理员<br/><span class="tag tag-pc">PC管理</span></td>
+            <td>
+              <span class="tag tag-grey">管理员创建课程</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-warning">设置课程性质（活动/单节）</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-success">发布上线</span>
+            </td>
+            <td>知新馆指导老师</td>
+            <td><span class="tag tag-success">已发布</span> / <span class="tag tag-grey">草稿</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">课程申报<br/><span style="font-size:11px;color:var(--text-3);">义工申报</span></td>
+            <td>辅学义工<br/><span class="tag tag-stu">PC学生</span><span class="tag tag-mob">移动端</span></td>
+            <td>
+              <span class="tag tag-grey">义工提交课程申报</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-warning">场地预约冲突检测</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-pc">管理员审核</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-success">审核通过发布</span>
+            </td>
+            <td>知新馆指导老师</td>
+            <td><span class="tag tag-success">通过</span> / <span class="tag tag-danger">驳回</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">时长认定<br/><span style="font-size:11px;color:var(--text-3);">双通道</span></td>
+            <td>系统自动 / 义工<br/><span class="tag tag-pc">PC管理</span><span class="tag tag-mob">移动端</span></td>
+            <td>
+              <span class="tag tag-grey">课表自动匹配 / 义工手动申报</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-pc">管理员审核时长</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-success">积分发放</span>
+            </td>
+            <td>知新馆指导老师</td>
+            <td><span class="tag tag-success">已认定</span> / <span class="tag tag-danger">驳回</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">星级评定<br/><span style="font-size:11px;color:var(--text-3);">五级阶梯</span></td>
+            <td>辅学义工<br/><span class="tag tag-stu">PC学生</span><span class="tag tag-mob">移动端</span></td>
+            <td>
+              <span class="tag tag-grey">义工提交星级申报</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-warning">系统校验（时长/评价/合规）</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-pc">管理员审核</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-success">学工部颁发证书</span>
+            </td>
+            <td>学工部负责人</td>
+            <td><span class="tag tag-success">晋级</span> / <span class="tag tag-danger">不通过</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">资料审核<br/><span style="font-size:11px;color:var(--text-3);">两级审核</span></td>
+            <td>辅学义工/学生<br/><span class="tag tag-stu">PC学生</span><span class="tag tag-mob">移动端</span></td>
+            <td>
+              <span class="tag tag-grey">用户上传资料</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-warning">系统初筛（格式/大小）</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-pc">管理员人工审核</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-success">发布到资料库</span>
+            </td>
+            <td>知新馆指导老师</td>
+            <td><span class="tag tag-success">已通过</span> / <span class="tag tag-danger">驳回</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">意见反馈<br/><span style="font-size:11px;color:var(--text-3);">异议处理</span></td>
+            <td>辅学义工<br/><span class="tag tag-stu">PC学生</span><span class="tag tag-mob">移动端</span></td>
+            <td>
+              <span class="tag tag-grey">义工提交反馈</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-warning">学院专干受理</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-pc">管理员核实处理</span>
+              <span class="flow-arrow">→</span>
+              <span class="tag tag-success">反馈回复</span>
+            </td>
+            <td>管理员</td>
+            <td><span class="tag tag-success">已通过</span> / <span class="tag tag-danger">已驳回</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== 义工管理操作矩阵 ==================== -->
+  <section class="table-section fade-up">
+    <h3>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      义工管理操作矩阵 <span class="sec-badge">按状态分权</span>
+    </h3>
+    <p class="sub">义工全生命周期状态流转与各角色可执行操作一览</p>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:120px;">义工状态</th>
+            <th style="width:120px;">对应页面</th>
+            <th>学工部负责人</th>
+            <th>知新馆指导老师</th>
+            <th>学院专干</th>
+            <th>义工本人</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-warning">待审批</span></td>
+            <td>申请管理</td>
+            <td>终审通过/驳回</td>
+            <td>二审通过/驳回</td>
+            <td>初审通过/驳回</td>
+            <td>查看申请进度</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-success">在任</span></td>
+            <td>义工管理</td>
+            <td>查看详情、移出</td>
+            <td>查看详情、移出、导出</td>
+            <td>查看</td>
+            <td>申报课程、时长申报、星级申报、意见反馈</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-grey">离任</span></td>
+            <td>义工管理</td>
+            <td>查看详情、恢复</td>
+            <td>查看详情、恢复</td>
+            <td>查看</td>
+            <td>查看历史记录</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-pc">星级申报中</span></td>
+            <td>星级评定</td>
+            <td>审核、颁发证书</td>
+            <td>审核</td>
+            <td>—</td>
+            <td>提交申报、查看进度</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-warning">时长待审</span></td>
+            <td>时长记录</td>
+            <td>审核认定</td>
+            <td>审核认定</td>
+            <td>—</td>
+            <td>提交申报、查看进度</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== 星级评定标准 ==================== -->
+  <section class="table-section fade-up">
+    <h3>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+      五级星级评定标准 <span class="sec-badge">阶梯晋升</span>
+    </h3>
+    <p class="sub">义工根据累计辅学时长逐级晋升，由系统校验后管理员审批、学工部颁发证书</p>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:100px;">星级</th>
+            <th style="width:150px;">累计时长要求</th>
+            <th>附加条件</th>
+            <th style="width:120px;">审批权限</th>
+            <th style="width:120px;">奖励</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="color:#FFC53D;font-weight:600;">★ 一星级</td><td>≥ 10 小时</td><td>通过义工申请审批即默认授予</td><td>系统自动</td><td>一星级数字证书</td></tr>
+          <tr><td style="color:#FFC53D;font-weight:600;">★★ 二星级</td><td>≥ 30 小时</td><td>无违规记录</td><td>知新馆老师</td><td>二星级数字证书</td></tr>
+          <tr><td style="color:#FFC53D;font-weight:600;">★★★ 三星级</td><td>≥ 60 小时</td><td>无违规记录、学员评价达标</td><td>知新馆老师</td><td>三星级数字证书</td></tr>
+          <tr><td style="color:#FFC53D;font-weight:600;">★★★★ 四星级</td><td>≥ 100 小时</td><td>无违规记录、学员好评率 ≥ 85%</td><td>学工部负责人</td><td>四星级纸质证书</td></tr>
+          <tr><td style="color:#FFC53D;font-weight:600;">★★★★★ 五星级</td><td>≥ 200 小时</td><td>无违规记录、好评率 ≥ 90%、提交评估表</td><td>学工部负责人（校长签发）</td><td>五星级纸质证书（校长签发）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== 课程分类 ==================== -->
+  <section class="table-section fade-up">
+    <h3>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      知新选课体系 <span class="sec-badge">四大坊</span>
+    </h3>
+    <p class="sub">覆盖答疑坊、荟知坊、志趣坊三大常规坊型，以及活动课程和单节课程两种课程性质</p>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:120px;">课程类型</th>
+            <th style="width:120px;">课程性质</th>
+            <th>说明</th>
+            <th style="width:140px;">可操作角色</th>
+            <th style="width:120px;">关键字段</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-weight:600;">答疑坊</td><td>单节课程</td><td>面向学科答疑的一次性辅导课程</td><td>管理员发布 / 义工申报</td><td>义工星级、奖励积分、义工类别、辅导组别</td></tr>
+          <tr><td style="font-weight:600;">荟知坊</td><td>活动课程 / 单节</td><td>知识沙龙类课程，支持日期区间</td><td>管理员发布 / 义工申报</td><td>上课时间段（日期区间）</td></tr>
+          <tr><td style="font-weight:600;">志趣坊</td><td>活动课程 / 单节</td><td>兴趣拓展类课程</td><td>管理员发布 / 义工申报</td><td>关联活动课程、场地预约</td></tr>
+          <tr><td style="font-weight:600;">自主报课（需求）</td><td>—</td><td>学生提交辅导需求，由系统匹配或义工响应</td><td>学生/义工</td><td>辅导形式（1对1/1对多）、偏好时间段、上课次数（一次性/长期）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="footer">© 2026 中南大学学生事务办 · 文档管理科 · 学风建设系统 v2.0 · 高保真原型</div>
+</main>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.15 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
