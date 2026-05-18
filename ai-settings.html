@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 助手配置 · 学风建设系统</title>
+<style>
+:root{
+  --primary:#3087CC;--primary-light:#E3F1F9;--primary-dark:#006DAD;--primary-50:#F4FAFE;
+  --text-1:#3C444F;--text-2:#696F7D;--text-3:#9096A2;--text-4:#ABB0BA;
+  --border:#E5E8EE;--border-light:#EFF1F5;--bg:#F4F6FA;--bg-card:#FFFFFF;
+  --success:#1BB975;--success-bg:#E8FCF4;--success-border:#A7F3D0;
+  --warning:#F29100;--warning-bg:#FFF5E5;--warning-border:#FFE0B3;
+  --danger:#DF2027;--danger-bg:#FCE8EA;--danger-border:#F6BCBE;
+  --purple:#7C5BC1;
+  --shadow-sm:0 1px 3px rgba(15,32,55,.05);--shadow-md:0 4px 14px rgba(15,32,55,.06);--shadow-lg:0 12px 32px rgba(15,32,55,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;font-size:14px;}
+body{min-height:100vh;display:flex;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+svg{display:block;flex-shrink:0;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D9DDE3;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#C0C5CD;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* Sidebar (shared style) */
+.sidebar{width:232px;flex-shrink:0;background:#fff;border-right:1px solid var(--border-light);height:100vh;position:sticky;top:0;display:flex;flex-direction:column;}
+.brand{padding:20px 20px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border-light);}
+.brand-logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(48,135,204,.28);}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text strong{font-size:14px;font-weight:600;}
+.brand-text span{font-size:10px;color:var(--text-3);letter-spacing:.4px;margin-top:3px;}
+.nav-group{padding:16px 12px 8px;flex:1;overflow-y:auto;}
+.nav-group-title{padding:8px 12px 6px;font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:var(--text-2);font-size:13px;cursor:pointer;transition:all .15s;margin-bottom:2px;}
+.nav-item:hover{background:var(--primary-50);color:var(--text-1);}
+.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:500;}
+.nav-item.active svg{color:var(--primary);}
+.nav-item .badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;font-weight:500;}
+.nav-item.active .badge{background:var(--primary);}
+.user-card{margin:12px;padding:12px;border-radius:10px;background:linear-gradient(135deg,#F4FAFE 0%,#E3F1F9 100%);display:flex;align-items:center;gap:10px;}
+.user-card .ava{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#3087CC,#006DAD);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:13px;}
+.user-card .info{flex:1;min-width:0;}
+.user-card .info h5{font-size:13px;font-weight:500;}
+.user-card .info p{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+/* Main */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{height:60px;background:#fff;border-bottom:1px solid var(--border-light);padding:0 28px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:10;}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--text-2);font-size:13px;}
+.crumb svg{color:var(--text-4);}
+.crumb a{color:var(--text-2);transition:color .15s;}
+.crumb a:hover{color:var(--primary);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.icon-btn{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-2);transition:all .15s;position:relative;}
+.icon-btn:hover{background:#F4F6FA;color:var(--text-1);}
+.topbar-user{display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:999px;cursor:pointer;}
+.topbar-user:hover{background:#F4F6FA;}
+.topbar-user .ava{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#3087CC,#006DAD);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;}
+.topbar-user span{font-size:13px;color:var(--text-1);}
+
+/* Page */
+.page{flex:1;padding:24px 28px;overflow-y:auto;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.page-head h1{font-size:22px;font-weight:600;display:flex;align-items:center;gap:10px;}
+.page-head h1 .pill{
+  background:linear-gradient(135deg,#7C5BC1,#5B3CA1);color:#fff;font-size:11px;font-weight:600;
+  padding:3px 10px;border-radius:6px;letter-spacing:.5px;
+}
+.page-head p{color:var(--text-3);font-size:13px;margin-top:6px;}
+.page-actions{display:flex;gap:8px;}
+
+.btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 16px;border-radius:8px;font-size:13px;font-weight:500;transition:all .15s;border:none;cursor:pointer;font-family:inherit;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(48,135,204,.28);}
+.btn-ghost{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.btn-danger{background:#fff;color:var(--danger);border:1px solid var(--danger-border);}
+.btn-danger:hover{background:var(--danger-bg);}
+.btn-ai{background:linear-gradient(135deg,#7C5BC1,#3087CC);color:#fff;}
+.btn-ai:hover{box-shadow:0 6px 20px rgba(124,91,193,.35);transform:translateY(-1px);}
+
+/* Hero banner */
+.ai-hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#1A2A4F 0%,#3B2670 50%,#5B3CA1 100%);
+  color:#fff;border-radius:18px;padding:28px 32px;margin-bottom:22px;
+  box-shadow:0 16px 40px rgba(60,40,120,.22);
+}
+.ai-hero::before{
+  content:"";position:absolute;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(48,135,204,.55),transparent 65%);
+  right:-90px;top:-130px;
+}
+.ai-hero::after{
+  content:"";position:absolute;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,214,143,.18),transparent 60%);
+  left:-60px;bottom:-90px;
+}
+.ai-hero-inner{position:relative;z-index:1;display:flex;align-items:center;gap:28px;flex-wrap:wrap;}
+.ai-hero-logo{
+  width:64px;height:64px;border-radius:18px;background:rgba(255,255,255,.16);
+  backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.24);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.ai-hero-text{flex:1;min-width:280px;}
+.ai-hero-text h2{font-size:22px;font-weight:700;display:flex;align-items:center;gap:10px;}
+.ai-hero-text .chip{
+  display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.18);
+  padding:3px 10px;border-radius:999px;font-size:11px;font-weight:500;
+  border:1px solid rgba(255,255,255,.24);
+}
+.ai-hero-text p{font-size:13px;opacity:.85;margin-top:8px;line-height:1.7;}
+.ai-hero-status{
+  display:flex;align-items:center;gap:14px;padding:14px 20px;
+  background:rgba(255,255,255,.1);border-radius:14px;border:1px solid rgba(255,255,255,.18);
+}
+.ai-hero-status .dot{width:10px;height:10px;border-radius:50%;background:#1BB975;box-shadow:0 0 0 4px rgba(27,185,117,.25);}
+.ai-hero-status .dot.mock{background:#FFC53D;box-shadow:0 0 0 4px rgba(255,197,61,.25);}
+.ai-hero-status .lbl{font-size:11px;opacity:.7;}
+.ai-hero-status .val{font-size:14px;font-weight:600;margin-top:2px;}
+
+/* Mode picker */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;}
+.mode-card{
+  background:#fff;border:2px solid var(--border-light);border-radius:14px;padding:20px 22px;
+  cursor:pointer;transition:all .18s;position:relative;display:flex;align-items:flex-start;gap:14px;
+}
+.mode-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.mode-card.selected{border-color:var(--primary);background:var(--primary-50);}
+.mode-card .ic{
+  width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.mode-card.mock-card .ic{background:linear-gradient(135deg,#FFF8E1,#FFE0B3);color:#9A6500;}
+.mode-card.real-card .ic{background:linear-gradient(135deg,#E3F1F9,#BFDDF6);color:var(--primary-dark);}
+.mode-card .text h4{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.mode-card .text .recommend{font-size:10px;background:var(--success);color:#fff;padding:1px 7px;border-radius:4px;font-weight:600;}
+.mode-card .text p{font-size:12px;color:var(--text-3);margin-top:5px;line-height:1.65;}
+.mode-card .radio{
+  position:absolute;top:18px;right:18px;width:18px;height:18px;border-radius:50%;
+  border:2px solid var(--border);display:flex;align-items:center;justify-content:center;
+}
+.mode-card.selected .radio{border-color:var(--primary);}
+.mode-card.selected .radio::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--primary);}
+
+/* Config panel */
+.panel{background:#fff;border-radius:14px;padding:24px 26px;box-shadow:var(--shadow-sm);margin-bottom:18px;}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;}
+.panel-head h3{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.panel-head h3 .ic{width:24px;height:24px;border-radius:7px;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;}
+.panel-head p{font-size:12px;color:var(--text-3);margin-top:3px;}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;}
+.form-grid .full{grid-column:1 / -1;}
+.form-item{display:flex;flex-direction:column;gap:6px;}
+.form-item label{font-size:12px;color:var(--text-2);font-weight:500;}
+.form-item label .req{color:var(--danger);margin-left:2px;}
+.form-item label .hint{font-size:11px;color:var(--text-4);font-weight:400;margin-left:6px;}
+.form-item input,.form-item select,.form-item textarea{
+  height:38px;padding:0 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;color:var(--text-1);background:#fff;outline:none;
+  transition:all .15s;font-family:inherit;width:100%;
+}
+.form-item textarea{height:auto;min-height:88px;padding:10px 12px;resize:vertical;line-height:1.6;}
+.form-item input:focus,.form-item select:focus,.form-item textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(48,135,204,.12);}
+.form-item input[disabled],.form-item select[disabled]{background:#FAFBFD;color:var(--text-4);cursor:not-allowed;}
+
+.range-row{display:flex;align-items:center;gap:12px;}
+.range-row input[type=range]{flex:1;height:6px;padding:0;}
+.range-row .val{min-width:36px;font-size:13px;font-weight:600;color:var(--primary);text-align:right;}
+
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;}
+.switch input{display:none;}
+.switch .track{width:36px;height:20px;border-radius:10px;background:#D9DDE3;position:relative;transition:all .2s;}
+.switch .track::after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:all .2s;box-shadow:0 1px 3px rgba(15,32,55,.2);}
+.switch input:checked + .track{background:var(--primary);}
+.switch input:checked + .track::after{transform:translateX(16px);}
+.switch .lbl{font-size:13px;color:var(--text-1);}
+.switch .hint{font-size:11px;color:var(--text-4);}
+
+.tip-box{
+  background:var(--warning-bg);border:1px solid var(--warning-border);color:#9A6500;
+  border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;
+  display:flex;gap:10px;align-items:flex-start;margin-bottom:18px;
+}
+.tip-box svg{flex-shrink:0;margin-top:2px;}
+
+.test-row{
+  display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:10px;
+  background:var(--bg);border:1px solid var(--border-light);
+}
+.test-row .info{flex:1;font-size:13px;color:var(--text-2);}
+.test-row .info strong{color:var(--text-1);}
+.test-result{
+  margin-top:12px;padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.65;
+  display:none;align-items:flex-start;gap:10px;
+}
+.test-result.show{display:flex;}
+.test-result.ok{background:var(--success-bg);color:#0F766E;border:1px solid var(--success-border);}
+.test-result.fail{background:var(--danger-bg);color:#B91C1C;border:1px solid var(--danger-border);}
+
+.foot-bar{
+  position:sticky;bottom:0;background:#fff;border-top:1px solid var(--border-light);
+  padding:14px 28px;display:flex;justify-content:flex-end;gap:10px;z-index:5;
+  margin:0 -28px -24px;
+}
+
+/* Provider preset cards */
+.provider-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:14px;}
+.provider-card{
+  border:1.5px solid var(--border-light);border-radius:10px;padding:12px 8px;
+  text-align:center;cursor:pointer;transition:all .15s;font-size:12px;color:var(--text-2);
+  background:#fff;
+}
+.provider-card:hover{border-color:var(--primary);color:var(--primary-dark);}
+.provider-card.selected{border-color:var(--primary);background:var(--primary-50);color:var(--primary-dark);font-weight:600;}
+.provider-card .logo{font-size:18px;margin-bottom:4px;}
+
+/* Toast */
+.toast{position:fixed;left:50%;top:80px;transform:translate(-50%,-20px);background:#1F2733;color:#fff;padding:11px 22px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:all .25s;z-index:200;box-shadow:var(--shadow-lg);}
+.toast.show{opacity:1;transform:translate(-50%,0);}
+</style>
+</head>
+<body>
+<aside class="sidebar"></aside>
+<main class="main">
+  <header class="topbar"></header>
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>
+          <span>AI 助手配置</span>
+          <span class="pill">实验功能</span>
+        </h1>
+        <p>统一管理三端 AI 学工助手的运行模式与大模型接入参数，支持 OpenAI 兼容协议下的主流厂商</p>
+      </div>
+      <div class="page-actions">
+        <a class="btn btn-ghost" href="settings.html">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          返回系统配置
+        </a>
+      </div>
+    </div>
+
+    <!-- AI Hero Banner -->
+    <div class="ai-hero">
+      <div class="ai-hero-inner">
+        <div class="ai-hero-logo">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="rgba(255,255,255,.3)"/>
+            <circle cx="19" cy="5" r="1.5" fill="#fff"/>
+            <circle cx="5" cy="19" r="1" fill="#fff"/>
+          </svg>
+        </div>
+        <div class="ai-hero-text">
+          <h2>
+            <span>小风 · AI 学工助手</span>
+            <span class="chip">OpenAI 兼容协议</span>
+          </h2>
+          <p>智能搜索 · 多轮对话 · 子模块辅助 · 上下文感知。配置真实 API 后，PC管理端、PC学生端、移动端的所有 AI 功能将自动切换为真实大模型回答。</p>
+        </div>
+        <div class="ai-hero-status">
+          <span class="dot" id="statusDot"></span>
+          <div>
+            <div class="lbl">当前模式</div>
+            <div class="val" id="statusLabel">Mock 演示</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode picker -->
+    <div class="mode-grid">
+      <div class="mode-card mock-card" id="modeCardMock" onclick="selectMode('mock')">
+        <div class="radio"></div>
+        <div class="ic">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        </div>
+        <div class="text">
+          <h4>Mock 演示模式 <span class="recommend">默认</span></h4>
+          <p>内置常见问题应答与菜单跳转，无需 API Key 即可立即体验。适合内部预演、断网演示场景。</p>
+        </div>
+      </div>
+      <div class="mode-card real-card" id="modeCardReal" onclick="selectMode('real')">
+        <div class="radio"></div>
+        <div class="ic">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <div class="text">
+          <h4>真实 API 模式</h4>
+          <p>接入 DeepSeek / 智谱 / Kimi / 通义 / OpenAI / 本地 Ollama 等真实大模型，获得更精准、智能的对话能力。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Provider presets -->
+    <div class="panel" id="providerPanel">
+      <div class="panel-head">
+        <div>
+          <h3><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span> 选择服务提供商</h3>
+          <p>选中后自动填充推荐的 Base URL 与默认模型名称</p>
+        </div>
+      </div>
+      <div class="provider-grid">
+        <div class="provider-card" data-provider="deepseek" onclick="selectProvider('deepseek')"><div class="logo">DS</div>DeepSeek</div>
+        <div class="provider-card" data-provider="zhipu" onclick="selectProvider('zhipu')"><div class="logo">智谱</div>智谱 GLM</div>
+        <div class="provider-card" data-provider="kimi" onclick="selectProvider('kimi')"><div class="logo">K</div>Kimi</div>
+        <div class="provider-card" data-provider="qwen" onclick="selectProvider('qwen')"><div class="logo">通义</div>通义千问</div>
+        <div class="provider-card" data-provider="openai" onclick="selectProvider('openai')"><div class="logo">GPT</div>OpenAI</div>
+        <div class="provider-card" data-provider="ollama" onclick="selectProvider('ollama')"><div class="logo">本地</div>Ollama</div>
+        <div class="provider-card" data-provider="custom" onclick="selectProvider('custom')"><div class="logo">⚙️</div>自定义</div>
+      </div>
+      <div class="tip-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <div>
+          <strong>跨域提示：</strong>纯前端浏览器直接调用部分厂商 API 可能触发 CORS 限制。如遇调用失败，可使用本地 Ollama，或在自己的反向代理上转发请求后填入代理 Base URL。
+        </div>
+      </div>
+      <div class="tip-box" style="background:#E8FCF4;border-color:#A7F3D0;color:#0F766E;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+          <strong>全局生效：</strong>保存配置后，PC管理端、PC学生端、移动端的全部 AI 功能（悬浮对话、全局搜索、表单辅助填写、AI 推荐等）将自动使用此处配置的模型，无需逐页设置。
+        </div>
+      </div>
+    </div>
+
+    <!-- API config -->
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h3><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> API 接入参数</h3>
+          <p>所有数据仅保存在浏览器 localStorage，不会上传至服务器。可在任意模式下预填，切换到真实 API 模式后生效。</p>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-item">
+          <label>API Base URL <span class="req">*</span></label>
+          <input type="text" id="cfgBaseUrl" placeholder="https://api.deepseek.com/v1" />
+        </div>
+        <div class="form-item">
+          <label>API Key <span class="req">*</span> <span class="hint">仅本地存储</span></label>
+          <input type="password" id="cfgApiKey" placeholder="sk-xxxxxxxxxxxx" autocomplete="off" />
+        </div>
+        <div class="form-item">
+          <label>模型名称 <span class="req">*</span></label>
+          <input type="text" id="cfgModel" placeholder="deepseek-chat" />
+        </div>
+        <div class="form-item">
+          <label>Max Tokens</label>
+          <input type="number" id="cfgMaxTokens" min="64" max="8192" step="64" />
+        </div>
+        <div class="form-item">
+          <label>Temperature <span class="hint">越高越发散</span></label>
+          <div class="range-row">
+            <input type="range" id="cfgTemperature" min="0" max="1" step="0.05" />
+            <span class="val" id="cfgTemperatureVal">0.7</span>
+          </div>
+        </div>
+        <div class="form-item">
+          <label>启用流式输出</label>
+          <label class="switch" style="margin-top:8px;">
+            <input type="checkbox" id="cfgStream" />
+            <span class="track"></span>
+            <span class="lbl">逐字流式渲染 <span class="hint">推荐开启</span></span>
+          </label>
+        </div>
+        <div class="form-item full">
+          <label>System Prompt <span class="hint">定义助手身份与回答风格</span></label>
+          <textarea id="cfgSystemPrompt" rows="4"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Behavior config -->
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h3><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span> 界面行为</h3>
+          <p>控制悬浮助手在三端的默认展开状态</p>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-item">
+          <label>PC 端默认</label>
+          <label class="switch" style="margin-top:8px;">
+            <input type="checkbox" id="cfgDefaultOpenPc" />
+            <span class="track"></span>
+            <span class="lbl">PC 页面打开后自动展开聊天面板</span>
+          </label>
+        </div>
+        <div class="form-item">
+          <label>移动端默认</label>
+          <label class="switch" style="margin-top:8px;">
+            <input type="checkbox" id="cfgDefaultOpenMobile" />
+            <span class="track"></span>
+            <span class="lbl">移动端打开后自动展开抽屉 <span class="hint">不推荐</span></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test connectivity -->
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h3><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span> 连通性测试</h3>
+          <p>发送一条 ping 消息验证 API 是否可用</p>
+        </div>
+      </div>
+      <div class="test-row">
+        <div class="info">
+          点击右侧按钮，<strong>发送一条「请回复"连通成功"四个字」</strong>的测试消息至当前配置的 API。Mock 模式下无需联网。
+        </div>
+        <button class="btn btn-ai" id="btnTest" onclick="doTest()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/><polyline points="22 4 22 22"/></svg>
+          测试连通性
+        </button>
+      </div>
+      <div class="test-result" id="testResult"></div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="foot-bar">
+      <button class="btn btn-danger" onclick="doReset()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
+        重置为 Mock 模式
+      </button>
+      <button class="btn btn-ghost" onclick="doCancel()">取消修改</button>
+      <button class="btn btn-primary" onclick="doSave()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        保存配置
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- AI scripts -->
+<script src="../assets/ai/ai-knowledge.js"></script>
+<script src="../assets/ai/ai-core.js"></script>
+
+<!-- 公共脚本（沿用 dashboard 风格） -->
+<script src="js-shared.js" onerror="this.remove();"></script>
+<script>
+// === 直接内联 PC_NAV 与渲染（与其他页面保持一致） ===
+const PC_NAV = [
+  {group:'首页',items:[
+    {id:'dashboard',name:'数据概览',href:'dashboard.html',icon:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'}
+  ]},
+  {group:'辅学义工',items:[
+    {id:'volunteers',name:'申请管理',href:'volunteers.html',badge:12,icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>'},
+    {id:'hours',name:'时长记录',href:'hours.html',icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'},
+    {id:'stars',name:'星级评定',href:'stars.html',badge:5,icon:'<polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/>'},
+    {id:'groups',name:'分组管理',href:'groups.html',icon:'<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="9" r="3"/><path d="M22 21v-1a3 3 0 0 0-2-2.83"/>'},
+    {id:'appeals',name:'意见反馈',href:'appeals.html',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/>'},
+    {id:'volunteer-manage',name:'义工管理',href:'volunteer-manage.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'}
+  ]},
+  {group:'知新选课',items:[
+    {id:'courses',name:'课程管理',href:'courses.html',badge:8,icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'},
+    {id:'course-categories',name:'课程分类',href:'course-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'venue-bookings',name:'场地预约',href:'venue-bookings.html',badge:6,icon:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'},
+    {id:'posters',name:'开屏海报',href:'posters.html',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'}
+  ]},
+  {group:'即问即答',items:[
+    {id:'qa-content',name:'内容管理',href:'qa-content.html',badge:3,icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+    {id:'qa-categories',name:'学科分类',href:'qa-categories.html',icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'},
+    {id:'qa-users',name:'用户管理',href:'qa-users.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+  ]},
+  {group:'宝藏资料库',items:[
+    {id:'library',name:'资料库管理',href:'library.html',badge:11,icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {id:'library-categories',name:'资料分类',href:'library-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'uploaders',name:'上传者管理',href:'uploaders.html',icon:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>'},
+    {id:'library-feedback',name:'反馈与需求池',href:'library-feedback.html',icon:'<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><line x1="7" y1="22" x2="7" y2="11"/>'}
+  ]},
+  {group:'系统配置',items:[
+    {id:'analytics',name:'数据分析',href:'analytics.html',icon:'<path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/>'},
+    {id:'settings',name:'系统配置',href:'settings.html',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+    {id:'ai-settings',name:'AI 助手配置',href:'ai-settings.html',icon:'<path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/><circle cx="19" cy="5" r="1.5"/>'}
+  ]}
+];
+
+function renderSidebar(activeId){
+  const sidebar = document.querySelector('.sidebar');
+  if(!sidebar) return;
+  const navHTML = PC_NAV.map((g,i)=>`
+    <div class="nav-group-title" ${i>0?'style="margin-top:14px;"':''}>${g.group}</div>
+    ${g.items.map(it=>`
+      <a class="nav-item ${it.id===activeId?'active':''}" href="${it.href}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg>
+        ${it.name}
+        ${it.badge?`<span class="badge">${it.badge}</span>`:''}
+      </a>
+    `).join('')}
+  `).join('');
+  sidebar.innerHTML = `
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="brand-text"><strong>学风建设系统</strong><span>管理后台 v2.0</span></div>
+    </div>
+    <nav class="nav-group">${navHTML}</nav>
+    <div class="user-card">
+      <div class="ava">王</div>
+      <div class="info"><h5>王老师</h5><p>学工部管理员</p></div>
+    </div>
+  `;
+}
+
+function renderTopbar(crumb){
+  const tb = document.querySelector('.topbar');
+  if(!tb) return;
+  tb.innerHTML = `
+    <button class="icon-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="crumb">
+      <a href="../index.html">学风建设</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      ${crumb||''}
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+      <div class="topbar-user"><div class="ava">王</div><span>王老师</span></div>
+    </div>
+  `;
+}
+
+function showToast(msg){
+  let t = document.getElementById('toast');
+  if(!t){ t = document.createElement('div'); t.id='toast'; t.className='toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+// ============= AI 设置页面交互 =============
+let _currentMode = 'mock';
+let _currentProvider = 'deepseek';
+
+function refreshUI(cfg){
+  _currentMode = cfg.mode;
+  _currentProvider = cfg.provider || 'deepseek';
+  document.getElementById('modeCardMock').classList.toggle('selected', cfg.mode==='mock');
+  document.getElementById('modeCardReal').classList.toggle('selected', cfg.mode==='real');
+  document.querySelectorAll('.provider-card').forEach(c=>{
+    c.classList.toggle('selected', c.dataset.provider===_currentProvider);
+  });
+  document.getElementById('cfgBaseUrl').value = cfg.baseUrl||'';
+  document.getElementById('cfgApiKey').value  = cfg.apiKey||'';
+  document.getElementById('cfgModel').value   = cfg.model||'';
+  document.getElementById('cfgMaxTokens').value = cfg.maxTokens||1024;
+  document.getElementById('cfgTemperature').value = cfg.temperature;
+  document.getElementById('cfgTemperatureVal').textContent = (+cfg.temperature).toFixed(2);
+  document.getElementById('cfgStream').checked = !!cfg.stream;
+  document.getElementById('cfgSystemPrompt').value = cfg.systemPrompt||'';
+  document.getElementById('cfgDefaultOpenPc').checked = !!cfg.defaultOpenPc;
+  document.getElementById('cfgDefaultOpenMobile').checked = !!cfg.defaultOpenMobile;
+
+  // 所有字段始终可编辑，方便用户预填后再切换模式
+  ['cfgBaseUrl','cfgApiKey','cfgModel','cfgMaxTokens','cfgTemperature','cfgStream','cfgSystemPrompt'].forEach(id=>{
+    document.getElementById(id).disabled = false;
+  });
+
+  // 状态显示
+  const isReal = cfg.mode==='real';
+  if(isReal && cfg.apiKey){
+    document.getElementById('statusLabel').textContent = '真实 API · ' + (cfg.model || '未填写模型');
+    document.getElementById('statusDot').className = 'dot';
+  } else if(isReal && !cfg.apiKey){
+    document.getElementById('statusLabel').textContent = '真实 API · 待配置 Key';
+    document.getElementById('statusDot').className = 'dot mock';
+  } else {
+    document.getElementById('statusLabel').textContent = 'Mock 演示';
+    document.getElementById('statusDot').className = 'dot mock';
+  }
+}
+
+function selectMode(mode){
+  _currentMode = mode;
+  const cfg = Object.assign({}, AICore.getConfig(), { mode });
+  refreshUI(cfg);
+}
+
+function selectProvider(name){
+  _currentProvider = name;
+  const presets = AICore.getProviderPresets();
+  const p = presets[name];
+  const cfg = Object.assign({}, AICore.getConfig(), { provider: name });
+  if(p && p.baseUrl){ cfg.baseUrl = p.baseUrl; }
+  if(p && p.model){ cfg.model = p.model; }
+  refreshUI(cfg);
+}
+
+function gatherForm(){
+  return {
+    mode: _currentMode,
+    provider: _currentProvider,
+    baseUrl: document.getElementById('cfgBaseUrl').value.trim(),
+    apiKey:  document.getElementById('cfgApiKey').value.trim(),
+    model:   document.getElementById('cfgModel').value.trim(),
+    maxTokens: parseInt(document.getElementById('cfgMaxTokens').value, 10) || 1024,
+    temperature: parseFloat(document.getElementById('cfgTemperature').value) || 0.7,
+    stream: document.getElementById('cfgStream').checked,
+    systemPrompt: document.getElementById('cfgSystemPrompt').value,
+    defaultOpenPc: document.getElementById('cfgDefaultOpenPc').checked,
+    defaultOpenMobile: document.getElementById('cfgDefaultOpenMobile').checked
+  };
+}
+
+function doSave(){
+  const cfg = gatherForm();
+  if(cfg.mode === 'real'){
+    if(!cfg.baseUrl){ showToast('请填写 API Base URL'); return; }
+    if(!cfg.apiKey){  showToast('请填写 API Key'); return; }
+    if(!cfg.model){   showToast('请填写模型名称'); return; }
+  }
+  AICore.saveConfig(cfg);
+  showToast('配置已保存');
+  refreshUI(AICore.getConfig());
+}
+
+function doCancel(){
+  refreshUI(AICore.getConfig());
+  showToast('已还原为上次保存的配置');
+}
+
+function doReset(){
+  if(!confirm('确认重置为 Mock 演示模式？已填写的 API Key 将被清空。')) return;
+  AICore.resetConfig();
+  refreshUI(AICore.getConfig());
+  showToast('已重置为 Mock 演示模式');
+}
+
+async function doTest(){
+  const cfg = gatherForm();
+  if(!cfg.baseUrl || !cfg.apiKey || !cfg.model){
+    if(!cfg.baseUrl) showToast('请先填写 API Base URL');
+    else if(!cfg.apiKey) showToast('请先填写 API Key');
+    else showToast('请先填写模型名称');
+    return;
+  }
+  const btn = document.getElementById('btnTest');
+  const oldText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;">测试中…</span>';
+  try{
+    let finalText = '';
+    const url = cfg.baseUrl.replace(/\/+$/,'') + '/chat/completions';
+    const resp = await fetch(url, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+cfg.apiKey },
+      body: JSON.stringify({ model:cfg.model, messages:[{role:'system',content:'你是测试助手，只用一句话回答。'},{role:'user',content:'你好，请回复"连通成功"四个字以测试连通性。'}], temperature:0.3, max_tokens:50, stream:false })
+    });
+    if(!resp.ok){
+      const errTxt = await resp.text().catch(()=>'');
+      throw new Error('HTTP ' + resp.status + ': ' + errTxt.slice(0,200));
+    }
+    const data = await resp.json();
+    finalText = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
+    // 测试成功 → 自动切换到真实 API 模式并保存
+    if(cfg.mode === 'mock'){
+      cfg.mode = 'real';
+      _currentMode = 'real';
+    }
+    AICore.saveConfig(cfg);
+    refreshUI(AICore.getConfig());
+    showTestResult(true, '连通成功！模型回复：' + (finalText.slice(0,120) || '(空)') + '<br><small style="color:#0F766E;">已自动切换为「真实 API 模式」并保存配置，全产品 AI 功能现在使用真实大模型。</small>');
+  }catch(err){
+    showTestResult(false, '连通失败：' + ((err && err.message) || String(err)));
+  }
+  btn.disabled = false;
+  btn.innerHTML = oldText;
+}
+
+function showTestResult(ok, msg){
+  const el = document.getElementById('testResult');
+  el.className = 'test-result show ' + (ok?'ok':'fail');
+  el.innerHTML = (ok
+    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
+    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+  ) + '<div>' + msg + '</div>';
+}
+
+// 温度滑块实时显示
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('cfgTemperature').addEventListener('input', e=>{
+    document.getElementById('cfgTemperatureVal').textContent = (+e.target.value).toFixed(2);
+  });
+});
+
+// 初始化
+renderSidebar('ai-settings');
+renderTopbar('<a href="settings.html">系统配置</a><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg><span>AI 助手配置</span>');
+refreshUI(AICore.getConfig());
+</script>
+
+<!-- AI Widget itself (this page also benefits from it) -->
+<link rel="stylesheet" href="../assets/ai/ai-widget-pc.css">
+<script src="../assets/ai/ai-widget-pc.js"></script>
+<script>
+  if(window.AIWidget){
+    AIWidget.init({
+      pageId: 'ai-settings',
+      pageName: 'AI 助手配置',
+      pageContext: '管理员正在配置 AI 助手的运行模式、API 接入参数。Mock 模式无需联网；真实模式支持 OpenAI 兼容协议（DeepSeek/智谱/Kimi/通义/OpenAI/Ollama 等）。',
+      end: 'PC管理'
+    });
+  }
+</script>
+</body>
+</html>

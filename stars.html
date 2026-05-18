@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>星级评定 · 学风建设系统</title>
+<style>
+:root{
+  --primary:#3087CC;
+  --primary-light:#E3F1F9;
+  --primary-dark:#006DAD;
+  --primary-50:#F4FAFE;
+  --text-1:#3C444F;
+  --text-2:#696F7D;
+  --text-3:#9096A2;
+  --text-4:#ABB0BA;
+  --border:#E5E8EE;
+  --border-light:#EFF1F5;
+  --bg:#F4F6FA;
+  --bg-card:#FFFFFF;
+  --success:#1BB975;
+  --success-bg:#E8FCF4;
+  --success-border:#A7F3D0;
+  --warning:#F29100;
+  --warning-bg:#FFF5E5;
+  --warning-border:#FFE0B3;
+  --danger:#DF2027;
+  --danger-bg:#FCE8EA;
+  --danger-border:#F6BCBE;
+  --shadow-sm:0 1px 3px rgba(15,32,55,.05);
+  --shadow-md:0 4px 14px rgba(15,32,55,.06);
+  --shadow-lg:0 12px 32px rgba(15,32,55,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;font-size:14px;}
+body{min-height:100vh;display:flex;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+svg{display:block;flex-shrink:0;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D9DDE3;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#C0C5CD;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ====== Sidebar ====== */
+.sidebar{
+  width:232px;flex-shrink:0;background:#fff;
+  border-right:1px solid var(--border-light);
+  height:100vh;position:sticky;top:0;display:flex;flex-direction:column;
+}
+.brand{
+  padding:20px 20px 16px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border-light);
+}
+.brand-logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(48,135,204,.28);
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text strong{font-size:14px;font-weight:600;}
+.brand-text span{font-size:10px;color:var(--text-3);letter-spacing:.4px;margin-top:3px;}
+
+.nav-group{padding:16px 12px 8px;flex:1;overflow-y:auto;}
+.nav-group-title{
+  padding:8px 12px 6px;font-size:11px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;color:var(--text-2);
+  font-size:13px;cursor:pointer;transition:all .15s;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:var(--primary-50);color:var(--text-1);}
+.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:500;}
+.nav-item.active svg{color:var(--primary);}
+.nav-item .badge{
+  margin-left:auto;background:var(--danger);color:#fff;font-size:10px;
+  padding:1px 6px;border-radius:8px;font-weight:500;
+}
+.nav-item.active .badge{background:var(--primary);}
+
+.user-card{
+  margin:12px;padding:12px;border-radius:10px;
+  background:linear-gradient(135deg,#F4FAFE 0%,#E3F1F9 100%);
+  display:flex;align-items:center;gap:10px;
+}
+.user-card .ava{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:600;font-size:13px;
+}
+.user-card .info{flex:1;min-width:0;}
+.user-card .info h5{font-size:13px;font-weight:500;}
+.user-card .info p{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+/* ====== Main ====== */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{
+  height:60px;background:#fff;border-bottom:1px solid var(--border-light);
+  padding:0 28px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:10;
+}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--text-2);font-size:13px;}
+.crumb svg{color:var(--text-4);}
+.crumb a{color:var(--text-2);transition:color .15s;}
+.crumb a:hover{color:var(--primary);}
+.search{
+  margin-left:24px;width:320px;height:36px;border-radius:8px;
+  background:#F4F6FA;display:flex;align-items:center;padding:0 12px;gap:8px;
+  border:1px solid transparent;transition:all .15s;
+}
+.search:focus-within{background:#fff;border-color:var(--primary);}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:13px;color:var(--text-1);}
+.search input::placeholder{color:var(--text-4);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;position:relative;
+}
+.icon-btn:hover{background:#F4F6FA;color:var(--text-1);}
+.icon-btn .red-dot{
+  position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;
+  background:var(--danger);border:2px solid #fff;
+}
+.topbar-user{
+  display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;
+  border-radius:999px;cursor:pointer;
+}
+.topbar-user:hover{background:#F4F6FA;}
+.topbar-user .ava{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
+}
+.topbar-user span{font-size:13px;color:var(--text-1);}
+
+/* ====== Page Content ====== */
+.page{flex:1;padding:24px 28px;overflow-y:auto;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.page-head h1{font-size:22px;font-weight:600;}
+.page-head p{color:var(--text-3);font-size:13px;margin-top:6px;}
+.page-actions{display:flex;gap:8px;}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:500;
+  transition:all .15s;
+}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(48,135,204,.28);}
+.btn-secondary{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+.btn-secondary:hover{background:var(--primary-light);}
+.btn-ghost{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{height:30px;padding:0 10px;font-size:12px;}
+
+/* ====== Stat Cards ====== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.stats-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.stat-card{
+  background:#fff;border-radius:14px;padding:20px 22px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.stat-card .blob{
+  position:absolute;width:140px;height:140px;border-radius:50%;
+  right:-40px;top:-40px;opacity:.35;
+}
+.stat-card .blob-1{background:radial-gradient(circle,#BFDDF6,transparent 65%);}
+.stat-card .blob-2{background:radial-gradient(circle,#FFE0B3,transparent 65%);}
+.stat-card .blob-3{background:radial-gradient(circle,#A7F3D0,transparent 65%);}
+.stat-card .blob-4{background:radial-gradient(circle,#F6BCBE,transparent 65%);}
+.stat-card .ic{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.stat-card .label{font-size:13px;color:var(--text-2);}
+.stat-card .num{
+  font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.5px;
+  display:flex;align-items:baseline;gap:6px;
+}
+.stat-card .num small{font-size:13px;color:var(--text-3);font-weight:400;}
+.stat-card .delta{
+  font-size:12px;margin-top:8px;display:flex;align-items:center;gap:4px;
+}
+.delta.up{color:var(--success);}
+.delta.down{color:var(--danger);}
+.delta.neutral{color:var(--text-3);}
+
+/* ====== Layout grids ====== */
+.row-2{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:20px;}
+.row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+
+.panel{
+  background:#fff;border-radius:14px;padding:22px 24px;
+  box-shadow:var(--shadow-sm);
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;
+}
+.panel-head h3{font-size:16px;font-weight:600;}
+.panel-head p{font-size:12px;color:var(--text-3);margin-top:2px;}
+.panel-tabs{display:flex;gap:4px;background:#F4F6FA;border-radius:8px;padding:3px;}
+.panel-tabs button{
+  height:28px;padding:0 12px;border-radius:6px;font-size:12px;color:var(--text-2);transition:all .15s;
+}
+.panel-tabs button.active{background:#fff;color:var(--primary);font-weight:500;box-shadow:var(--shadow-sm);}
+
+/* ====== Chart ====== */
+.chart-wrap{height:280px;position:relative;}
+
+/* ====== Approval list ====== */
+.approval-list{display:flex;flex-direction:column;gap:10px;}
+.approval-item{
+  padding:14px;border:1px solid var(--border-light);border-radius:10px;
+  display:flex;align-items:center;gap:12px;transition:all .15s;
+}
+.approval-item:hover{border-color:var(--primary);background:var(--primary-50);}
+.approval-item .ava{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;
+  flex-shrink:0;
+}
+.approval-item .text{flex:1;min-width:0;}
+.approval-item .text h5{font-size:14px;font-weight:500;}
+.approval-item .text p{font-size:12px;color:var(--text-3);margin-top:3px;}
+.approval-item .actions{display:flex;gap:6px;}
+
+/* ====== Tag ====== */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500;
+  background:var(--primary-light);color:var(--primary);border:1px solid #BFDDF6;
+}
+.tag-success{background:var(--success-bg);color:var(--success);border-color:var(--success-border);}
+.tag-warning{background:var(--warning-bg);color:var(--warning);border-color:var(--warning-border);}
+.tag-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border);}
+.tag-grey{background:#F1F2F3;color:var(--text-3);border-color:var(--border);}
+
+/* ====== Star ====== */
+.stars{display:inline-flex;gap:2px;}
+.stars svg{width:14px;height:14px;color:#FFC53D;}
+.stars.empty svg{color:#E5E8EE;}
+
+/* ====== Filter Bar ====== */
+.filterbar{
+  background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:16px;
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+  box-shadow:var(--shadow-sm);
+}
+.filterbar .field{display:flex;align-items:center;gap:6px;}
+.filterbar label{font-size:13px;color:var(--text-2);}
+.input,.select{
+  height:34px;padding:0 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;color:var(--text-1);background:#fff;outline:none;min-width:140px;
+  transition:all .15s;font-family:inherit;
+}
+.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(48,135,204,.12);}
+.filterbar .spacer{flex:1;}
+
+/* ====== Table ====== */
+.table-wrap{
+  background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{
+  background:#F8FAFC;color:var(--text-2);font-weight:500;
+  text-align:left;padding:14px 16px;font-size:12px;
+  border-bottom:1px solid var(--border-light);
+}
+tbody td{padding:14px 16px;border-bottom:1px solid var(--border-light);color:var(--text-1);}
+tbody tr:hover{background:#FAFBFD;}
+tbody tr:last-child td{border-bottom:none;}
+.checkbox{width:14px;height:14px;border:1.5px solid var(--border);border-radius:3px;cursor:pointer;display:inline-block;vertical-align:middle;position:relative;}
+.checkbox.checked{background:var(--primary);border-color:var(--primary);}
+.checkbox.checked::after{
+  content:"";position:absolute;left:3px;top:0;width:5px;height:9px;
+  border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);
+}
+.row-action{display:inline-flex;gap:4px;align-items:center;}
+.row-action button{
+  width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;
+}
+.row-action button:hover{background:var(--primary-light);color:var(--primary);}
+.row-action button.danger:hover{background:var(--danger-bg);color:var(--danger);}
+
+.table-foot{
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border-light);
+}
+.table-foot .count{color:var(--text-3);font-size:12px;}
+.pager{display:flex;align-items:center;gap:4px;}
+.pager button{
+  min-width:30px;height:30px;padding:0 8px;border-radius:6px;font-size:12px;color:var(--text-2);
+}
+.pager button:hover:not(:disabled){background:#F4F6FA;color:var(--text-1);}
+.pager button.active{background:var(--primary);color:#fff;}
+.pager button:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ====== Tab nav inside page ====== */
+.seg{
+  display:inline-flex;background:#F4F6FA;border-radius:10px;padding:4px;margin-bottom:18px;flex-wrap:wrap;gap:4px;
+}
+.seg button{
+  height:34px;padding:0 18px;border-radius:7px;font-size:13px;color:var(--text-2);font-weight:500;
+  transition:all .15s;
+}
+.seg button.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);}
+
+/* ====== Schedule cards ====== */
+.sch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.sch-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;
+}
+.sch-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.sch-card .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;}
+.sch-card h5{font-size:14px;font-weight:600;}
+.sch-card .meta{font-size:12px;color:var(--text-3);margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sch-card .meta span{display:inline-flex;align-items:center;gap:4px;}
+
+/* ====== Group cards ====== */
+.group-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.group-card{
+  background:#fff;border-radius:14px;padding:20px;
+  box-shadow:var(--shadow-sm);position:relative;overflow:hidden;
+  transition:all .2s;cursor:pointer;
+}
+.group-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.group-card::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:4px;
+}
+.group-card.math::before{background:linear-gradient(90deg,#3087CC,#9CBFDA);}
+.group-card.physics::before{background:linear-gradient(90deg,#7C5BC1,#B59CE5);}
+.group-card.chem::before{background:linear-gradient(90deg,#1BB975,#A7F3D0);}
+.group-card.eng::before{background:linear-gradient(90deg,#F29100,#FFD68F);}
+.group-card.mech::before{background:linear-gradient(90deg,#DF2027,#F6BCBE);}
+.group-card.cs::before{background:linear-gradient(90deg,#0EA5E9,#7DD3FC);}
+.group-card .group-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.group-card .gi{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+}
+.group-card .gname{font-size:15px;font-weight:600;}
+.group-card .gleader{font-size:12px;color:var(--text-3);margin-top:2px;}
+.group-card .gstats{
+  display:flex;justify-content:space-between;padding:12px 0;
+  border-top:1px dashed var(--border-light);border-bottom:1px dashed var(--border-light);margin-bottom:12px;
+}
+.group-card .gstats div{text-align:center;flex:1;}
+.group-card .gstats div strong{font-size:18px;display:block;}
+.group-card .gstats div span{font-size:11px;color:var(--text-3);}
+.group-card .gmembers{display:flex;align-items:center;}
+.group-card .gmembers .ava{
+  width:26px;height:26px;border-radius:50%;border:2px solid #fff;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;
+  margin-left:-6px;
+}
+.group-card .gmembers .ava:first-child{margin-left:0;}
+.group-card .gmembers .more{margin-left:8px;font-size:12px;color:var(--text-3);}
+
+/* ====== Star milestone ====== */
+.star-track{
+  background:#fff;border-radius:14px;padding:24px;margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+}
+.star-bar{position:relative;height:8px;background:#F1F2F3;border-radius:4px;margin:32px 0 24px;}
+.star-bar .fill{
+  position:absolute;left:0;top:0;height:100%;border-radius:4px;
+  background:linear-gradient(90deg,#3087CC,#1BB975);
+}
+.star-bar .marker{
+  position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:#fff;
+  border:3px solid #E5E8EE;transform:translateX(-50%);
+}
+.star-bar .marker.done{border-color:var(--primary);}
+.star-bar .marker.current{border-color:var(--success);box-shadow:0 0 0 6px rgba(27,185,117,.18);}
+.star-bar .marker .lbl{
+  position:absolute;top:24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-2);
+  white-space:nowrap;
+}
+.star-bar .marker .lbl strong{display:block;font-size:13px;color:var(--text-1);font-weight:600;}
+
+/* ====== Library cards ====== */
+.lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.lib-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;cursor:pointer;
+}
+.lib-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.lib-card .ftype{
+  width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;font-size:11px;font-weight:600;color:#fff;
+}
+.ftype.pdf{background:linear-gradient(135deg,#DF2027,#FF6B6B);}
+.ftype.ppt{background:linear-gradient(135deg,#F29100,#FFAA33);}
+.ftype.doc{background:linear-gradient(135deg,#3087CC,#5BA8DE);}
+.ftype.xls{background:linear-gradient(135deg,#1BB975,#34D399);}
+.lib-card h5{font-size:13px;font-weight:500;margin-bottom:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.lib-card .meta{font-size:11px;color:var(--text-3);display:flex;justify-content:space-between;}
+.lib-card .stats{
+  margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-light);
+  display:flex;gap:12px;font-size:11px;color:var(--text-3);
+}
+.lib-card .stats span{display:inline-flex;align-items:center;gap:3px;}
+
+/* ====== Modal ====== */
+.modal-mask{
+  position:fixed;inset:0;background:rgba(15,32,55,.42);z-index:100;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-mask.show{opacity:1;pointer-events:auto;}
+.modal{
+  background:#fff;border-radius:14px;width:680px;max-width:92vw;max-height:88vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.94);transition:transform .2s;
+}
+.modal-mask.show .modal{transform:scale(1);}
+.modal-head{
+  padding:18px 24px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h3{font-size:16px;font-weight:600;}
+.modal-body{padding:22px 24px;overflow-y:auto;flex:1;}
+.modal-foot{
+  padding:14px 24px;border-top:1px solid var(--border-light);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;}
+.form-item{display:flex;flex-direction:column;}
+.form-item label{font-size:12px;color:var(--text-2);margin-bottom:6px;}
+.form-item label .req{color:var(--danger);}
+.form-item .input,.form-item textarea,.form-item .select{width:100%;}
+.form-item textarea{
+  padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;
+  font-family:inherit;outline:none;transition:all .15s;resize:vertical;
+}
+.form-item textarea:focus{border-color:var(--primary);}
+
+/* ====== Toast ====== */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#fff;border:1px solid var(--success-border);background:var(--success-bg);color:var(--success);
+  padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:8px;z-index:200;
+  opacity:0;pointer-events:none;transition:all .25s;
+  box-shadow:var(--shadow-lg);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Donut ring */
+.ring-row{display:flex;gap:18px;margin-top:16px;flex-wrap:wrap;}
+.ring-item{
+  flex:1;min-width:180px;background:#FAFBFD;border-radius:10px;padding:14px;
+  display:flex;align-items:center;gap:12px;
+}
+.ring-item .label{font-size:12px;color:var(--text-2);}
+.ring-item .val{font-size:18px;font-weight:600;margin-top:2px;}
+.ring-item .val small{font-size:11px;color:var(--text-3);font-weight:400;margin-left:4px;}
+
+/* Calendar */
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-day{
+  aspect-ratio:1.1;background:#FAFBFD;border-radius:8px;padding:8px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  transition:all .15s;cursor:pointer;border:1px solid transparent;
+  position:relative;
+}
+.cal-day:hover{background:var(--primary-light);}
+.cal-day .d{font-size:13px;font-weight:500;}
+.cal-day .t{font-size:10px;color:var(--text-3);text-align:right;}
+.cal-day.has-event::after{
+  content:"";position:absolute;bottom:6px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--primary);
+}
+.cal-day.today{background:var(--primary);color:#fff;}
+.cal-day.today .t{color:rgba(255,255,255,.8);}
+.cal-day.today.has-event::after{background:#fff;}
+.cal-day.muted{opacity:.35;}
+
+/* Approval timeline */
+.timeline{padding:8px 0;}
+.tl-item{display:flex;gap:14px;position:relative;padding-bottom:18px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{
+  content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--border-light);
+}
+.tl-item:last-child::before{display:none;}
+.tl-item .dot{
+  width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;
+}
+.tl-item.done .dot{background:var(--success);border-color:var(--success);color:#fff;}
+.tl-item.current .dot{background:#fff;border-color:var(--primary);}
+.tl-item.current .dot::after{
+  content:"";width:8px;height:8px;border-radius:50%;background:var(--primary);
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(1.4);}}
+.tl-item .tl-content{flex:1;}
+.tl-item .tl-content h6{font-size:13px;font-weight:500;}
+.tl-item .tl-content p{font-size:12px;color:var(--text-3);margin-top:3px;}
+
+/* Charts inside */
+.horiz-bar{margin-top:8px;}
+.hb-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.hb-row .name{width:84px;font-size:12px;color:var(--text-2);}
+.hb-row .track{flex:1;height:8px;background:#F1F2F3;border-radius:4px;overflow:hidden;position:relative;}
+.hb-row .track .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#3087CC,#5BA8DE);transition:width .8s ease;}
+.hb-row .val{width:50px;text-align:right;font-size:12px;font-weight:600;color:var(--text-1);}
+
+/* Star levels grid */
+.star-levels{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:48px;}
+.sl{border-radius:10px;padding:14px;text-align:center;}
+.sl-1{background:#F4FAFE;border:1px solid #BFDDF6;}
+.sl-2{background:#FFF8E6;border:1px solid #FFE0B3;}
+.sl-3{background:#FFF5E5;border:1px solid #FFE0B3;}
+.sl-4{background:#E8FCF4;border:1px solid #A7F3D0;}
+.sl-5{background:linear-gradient(135deg,#FFE0B3,#FFD68F);border:1px solid #F29100;color:#fff;}
+.sl strong{font-size:20px;font-weight:700;display:block;margin-top:6px;}
+.sl span{font-size:11px;color:var(--text-3);}
+.sl-5 strong, .sl-5 span{color:#fff;}
+.sl-5 span{opacity:.85;}
+
+/* ====== Star application tabs ====== */
+.star-tabs{
+  display:flex;gap:2px;padding:4px;background:#F4F6FA;border-radius:10px;
+}
+.star-tab{
+  flex:1;height:36px;padding:0 12px;border-radius:7px;font-size:13px;
+  color:var(--text-2);font-weight:500;transition:all .15s;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  cursor:pointer;border:none;background:none;font-family:inherit;
+}
+.star-tab.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);}
+.star-tab .tc{
+  min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:600;
+  padding:0 5px;display:inline-flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.star-tab.active .tc{background:var(--primary);color:#fff;}
+.star-tab:not(.active) .tc{background:#E5E8EE;color:var(--text-3);}
+
+/* ====== Detail modal ====== */
+.modal-xl{width:860px;}
+.detail-header{
+  background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);
+  color:#fff;border-radius:12px;padding:18px 22px;margin-bottom:18px;
+  display:flex;align-items:center;gap:16px;
+}
+.detail-header .d-ava{
+  width:54px;height:54px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:700;
+  border:2px solid rgba(255,255,255,.4);flex-shrink:0;
+}
+.detail-header .d-info h4{font-size:16px;font-weight:600;letter-spacing:.3px;}
+.detail-header .d-info .d-sub{font-size:12px;opacity:.8;margin-top:3px;}
+.detail-header .d-info .d-meta{display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;}
+.detail-header .d-info .d-meta span{font-size:12px;opacity:.9;display:flex;align-items:center;gap:5px;}
+.detail-kpi{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;
+}
+.dk-card{
+  background:#F8FAFC;border-radius:10px;padding:14px;text-align:center;
+  border:1px solid var(--border-light);
+}
+.dk-card .dk-label{font-size:11px;color:var(--text-3);}
+.dk-card .dk-val{font-size:22px;font-weight:700;margin-top:4px;color:var(--text-1);}
+.dk-card .dk-val small{font-size:11px;color:var(--text-3);font-weight:400;margin-left:2px;}
+.section-title{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text-1);display:flex;align-items:center;gap:8px;}
+.section-title::before{content:"";width:3px;height:14px;border-radius:2px;background:var(--primary);display:inline-block;}
+.detail-inner-tab{display:flex;gap:4px;margin-bottom:14px;}
+.dit-btn{
+  height:30px;padding:0 14px;border-radius:6px;font-size:12px;
+  color:var(--text-2);font-weight:500;cursor:pointer;border:1px solid var(--border);
+  background:#fff;font-family:inherit;transition:all .15s;
+}
+.dit-btn.active{border-color:var(--primary);color:var(--primary);background:var(--primary-light);}
+
+/* Star Apply Detail Panel */
+.sa-section{background:#FAFBFD;border-radius:12px;padding:18px 20px;margin-bottom:14px;border:1px solid var(--border-light);}
+.sa-section-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border-light);}
+.sa-section-head .ic{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sa-section-head h5{font-size:14px;font-weight:600;}
+.sa-kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;}
+.sa-kv{display:flex;flex-direction:column;gap:4px;}
+.sa-kv.full{grid-column:1/-1;}
+.sa-kv label{font-size:11px;color:var(--text-3);font-weight:500;}
+.sa-kv span{font-size:13px;color:var(--text-1);line-height:1.7;}
+.sa-audit-item{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid var(--border-light);}
+.sa-audit-item .audit-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.sa-audit-item .audit-role{font-size:13px;font-weight:500;color:var(--text-1);}
+.sa-audit-item .audit-date{font-size:12px;color:var(--text-3);}
+.sa-audit-item .audit-result{display:inline-block;padding:2px 10px;border-radius:6px;font-size:12px;font-weight:500;margin-bottom:6px;}
+.sa-audit-item .audit-result.pass{background:var(--success-bg);color:var(--success);}
+.sa-audit-item .audit-result.reject{background:var(--danger-bg);color:var(--danger);}
+.sa-audit-item .audit-result.pending{background:var(--warning-bg);color:var(--warning);}
+.sa-audit-item .audit-remark{font-size:12px;color:var(--text-2);line-height:1.6;padding-top:6px;border-top:1px dashed var(--border-light);}
+
+@media(max-width:1280px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .row-2{grid-template-columns:1fr;}
+  .lib-grid{grid-template-columns:repeat(3,1fr);}
+  .group-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:980px){
+  .lib-grid{grid-template-columns:repeat(2,1fr);}
+  .group-grid{grid-template-columns:1fr;}
+  .star-levels{grid-template-columns:repeat(5,1fr);}
+}
+
+</style>
+</head>
+<body>
+<aside class="sidebar"></aside>
+<main class="main">
+  <header class="topbar"></header>
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>星级评定</h1>
+        <p>1-5 星阶梯标准（10/30/60/100/200h），自动智能提醒，分级审批流转</p>
+      </div>
+      <button class="btn btn-primary" onclick="openFiveStarNotice()" style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        五星答辩通知
+      </button>
+    </div>
+
+    <div class="star-track">
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:6px;">星级评定标准 · 累计辅学服务时长</h3>
+      <p style="font-size:12px;color:var(--text-3);">达到下方时长门槛即可申报对应星级，超过提醒阈值时系统自动推送冲刺提醒</p>
+      <div class="star-bar">
+        <div class="fill" style="width:62%;"></div>
+        <div class="marker done" style="left:5%;"><div class="lbl"><strong>10h</strong>一星</div></div>
+        <div class="marker done" style="left:20%;"><div class="lbl"><strong>30h</strong>二星</div></div>
+        <div class="marker current" style="left:40%;"><div class="lbl"><strong>60h</strong>三星</div></div>
+        <div class="marker" style="left:65%;"><div class="lbl"><strong>100h</strong>四星</div></div>
+        <div class="marker" style="left:95%;"><div class="lbl"><strong>200h</strong>五星</div></div>
+      </div>
+      <div class="star-levels">
+        <div class="sl sl-1">
+          <div class="stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg></div>
+          <strong>128</strong><span>一星级</span>
+        </div>
+        <div class="sl sl-2">
+          <div class="stars">
+            <svg viewBox="0 0 24 24" fill="#FFC53D"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="#FFC53D"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+          </div>
+          <strong>156</strong><span>二星级</span>
+        </div>
+        <div class="sl sl-3">
+          <div class="stars">
+            <svg viewBox="0 0 24 24" fill="#FFC53D"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="#FFC53D"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="#FFC53D"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+          </div>
+          <strong>88</strong><span>三星级</span>
+        </div>
+        <div class="sl sl-4">
+          <div class="stars">
+            <svg viewBox="0 0 24 24" fill="#FFC53D"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="#FFC53D"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="#FFC53D"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="#FFC53D"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+          </div>
+          <strong>32</strong><span>四星级</span>
+        </div>
+        <div class="sl sl-5">
+          <div class="stars">
+            <svg viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+          </div>
+          <strong>12</strong><span>五星级</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 星级申请审核 标题区 -->
+    <div class="page-head" style="margin-bottom:16px;">
+      <div>
+        <h3 style="font-size:18px;font-weight:600;">星级申请审核</h3>
+        <p>管理义工星级申报、查看上课记录与服务时长</p>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="showToast('已导出选中记录')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          导出
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab 切换 — 独立板块 -->
+    <div class="star-tabs" id="starTabBar" style="background:#fff;border-radius:14px;padding:6px;margin-bottom:16px;box-shadow:var(--shadow-sm);">
+      <button class="star-tab active" onclick="switchStarTab('all',this)">
+        全部 <span class="tc" id="cntAll">7</span>
+      </button>
+      <button class="star-tab" onclick="switchStarTab('pending',this)">
+        待审批 <span class="tc" id="cntPending">3</span>
+      </button>
+      <button class="star-tab" onclick="switchStarTab('passed',this)">
+        已通过 <span class="tc" id="cntPassed">2</span>
+      </button>
+      <button class="star-tab" onclick="switchStarTab('rejected',this)">
+        已驳回 <span class="tc" id="cntRejected">2</span>
+      </button>
+    </div>
+
+    <!-- 筛选栏 — 独立板块 -->
+    <div class="filterbar" style="flex-wrap:nowrap;">
+      <div class="field">
+        <label>申请人/学号</label>
+        <input class="input" id="filterKw" placeholder="姓名或学号" style="min-width:0;width:120px;" />
+      </div>
+      <div class="field">
+        <label>申请星级</label>
+        <select class="select" id="filterStar" style="min-width:0;width:90px;">
+          <option value="">全部</option>
+          <option value="1">一星级</option>
+          <option value="2">二星级</option>
+          <option value="3">三星级</option>
+          <option value="4">四星级</option>
+          <option value="5">五星级</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>义工类别</label>
+        <select class="select" id="filterType" style="min-width:0;width:130px;">
+          <option value="">全部</option>
+          <option>知新馆辅学义工</option>
+          <option>院级辅学义工</option>
+          <option>56度中南辅学义工</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>审批状态</label>
+        <select class="select" id="filterStatus" style="min-width:0;width:90px;">
+          <option value="">全部</option>
+          <option>审核中</option>
+          <option>已通过</option>
+          <option>已驳回</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>申请时间</label>
+        <input type="date" class="input" id="filterDate" style="min-width:0;width:140px;" />
+      </div>
+      <div class="spacer"></div>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button class="btn btn-ghost btn-sm" onclick="resetStarFilter()">重置</button>
+        <button class="btn btn-primary btn-sm" onclick="applyStarFilter()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          查询
+        </button>
+      </div>
+    </div>
+
+    <!-- 表格 -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:42px;"><span class="checkbox" id="checkAllStar" onclick="toggleCheckAll()"></span></th>
+            <th>申请人 / 学号</th>
+            <th>当前星级</th>
+            <th>拟申请星级</th>
+            <th>当前累计时长</th>
+            <th>义工类别</th>
+            <th>申请时间</th>
+            <th>审批状态</th>
+            <th style="width:160px;">操作</th>
+          </tr>
+        </thead>
+        <tbody id="starTableBody"></tbody>
+      </table>
+      <div class="table-foot">
+        <div class="count">共 <span id="starTableCount">0</span> 条记录</div>
+        <div class="pager">
+          <button disabled>‹</button>
+          <button class="active">1</button>
+          <button>›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ====== 义工档案详情弹窗 ====== -->
+<div class="modal-mask" id="detailModal">
+  <div class="modal modal-xl">
+    <div class="modal-head">
+      <h3>义工档案详情</h3>
+      <button class="icon-btn" onclick="closeModal('detailModal')" style="font-size:20px;color:var(--text-3);">&times;</button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px;">
+
+      <!-- 头部：义工基本信息 -->
+      <div class="detail-header" id="detailHeader">
+        <div class="d-ava" id="dAva" style="background:linear-gradient(135deg,#9CBFDA,#3087CC);">李</div>
+        <div class="d-info">
+          <h4 id="dName">李明杰</h4>
+          <div class="d-sub" id="dSub">2023041201 · 计算机科学与技术 2023</div>
+          <div class="d-meta">
+            <span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+              当前星级：<strong id="dCurrentStar">二星级</strong>
+            </span>
+            <span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+              申请星级：<strong id="dTargetStar">三星级</strong>
+            </span>
+            <span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              义工类别：<strong id="dType">知新馆数学组</strong>
+            </span>
+            <span id="dStatusBadge" style="margin-left:4px;"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 数据卡片 -->
+      <div class="detail-kpi">
+        <div class="dk-card">
+          <div class="dk-label">累计服务时长</div>
+          <div class="dk-val"><span id="dTotalHours">62</span><small>h</small></div>
+        </div>
+        <div class="dk-card">
+          <div class="dk-label">辅学课程节数</div>
+          <div class="dk-val"><span id="dTotalSessions">6</span><small>节</small></div>
+        </div>
+        <div class="dk-card">
+          <div class="dk-label">服务学生人次</div>
+          <div class="dk-val"><span id="dTotalStudents">150</span><small>人次</small></div>
+        </div>
+        <div class="dk-card">
+          <div class="dk-label">已认定积分</div>
+          <div class="dk-val"><span id="dTotalPts">18</span><small>分</small></div>
+        </div>
+      </div>
+
+      <!-- 内部 Tab -->
+      <div class="detail-inner-tab">
+        <button class="dit-btn active" id="ditStarApply" onclick="switchDetailTab('starApply')">星级申报详情</button>
+        <button class="dit-btn" id="ditCourse" onclick="switchDetailTab('course')">上课记录</button>
+        <button class="dit-btn" id="ditStats" onclick="switchDetailTab('stats')">服务统计</button>
+      </div>
+
+      <!-- 星级申报详情 -->
+      <div id="detailStarApplyPanel">
+        <div id="starApplyContent"></div>
+      </div>
+
+      <!-- 上课记录 -->
+      <div id="detailCoursePanel" style="display:none;">
+        <div class="table-wrap" style="box-shadow:none;border:1px solid var(--border-light);">
+          <table>
+            <thead>
+              <tr>
+                <th>课程名称</th>
+                <th>上课日期</th>
+                <th>时间段</th>
+                <th>上课地点</th>
+                <th>学生人数</th>
+                <th>服务时长</th>
+                <th>认定积分</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody id="detailCourseBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 服务统计 -->
+      <div id="detailStatsPanel" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div>
+            <div class="section-title">月度服务时长分布</div>
+            <div id="monthlyBars" style="margin-top:4px;"></div>
+          </div>
+          <div>
+            <div class="section-title">服务汇总</div>
+            <div id="statsSummary" style="margin-top:4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI 综合服务评价 -->
+      <div id="starAiPanel" style="margin-top:20px;border-top:1px solid var(--border-light);padding-top:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#3B2670;">
+            <span style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#7C5BC1,#3087CC);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg>
+            </span>
+            AI 综合服务评价
+          </div>
+          <button id="starAiBtn" onclick="aiStarEval()" style="padding:5px 12px;border-radius:6px;background:#fff;color:#5B3CA1;font-size:12px;font-weight:500;cursor:pointer;border:1px solid #D9D2F0;display:inline-flex;align-items:center;gap:5px;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg>
+            生成评价
+          </button>
+        </div>
+        <div id="starAiText" style="font-size:12px;color:var(--text-2);line-height:1.9;background:linear-gradient(135deg,#F4F0FF,#F4FAFE);border:1px solid #E0D8F6;border-radius:8px;padding:12px 14px;white-space:pre-line;min-height:42px;">点击右上角"生成评价"，AI 将综合工作总结、上课记录与服务统计，给出一段评价。</div>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('detailModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== PC 管理端公共脚本（侧边栏渲染、Toast、Modal、Checkbox、Pager 交互） ======
+
+const PC_NAV = [
+  {group:'首页',items:[
+    {id:'dashboard',name:'数据概览',href:'dashboard.html',icon:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'}
+  ]},
+  {group:'辅学义工',items:[
+    {id:'volunteers',name:'申请管理',href:'volunteers.html',badge:12,icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>'},
+    {id:'hours',name:'时长记录',href:'hours.html',icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'},
+    {id:'stars',name:'星级评定',href:'stars.html',badge:5,icon:'<polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/>'},
+    {id:'groups',name:'分组管理',href:'groups.html',icon:'<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="9" r="3"/><path d="M22 21v-1a3 3 0 0 0-2-2.83"/>'},
+    {id:'appeals',name:'意见反馈',href:'appeals.html',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/>'},
+    {id:'volunteer-manage',name:'义工管理',href:'volunteer-manage.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'}
+  ]},
+  {group:'知新选课',items:[
+    {id:'courses',name:'课程管理',href:'courses.html',badge:8,icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'},
+    {id:'course-categories',name:'课程分类',href:'course-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'venue-bookings',name:'场地预约',href:'venue-bookings.html',badge:6,icon:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'},
+    {id:'posters',name:'开屏海报',href:'posters.html',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'}
+  ]},
+  {group:'即问即答',items:[
+    {id:'qa-content',name:'内容管理',href:'qa-content.html',badge:3,icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+    {id:'qa-categories',name:'学科分类',href:'qa-categories.html',icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'},
+    {id:'qa-users',name:'用户管理',href:'qa-users.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+  ]},
+  {group:'宝藏资料库',items:[
+    {id:'library',name:'资料库管理',href:'library.html',badge:11,icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {id:'library-categories',name:'资料分类',href:'library-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'uploaders',name:'上传者管理',href:'uploaders.html',icon:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>'},
+    {id:'library-feedback',name:'反馈与需求池',href:'library-feedback.html',icon:'<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><line x1="7" y1="22" x2="7" y2="11"/>'}
+  ]},
+  {group:'系统配置',items:[
+    {id:'analytics',name:'数据分析',href:'analytics.html',icon:'<path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/>'},
+    {id:'settings',name:'系统配置',href:'settings.html',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+    {id:'ai-settings',name:'AI 助手配置',href:'ai-settings.html',icon:'<path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/><circle cx="19" cy="5" r="1.5"/>'}
+  ]}
+];
+
+function renderSidebar(activeId){
+  const sidebar = document.querySelector('.sidebar');
+  if(!sidebar) return;
+  const navHTML = PC_NAV.map((g,i)=>`
+    <div class="nav-group-title" ${i>0?'style="margin-top:14px;"':''}>${g.group}</div>
+    ${g.items.map(it=>`
+      <a class="nav-item ${it.id===activeId?'active':''}" href="${it.href}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg>
+        ${it.name}
+        ${it.badge?`<span class="badge">${it.badge}</span>`:''}
+      </a>
+    `).join('')}
+  `).join('');
+  sidebar.innerHTML = `
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="brand-text">
+        <strong>学风建设系统</strong>
+        <span>管理后台 v2.0</span>
+      </div>
+    </div>
+    <nav class="nav-group">${navHTML}</nav>
+    <div class="user-card">
+      <div class="ava">王</div>
+      <div class="info"><h5>王老师</h5><p>学工部管理员</p></div>
+      <button class="icon-btn" style="width:24px;height:24px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function renderTopbar(crumb){
+  const tb = document.querySelector('.topbar');
+  if(!tb) return;
+  tb.innerHTML = `
+    <button class="icon-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="crumb">
+      <a href="../index.html">学风建设</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span style="color:var(--text-1);font-weight:500;">${crumb}</span>
+    </div>
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input placeholder="搜索学生、课程、资料..." />
+      <span style="font-size:11px;color:var(--text-4);background:#fff;padding:2px 6px;border-radius:4px;border:1px solid var(--border);">⌘K</span>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="刷新">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
+      <button class="icon-btn" title="消息">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="red-dot"></span>
+      </button>
+      <button class="icon-btn" title="帮助">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+      <div class="topbar-user">
+        <div class="ava">王</div>
+        <span>王老师</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  `;
+}
+
+// ============= Toast =============
+function showToast(msg){
+  let toast = document.getElementById('toast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id='toast';toast.className='toast';
+    toast.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
+    document.body.appendChild(toast);
+  }
+  toast.querySelector('span').textContent=msg;
+  toast.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>toast.classList.remove('show'),2400);
+}
+
+// ============= Modal =============
+function openModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.add('show');
+}
+function closeModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.remove('show');
+}
+
+// ============= Checkbox =============
+document.addEventListener('click',e=>{
+  if(e.target.classList && e.target.classList.contains('checkbox')){
+    e.target.classList.toggle('checked');
+  }
+});
+
+// ============= Segments / Panel tabs =============
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.seg, .panel-tabs').forEach(g=>{
+    g.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        g.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        // Show corresponding tab content if exists
+        const tab=b.getAttribute('data-tab');
+        if(tab){
+          const wrap=g.closest('.panel,.page,.tab-wrap')||document;
+          wrap.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+          const target=wrap.querySelector('.tab-content[data-tab="'+tab+'"]');
+          if(target)target.style.display='';
+        }
+      });
+    });
+  });
+  document.querySelectorAll('.modal-mask').forEach(m=>{
+    m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');});
+  });
+});
+
+</script>
+<script>
+renderSidebar('stars');
+renderTopbar('辅学义工 / 星级评定');
+
+// ====== 模拟数据 ======
+const STAR_DATA = [
+  {id:1, name:'李明杰', sid:'2023041201', avatar:'李', avaGrad:'linear-gradient(135deg,#9CBFDA,#3087CC)', dept:'计算机科学与技术 2023', currentStar:2, targetStar:3, hours:62,  type:'知新馆数学组',  applyTime:'2026-04-26 09:15', status:'审核中'},
+  {id:2, name:'王诗韵', sid:'2023021802', avatar:'王', avaGrad:'linear-gradient(135deg,#FFD68F,#F29100)',  dept:'外国语学院英语 2023',  currentStar:4, targetStar:5, hours:206, type:'知新馆英语组',  applyTime:'2026-04-25 14:32', status:'审核中'},
+  {id:3, name:'李航',   sid:'2022030503', avatar:'李', avaGrad:'linear-gradient(135deg,#A7F3D0,#1BB975)', dept:'物理学院 2022',        currentStar:3, targetStar:4, hours:108, type:'知新馆物理组',  applyTime:'2026-04-24 16:08', status:'审核中'},
+  {id:4, name:'林楠',   sid:'2023055604', avatar:'林', avaGrad:'linear-gradient(135deg,#BFDDF6,#3087CC)', dept:'数学学院 2023',        currentStar:1, targetStar:2, hours:32,  type:'知新馆数学组',  applyTime:'2026-04-20 11:22', status:'已通过'},
+  {id:5, name:'张宇',   sid:'2021067805', avatar:'张', avaGrad:'linear-gradient(135deg,#B59CE5,#7C5BC1)', dept:'化学学院 2021',        currentStar:3, targetStar:4, hours:106, type:'知新馆化学组',  applyTime:'2026-04-18 09:30', status:'已通过'},
+  {id:6, name:'刘子轩', sid:'2023078906', avatar:'刘', avaGrad:'linear-gradient(135deg,#7DD3FC,#0EA5E9)', dept:'软件工程 2023',        currentStar:1, targetStar:2, hours:18,  type:'知新馆计算机组',applyTime:'2026-04-15 14:00', status:'已驳回'},
+  {id:7, name:'周泽宇', sid:'2022034507', avatar:'周', avaGrad:'linear-gradient(135deg,#F6BCBE,#DF2027)', dept:'机械学院 2022',        currentStar:2, targetStar:3, hours:55,  type:'知新馆力学组',  applyTime:'2026-04-12 10:15', status:'已驳回'},
+];
+
+const STAR_COURSES = {
+  1:[
+    {course:'高等数学A·微分方程专题',date:'2026-04-26',time:'10:00-12:00',loc:'知新馆301',students:28,hours:2,pts:3,status:'已认定'},
+    {course:'线性代数·行列式计算',  date:'2026-04-19',time:'14:00-16:00',loc:'知新馆408',students:24,hours:2,pts:3,status:'已认定'},
+    {course:'高等数学A·极限与连续', date:'2026-04-12',time:'10:00-12:00',loc:'知新馆301',students:30,hours:2,pts:3,status:'已认定'},
+    {course:'微积分·定积分应用',    date:'2026-04-05',time:'14:00-16:00',loc:'知新馆205',students:22,hours:2,pts:3,status:'已认定'},
+    {course:'高等数学A·级数收敛判断',date:'2026-03-29',time:'10:00-12:00',loc:'知新馆301',students:26,hours:2,pts:3,status:'已认定'},
+    {course:'线性代数·矩阵初等变换',date:'2026-03-22',time:'14:00-16:00',loc:'知新馆408',students:20,hours:2,pts:3,status:'已认定'},
+  ],
+  2:[
+    {course:'大学英语六级·真题精讲', date:'2026-04-25',time:'14:00-16:00',loc:'知新馆205',students:32,hours:2,pts:3,status:'已认定'},
+    {course:'大学英语六级·听力技巧', date:'2026-04-18',time:'14:00-16:00',loc:'知新馆205',students:30,hours:2,pts:3,status:'已认定'},
+    {course:'大学英语六级·阅读精析', date:'2026-04-11',time:'14:00-16:00',loc:'知新馆205',students:35,hours:2,pts:3,status:'已认定'},
+    {course:'大学英语六级·写作专项', date:'2026-04-04',time:'14:00-16:00',loc:'知新馆102',students:28,hours:2,pts:3,status:'已认定'},
+    {course:'四级考前冲刺·综合模拟', date:'2026-03-28',time:'10:00-12:00',loc:'知新馆205',students:40,hours:2,pts:3,status:'已认定'},
+    {course:'英语词汇与语法精练',    date:'2026-03-21',time:'14:00-16:00',loc:'知新馆205',students:36,hours:2,pts:3,status:'已认定'},
+  ],
+  3:[
+    {course:'大学物理·电磁感应专题', date:'2026-04-24',time:'10:00-12:00',loc:'知新馆102',students:30,hours:2,pts:3,status:'已认定'},
+    {course:'大学物理·静电场与电势', date:'2026-04-17',time:'14:00-16:00',loc:'知新馆102',students:28,hours:2,pts:3,status:'已认定'},
+    {course:'大学物理·机械振动与波', date:'2026-04-10',time:'10:00-12:00',loc:'知新馆102',students:25,hours:2,pts:3,status:'已认定'},
+    {course:'大学物理·热力学第一定律',date:'2026-04-03',time:'14:00-16:00',loc:'知新馆301',students:22,hours:2,pts:3,status:'已认定'},
+    {course:'大学物理·光学干涉衍射', date:'2026-03-27',time:'10:00-12:00',loc:'知新馆102',students:26,hours:2,pts:3,status:'已认定'},
+  ],
+  4:[
+    {course:'高等数学A·函数极限计算',date:'2026-04-19',time:'10:00-12:00',loc:'知新馆301',students:25,hours:2,pts:3,status:'已认定'},
+    {course:'高等数学A·导数与微分',  date:'2026-04-12',time:'10:00-12:00',loc:'知新馆408',students:20,hours:2,pts:3,status:'已认定'},
+  ],
+  5:[
+    {course:'有机化学·亲电取代反应', date:'2026-04-17',time:'14:00-16:00',loc:'知新馆301',students:22,hours:2,pts:3,status:'已认定'},
+    {course:'有机化学·自由基反应',   date:'2026-04-10',time:'14:00-16:00',loc:'知新馆301',students:25,hours:2,pts:3,status:'已认定'},
+    {course:'无机化学·配位化合物',   date:'2026-04-03',time:'10:00-12:00',loc:'知新馆408',students:18,hours:2,pts:3,status:'已认定'},
+    {course:'分析化学·酸碱滴定分析', date:'2026-03-27',time:'14:00-16:00',loc:'知新馆301',students:20,hours:2,pts:3,status:'已认定'},
+    {course:'物理化学·化学反应速率', date:'2026-03-20',time:'10:00-12:00',loc:'知新馆301',students:24,hours:2,pts:3,status:'已认定'},
+  ],
+  6:[
+    {course:'C语言程序设计·指针专题',date:'2026-04-14',time:'14:00-16:00',loc:'知新馆102',students:15,hours:2,pts:3,status:'已认定'},
+    {course:'数据结构·链表与树',     date:'2026-04-07',time:'10:00-12:00',loc:'知新馆102',students:12,hours:2,pts:3,status:'已认定'},
+  ],
+  7:[
+    {course:'理论力学·质点系动力学', date:'2026-04-11',time:'10:00-12:00',loc:'知新馆408',students:20,hours:2,pts:3,status:'已认定'},
+    {course:'材料力学·弯曲正应力',   date:'2026-04-04',time:'14:00-16:00',loc:'知新馆408',students:18,hours:2,pts:3,status:'已认定'},
+    {course:'理论力学·刚体定轴转动', date:'2026-03-28',time:'10:00-12:00',loc:'知新馆408',students:22,hours:2,pts:3,status:'已认定'},
+  ],
+};
+
+const STATUS_TAG = {
+  '审核中': 'tag-warning',
+  '已通过': 'tag-success',
+  '已驳回': 'tag-danger',
+};
+
+const STAR_NAMES = ['', '一', '二', '三', '四', '五'];
+
+const STAR_APPLY_DATA = {
+  1:{summary:'累计完成 31 次辅导服务，主要辅导高等数学A和线性代数两门课程，帮助 150 余名同学巩固数学基础，期末通过率提升显著。',reason:'数学基础扎实，辅导耐心细致，课程评分稳定在 4.6 以上，学员好评率 85%。本学期组织了 2 次期中复习专题辅导。',plan:'计划增开概率统计辅导专场，同时参与知新馆数学组新义工培训带教工作。',thought:'建议增加辅导教材的统一管理平台，便于义工间共享优质教学资源。',audit:[{role:'学院专干一审 · 计算机学院 王老师',date:'审核中',result:'待处理',pass:null,remark:''}]},
+  2:{summary:'累计完成 103 次辅导服务，涵盖大学英语四六级全科目。组织 8 次专题模拟考试，帮助 500 余名同学提升英语水平，四级通过率提升 18%。',reason:'英语教学经验丰富，四星义工期间获知新馆"优秀义工"称号 2 次，学员课程评分长期保持 4.8+。',plan:'下学期计划开设雅思入门辅导课程，拓展国际化语言能力培养，同时编写六级备考手册。',thought:'建议建立学员跟踪反馈机制，定期了解辅导效果，形成闭环。',audit:[{role:'学院专干一审 · 外国语学院 张老师',date:'审核中',result:'待处理',pass:null,remark:''}]},
+  3:{summary:'累计完成 54 次辅导服务，主要辅导大学物理和物理实验课程，帮助 300 余名同学理解物理概念与实验方法。',reason:'物理专业背景扎实，辅导注重实验与理论结合，学员反馈良好，课程评分 4.5 以上。',plan:'计划增加物理竞赛辅导内容，帮助有兴趣的同学备赛。',thought:'希望能增加实验室辅导场地的预约便利性，方便安排实验演示环节。',audit:[{role:'学院专干一审 · 物理学院 赵老师',date:'审核中',result:'待处理',pass:null,remark:''}]},
+  4:{summary:'累计完成 16 次辅导服务，主要在周三和周五晚自习时段进行高数答疑，帮助 45 名同学巩固微积分基础。',reason:'数学基础扎实，辅导耐心细致，学员反馈良好。',plan:'计划增加辅导频次，每周投入不少于 4 小时，同时拓展线性代数科目。',thought:'作为新义工，希望能有更多培训机会和经验交流。',audit:[{role:'学院专干一审 · 数学学院 孙老师',date:'2026-04-21',result:'通过',pass:true,remark:'服务次数与时长均达标，态度认真。'},{role:'知新馆指导老师二审 · 李老师',date:'2026-04-22',result:'通过',pass:true,remark:'同意授予二星级义工。'}]},
+  5:{summary:'累计完成 53 次辅导服务，涵盖有机化学、无机化学、分析化学三门课程，帮助 350 余名同学理解化学核心概念。',reason:'化学专业能力突出，辅导方式灵活多样，善于用生活案例解释抽象概念，课程评分 4.7+。',plan:'下学期计划增开化学实验安全规范专题辅导，同时参与课程内容标准化建设。',thought:'建议增加跨学科联合辅导活动，促进不同学科义工的协作。',audit:[{role:'学院专干一审 · 化学学院 刘老师',date:'2026-04-19',result:'通过',pass:true,remark:'表现优秀，指标全部达标。'},{role:'知新馆指导老师二审 · 陈老师',date:'2026-04-20',result:'通过',pass:true,remark:'同意授予四星级义工。'}]},
+  6:{summary:'累计完成 9 次辅导服务，主要辅导程序设计基础课程，帮助 35 名同学入门编程。',reason:'编程能力较强，辅导热情高，但服务时长和次数尚未达到二星级要求。',plan:'计划增加辅导频率，争取在下学期达到二星级标准。',thought:'希望能获得更多辅导技巧方面的培训。',audit:[{role:'学院专干一审 · 软件工程学院 黄老师',date:'2026-04-16',result:'驳回',pass:false,remark:'服务时长 18h 未达二星级最低 30h 要求，建议继续积累服务时长后重新申报。'}]},
+  7:{summary:'累计完成 27 次辅导服务，主要辅导理论力学和材料力学课程，帮助 160 余名同学理解力学分析方法。',reason:'力学知识扎实，辅导认真负责，但部分学员反映讲解节奏偏快。',plan:'计划放慢讲解节奏，增加课堂互动环节，争取改善辅导效果。',thought:'建议组织义工教学能力提升工作坊，互相学习授课技巧。',audit:[{role:'学院专干一审 · 机械学院 钱老师',date:'2026-04-13',result:'驳回',pass:false,remark:'课程评分 3.8 低于三星级最低 4.0 要求，且近期有学员投诉讲解过快，建议改善辅导质量后重新申报。'}]},
+};
+
+// 生成星形HTML
+function starHTML(n, filled='#FFC53D', empty='#E5E8EE', size=13) {
+  const s = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="COLOR" style="flex-shrink:0;"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>`;
+  return Array.from({length:5}, (_,i) => s.replace('COLOR', i<n ? filled : empty)).join('');
+}
+
+// ====== Tab 状态 ======
+let currentStarTab = 'all';
+
+function switchStarTab(tab, el) {
+  currentStarTab = tab;
+  document.querySelectorAll('.star-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  applyStarFilter();
+}
+
+// ====== 渲染表格 ======
+function renderStarTable(data) {
+  const tbody = document.getElementById('starTableBody');
+  const countEl = document.getElementById('starTableCount');
+  if(countEl) countEl.textContent = data.length;
+  if(!tbody) return;
+  if(data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--text-3);">暂无符合条件的申请</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map(d => `
+    <tr>
+      <td><span class="checkbox"></span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:8px;background:${d.avaGrad};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:13px;flex-shrink:0;">${d.avatar}</div>
+          <div>
+            <div style="font-size:13px;font-weight:500;">${d.name}</div>
+            <div style="font-size:11px;color:var(--text-3);">${d.sid}</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div style="display:inline-flex;gap:1px;">${starHTML(d.currentStar)}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px;">${STAR_NAMES[d.currentStar]}星级</div>
+      </td>
+      <td>
+        <div style="display:inline-flex;gap:1px;">${starHTML(d.targetStar,'#F29100','#FFE0B3')}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px;">${STAR_NAMES[d.targetStar]}星级</div>
+      </td>
+      <td><strong>${d.hours}h</strong></td>
+      <td><span class="tag">${d.type}</span></td>
+      <td style="color:var(--text-2);font-size:12px;">${d.applyTime}</td>
+      <td><span class="tag ${STATUS_TAG[d.status]||''}">${d.status}</span></td>
+      <td>
+        <div style="display:inline-flex;align-items:center;gap:12px;">
+          <a role="button" style="color:var(--primary);font-weight:500;font-size:13px;cursor:pointer;" onclick="openDetailModal(${d.id})">查看详情</a>
+          ${d.status==='审核中'?'<a role="button" style="color:#C4884D;font-weight:500;font-size:13px;cursor:pointer;" onclick="showToast(\'请前往待办中心完成审核\')">去审核</a>':''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ====== 过滤逻辑 ======
+function applyStarFilter() {
+  const kw   = (document.getElementById('filterKw')||{}).value?.trim().toLowerCase()||'';
+  const star = (document.getElementById('filterStar')||{}).value||'';
+  const type = (document.getElementById('filterType')||{}).value||'';
+  const sts  = (document.getElementById('filterStatus')||{}).value||'';
+  const date = (document.getElementById('filterDate')||{}).value||'';
+
+  const data = STAR_DATA.filter(d => {
+    if(currentStarTab==='pending'  && d.status!=='审核中') return false;
+    if(currentStarTab==='passed'   && d.status!=='已通过') return false;
+    if(currentStarTab==='rejected' && d.status!=='已驳回') return false;
+    if(kw   && !d.name.toLowerCase().includes(kw) && !d.sid.includes(kw)) return false;
+    if(star && d.targetStar !== parseInt(star)) return false;
+    if(type && d.type !== type) return false;
+    if(sts  && d.status !== sts) return false;
+    if(date && d.applyTime.slice(0,10) !== date) return false;
+    return true;
+  });
+  renderStarTable(data);
+}
+
+function resetStarFilter() {
+  ['filterKw','filterStar','filterType','filterStatus','filterDate'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value='';
+  });
+  applyStarFilter();
+}
+
+// 全选
+function toggleCheckAll() {
+  const ca = document.getElementById('checkAllStar');
+  if(!ca) return;
+  ca.classList.toggle('checked');
+  const checked = ca.classList.contains('checked');
+  document.querySelectorAll('#starTableBody .checkbox').forEach(cb => {
+    if(checked) cb.classList.add('checked');
+    else cb.classList.remove('checked');
+  });
+}
+
+function batchApprove() {
+  const checked = document.querySelectorAll('#starTableBody .checkbox.checked').length;
+  if(checked === 0) { showToast('请先勾选需要操作的记录'); return; }
+  showToast(`已批量通过 ${checked} 条申请`);
+}
+
+// 更新 Tab 计数徽章
+function updateTabCounts() {
+  document.getElementById('cntAll').textContent     = STAR_DATA.length;
+  document.getElementById('cntPending').textContent = STAR_DATA.filter(d=>d.status==='审核中').length;
+  document.getElementById('cntPassed').textContent  = STAR_DATA.filter(d=>d.status==='已通过').length;
+  document.getElementById('cntRejected').textContent= STAR_DATA.filter(d=>d.status==='已驳回').length;
+}
+
+// ====== 详情弹窗 ======
+let detailTab = 'course';
+let _starDetailVolId = null;
+
+function openDetailModal(id) {
+  _starDetailVolId = id;
+  // 重置 AI 评价区
+  const aiText = document.getElementById('starAiText');
+  const aiBtn  = document.getElementById('starAiBtn');
+  if(aiText) aiText.textContent = '点击右上角"生成评价"，AI 将综合工作总结、上课记录与服务统计，给出一段评价。';
+  if(aiBtn){ aiBtn.disabled = false; aiBtn.textContent = ''; aiBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> 生成评价'; }
+  const d = STAR_DATA.find(x => x.id === id);
+  if(!d) return;
+
+  // 头部信息
+  document.getElementById('dAva').textContent = d.avatar;
+  document.getElementById('dAva').style.background = d.avaGrad;
+  document.getElementById('dName').textContent = d.name;
+  document.getElementById('dSub').textContent  = d.sid + ' · ' + d.dept;
+  document.getElementById('dCurrentStar').textContent = STAR_NAMES[d.currentStar] + '星级';
+  document.getElementById('dTargetStar').textContent  = STAR_NAMES[d.targetStar]  + '星级';
+  document.getElementById('dType').textContent = d.type;
+  document.getElementById('dStatusBadge').innerHTML =
+    `<span style="background:rgba(255,255,255,.18);color:#fff;font-size:11px;border-radius:4px;padding:2px 8px;font-weight:500;">${d.status}</span>`;
+
+  // KPI
+  const courses = STAR_COURSES[id] || [];
+  const totalHours    = courses.reduce((a,c)=>a+c.hours, 0);
+  const totalStudents = courses.reduce((a,c)=>a+c.students, 0);
+  const totalPts      = courses.reduce((a,c)=>a+c.pts, 0);
+  document.getElementById('dTotalHours').textContent    = totalHours;
+  document.getElementById('dTotalSessions').textContent = courses.length;
+  document.getElementById('dTotalStudents').textContent = totalStudents;
+  document.getElementById('dTotalPts').textContent      = totalPts;
+
+  // 上课记录表
+  const tbody = document.getElementById('detailCourseBody');
+  if(courses.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-3);">暂无上课记录</td></tr>`;
+  } else {
+    tbody.innerHTML = courses.map(c=>`
+      <tr>
+        <td style="font-size:13px;">${c.course}</td>
+        <td style="color:var(--text-2);font-size:12px;">${c.date}</td>
+        <td style="color:var(--text-2);font-size:12px;">${c.time}</td>
+        <td style="color:var(--text-2);font-size:12px;">${c.loc}</td>
+        <td style="font-weight:500;">${c.students}</td>
+        <td><strong>${c.hours}h</strong></td>
+        <td><strong>${c.pts}</strong></td>
+        <td><span class="tag tag-success" style="font-size:11px;">${c.status}</span></td>
+      </tr>
+    `).join('');
+  }
+
+  // 服务统计面板
+  // 月度分布
+  const monthMap = {};
+  courses.forEach(c=>{
+    const m = c.date.slice(0,7);
+    monthMap[m] = (monthMap[m]||0) + c.hours;
+  });
+  const months = Object.keys(monthMap).sort();
+  const maxH = Math.max(...Object.values(monthMap), 1);
+  document.getElementById('monthlyBars').innerHTML = months.map(m=>`
+    <div class="hb-row">
+      <div class="name">${m.slice(5)}月</div>
+      <div class="track"><div class="fill" style="width:${Math.round(monthMap[m]/maxH*100)}%;"></div></div>
+      <div class="val">${monthMap[m]}h</div>
+    </div>
+  `).join('') || '<p style="color:var(--text-3);font-size:13px;">暂无数据</p>';
+
+  document.getElementById('statsSummary').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:#F8FAFC;border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border-light);">
+        <span style="font-size:13px;color:var(--text-2);">总服务时长</span>
+        <strong style="font-size:16px;">${totalHours}h</strong>
+      </div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border-light);">
+        <span style="font-size:13px;color:var(--text-2);">服务学生人次</span>
+        <strong style="font-size:16px;">${totalStudents} 人次</strong>
+      </div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border-light);">
+        <span style="font-size:13px;color:var(--text-2);">已认定积分</span>
+        <strong style="font-size:16px;">${totalPts} 分</strong>
+      </div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border-light);">
+        <span style="font-size:13px;color:var(--text-2);">本学期累计</span>
+        <strong style="font-size:16px;">${d.hours}h</strong>
+      </div>
+    </div>
+  `;
+
+  // 默认显示星级申报详情
+  // 星级申报详情面板
+  const applyD = STAR_APPLY_DATA[id];
+  const starApplyEl = document.getElementById('starApplyContent');
+  if(applyD){
+    starApplyEl.innerHTML = `
+      <div class="sa-section">
+        <div class="sa-section-head">
+          <div class="ic" style="background:var(--primary-light);color:var(--primary);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
+          <h5>基本信息</h5>
+        </div>
+        <div class="sa-kv-grid">
+          <div class="sa-kv"><label>姓名 / 学号</label><span>${d.name} / ${d.sid}</span></div>
+          <div class="sa-kv"><label>辅学义工类别</label><span>${d.type}</span></div>
+          <div class="sa-kv"><label>当前星级</label><span>${STAR_NAMES[d.currentStar]}星级</span></div>
+          <div class="sa-kv"><label>累计服务时长</label><span>${d.hours} 小时</span></div>
+        </div>
+      </div>
+      <div class="sa-section">
+        <div class="sa-section-head">
+          <div class="ic" style="background:#FFF8E1;color:#F29100;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg></div>
+          <h5>星级申请 · 申请${STAR_NAMES[d.targetStar]}星级</h5>
+        </div>
+        <div class="sa-kv-grid">
+          <div class="sa-kv full"><label>辅学义工工作总结</label><span>${applyD.summary}</span></div>
+          <div class="sa-kv full"><label>申请理由与优势</label><span>${applyD.reason}</span></div>
+          <div class="sa-kv full"><label>未来工作计划</label><span>${applyD.plan}</span></div>
+          <div class="sa-kv full"><label>辅学义工工作的相关思考与建议</label><span>${applyD.thought}</span></div>
+        </div>
+      </div>
+      <div class="sa-section" style="margin-bottom:0;">
+        <div class="sa-section-head">
+          <div class="ic" style="background:var(--success-bg);color:var(--success);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <h5>审核记录</h5>
+        </div>
+        ${applyD.audit.map(r=>`
+          <div class="sa-audit-item">
+            <div class="audit-meta"><span class="audit-role">${r.role}</span><span class="audit-date">${r.date}</span></div>
+            <div class="audit-result ${r.pass===true?'pass':r.pass===false?'reject':'pending'}">${r.pass===null?'<span style="color:var(--warning);">待审核</span>':r.result}</div>
+            ${r.remark?'<div class="audit-remark">'+r.remark+'</div>':''}
+          </div>`).join('')}
+      </div>`;
+  } else {
+    starApplyEl.innerHTML = '<p style="text-align:center;padding:24px;color:var(--text-3);">暂无星级申报数据</p>';
+  }
+
+  switchDetailTab('starApply');
+  openModal('detailModal');
+}
+
+function switchDetailTab(tab) {
+  detailTab = tab;
+  document.getElementById('ditStarApply').classList.toggle('active', tab==='starApply');
+  document.getElementById('ditCourse').classList.toggle('active', tab==='course');
+  document.getElementById('ditStats').classList.toggle('active',  tab==='stats');
+  document.getElementById('detailStarApplyPanel').style.display = tab==='starApply' ? '' : 'none';
+  document.getElementById('detailCoursePanel').style.display = tab==='course' ? '' : 'none';
+  document.getElementById('detailStatsPanel').style.display  = tab==='stats'  ? '' : 'none';
+}
+
+// ====== 初始化 ======
+document.addEventListener('DOMContentLoaded', ()=>{
+  updateTabCounts();
+  applyStarFilter();
+});
+
+// ====== 五星答辩通知 ======
+const STAR_NAMES_CN = ['','一星','二星','三星','四星','五星'];
+
+function openFiveStarNotice(){
+  const fiveStarList = STAR_DATA.filter(d => d.targetStar === 5);
+  const tbody = document.getElementById('fsnTableBody');
+  if(fiveStarList.length === 0){
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-3);">暂无五星申报记录</td></tr>';
+  } else {
+    tbody.innerHTML = fiveStarList.map(d=>`
+      <tr>
+        <td style="text-align:center;"><input type="checkbox" class="fsn-check" data-id="${d.id}" style="width:15px;height:15px;cursor:pointer;accent-color:var(--primary);"></td>
+        <td style="font-weight:500;white-space:nowrap;">${d.name} <span style="color:var(--text-3);font-size:11px;font-weight:400;">${d.sid}</span></td>
+        <td style="font-size:13px;white-space:nowrap;">知新馆辅学义工</td>
+        <td style="font-size:13px;white-space:nowrap;">${d.type}</td>
+        <td style="text-align:center;">
+          <span style="color:#F5A623;font-size:13px;">${'★'.repeat(d.currentStar)}</span>
+          <span style="font-size:12px;color:var(--text-3);margin-left:4px;">${STAR_NAMES_CN[d.currentStar]}星级</span>
+        </td>
+        <td style="text-align:center;">
+          <span style="color:var(--primary);font-size:13px;">★★★★★</span>
+          <span style="font-size:12px;color:var(--primary);margin-left:4px;font-weight:500;">五星级</span>
+        </td>
+        <td style="text-align:center;">
+          <a style="color:var(--primary);font-size:13px;cursor:pointer;font-weight:500;" onclick="closeFiveStarNotice();openDetailModal(${d.id})">查看详情</a>
+        </td>
+      </tr>
+    `).join('');
+  }
+  document.getElementById('fsnSelectAll').checked = false;
+  document.getElementById('fsnMessage').value = '';
+  document.getElementById('fiveStarNoticeModal').classList.add('show');
+}
+
+function closeFiveStarNotice(){
+  document.getElementById('fiveStarNoticeModal').classList.remove('show');
+}
+
+function fsnToggleAll(cb){
+  document.querySelectorAll('.fsn-check').forEach(c => c.checked = cb.checked);
+}
+
+function fsnSendNotice(){
+  const msg = document.getElementById('fsnMessage').value.trim();
+  if(!msg){ showToast('请输入通知内容后再发送'); return; }
+  const selected = [...document.querySelectorAll('.fsn-check:checked')];
+  if(selected.length === 0){ showToast('请至少勾选一名义工'); return; }
+  showToast(`已向 ${selected.length} 名义工发送答辩通知`);
+  closeFiveStarNotice();
+}
+</script>
+<!-- ===== 五星答辩通知 Modal ===== -->
+<div class="modal-mask" id="fiveStarNoticeModal" style="z-index:1100;">
+  <div class="modal" style="width:860px;max-width:96vw;max-height:88vh;display:flex;flex-direction:column;">
+    <div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border-light);flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <h3 style="font-size:15px;font-weight:600;">五星答辩通知</h3>
+        <span style="font-size:12px;color:var(--text-3);">向五星申报义工发送线下答辩提醒</span>
+      </div>
+      <button onclick="closeFiveStarNotice()" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--text-3);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:20px;">
+      <!-- 表格 -->
+      <div style="border:1px solid var(--border-light);border-radius:10px;overflow:hidden;margin-bottom:20px;">
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr style="background:var(--bg);border-bottom:1px solid var(--border-light);">
+                <th style="padding:10px 12px;text-align:center;width:40px;font-weight:500;white-space:nowrap;">
+                  <input type="checkbox" id="fsnSelectAll" onclick="fsnToggleAll(this)" style="width:15px;height:15px;cursor:pointer;accent-color:var(--primary);">
+                </th>
+                <th style="padding:10px 12px;text-align:left;font-weight:500;white-space:nowrap;">义工姓名/学号</th>
+                <th style="padding:10px 12px;text-align:left;font-weight:500;white-space:nowrap;">义工类别</th>
+                <th style="padding:10px 12px;text-align:left;font-weight:500;white-space:nowrap;">辅导组别</th>
+                <th style="padding:10px 12px;text-align:center;font-weight:500;white-space:nowrap;">目前星级</th>
+                <th style="padding:10px 12px;text-align:center;font-weight:500;white-space:nowrap;">拟申请星级</th>
+                <th style="padding:10px 12px;text-align:center;font-weight:500;white-space:nowrap;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="fsnTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- 通知内容输入 -->
+      <div style="background:var(--bg);border:1px solid var(--border-light);border-radius:10px;padding:16px;">
+        <div style="font-size:13px;font-weight:500;color:var(--text-1);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/></svg>
+          通知内容
+        </div>
+        <textarea id="fsnMessage" rows="3" placeholder="请输入答辩通知内容，例如：请于 2026年6月8日（周日）上午10:00，携带相关材料前往知新馆报告厅参加五星答辩，请准时到场。"
+          style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border-light);font-size:13px;color:var(--text-1);font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;line-height:1.7;background:#fff;"></textarea>
+      </div>
+    </div>
+    <div style="padding:14px 20px;border-top:1px solid var(--border-light);display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-shrink:0;">
+      <span style="font-size:12px;color:var(--text-3);margin-right:auto;">勾选义工后点击发送，所选义工将收到系统站内通知</span>
+      <button onclick="closeFiveStarNotice()" class="btn btn-ghost" style="font-size:13px;">取消</button>
+      <button onclick="fsnSendNotice()" class="btn btn-primary" style="font-size:13px;display:inline-flex;align-items:center;gap:5px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        发送消息提醒
+      </button>
+    </div>
+  </div>
+</div>
+<!-- AI 学工助手 -->
+<link rel="stylesheet" href="../assets/ai/ai-widget-pc.css">
+<script src="../assets/ai/ai-knowledge.js"></script>
+<script src="../assets/ai/ai-core.js"></script>
+<script src="../assets/ai/ai-widget-pc.js"></script>
+<script>
+// ====== AI 综合服务评价 ======
+function _typewriteStar(text, el, speed, onDone){
+  let i = 0; el.textContent = '';
+  function tick(){ if(i<text.length){ el.textContent += text[i++]; setTimeout(tick,speed); } else if(onDone) onDone(); }
+  tick();
+}
+
+function aiStarEval(){
+  const btn    = document.getElementById('starAiBtn');
+  const textEl = document.getElementById('starAiText');
+  if(!textEl || _starDetailVolId===null) return;
+
+  const d = STAR_DATA.find(x=>x.id===_starDetailVolId);
+  const applyD = (typeof STAR_APPLY_DATA!=='undefined') ? STAR_APPLY_DATA[_starDetailVolId] : null;
+  const courses = STAR_COURSES[_starDetailVolId] || [];
+  if(!d){ textEl.textContent='暂无数据'; return; }
+
+  const SNAMES = ['','一','二','三','四','五'];
+  const totalHours    = courses.reduce((a,c)=>a+c.hours,0);
+  const totalStudents = courses.reduce((a,c)=>a+c.students,0);
+  const totalPts      = courses.reduce((a,c)=>a+c.pts,0);
+  const avgStudents   = courses.length ? Math.round(totalStudents/courses.length) : 0;
+
+  // 生成评价文本
+  function buildText(){
+    const lines = [];
+    // 基本情况
+    lines.push(`【基本情况】${d.name}（${d.sid}）现为${SNAMES[d.currentStar]}星级义工，本次申请晋升${SNAMES[d.targetStar]}星级，隶属${d.type}，申请时累计服务时长 ${totalHours}h，共开展 ${courses.length} 节课程，累计服务学生 ${totalStudents} 人次，已认定积分 ${totalPts} 分，课均服务 ${avgStudents} 人。`);
+
+    // 工作总结评价
+    if(applyD && applyD.summary){
+      const summaryLen = applyD.summary.length;
+      const quality = summaryLen > 80 ? '内容翔实' : '内容简洁';
+      lines.push(`\n【申报内容】工作总结${quality}，申请理由逻辑清晰；未来计划具体可行，体现了持续服务的意愿。`);
+    }
+
+    // 达标判断
+    const thresholds = [0,10,30,60,100,200];
+    const required = thresholds[d.targetStar] || 0;
+    const isHoursOk = totalHours >= required;
+    if(isHoursOk){
+      lines.push(`\n【时长核验】累计时长 ${totalHours}h 已满足${SNAMES[d.targetStar]}星级最低要求（${required}h），达标。`);
+    } else {
+      lines.push(`\n【时长核验】累计时长 ${totalHours}h 尚未满足${SNAMES[d.targetStar]}星级最低要求（${required}h），差 ${required-totalHours}h，建议继续积累后重新申报。`);
+    }
+
+    // 综合建议
+    const conclusion = d.status==='已驳回'
+      ? `当前申报状态为已驳回，请关注审核意见，针对不足之处进行改进。`
+      : isHoursOk
+        ? `综合各项指标，该义工服务态度积极，履职表现${totalHours>=100?'优秀':totalHours>=60?'良好':'正常'}，建议酌情通过本次星级申报。`
+        : `建议待时长达标后再行申报，期间可鼓励义工增加辅导频次。`;
+    lines.push(`\n【综合建议】${conclusion}`);
+
+    return lines.join('');
+  }
+
+  if(btn){ btn.disabled=true; btn.textContent='生成中…'; }
+  textEl.textContent = '⏳ AI 正在综合分析数据…';
+
+  setTimeout(()=>{
+    _typewriteStar(buildText(), textEl, 12, ()=>{
+      if(btn){ btn.disabled=false; btn.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> 重新生成'; }
+    });
+  }, 700);
+}
+
+  AIWidget.init({
+    pageId: 'stars',
+    pageName: '星级评定',
+    pageContext: '管理员正在查看星级评定（一~五星级），可审核晋级申报、生成证书。',
+    end: 'PC管理'
+  });
+</script>
+</body>
+</html>

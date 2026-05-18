@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>问答内容管理 · 学风建设系统</title>
+<style>
+:root{
+  --primary:#3087CC;
+  --primary-light:#E3F1F9;
+  --primary-dark:#006DAD;
+  --primary-50:#F4FAFE;
+  --text-1:#3C444F;
+  --text-2:#696F7D;
+  --text-3:#9096A2;
+  --text-4:#ABB0BA;
+  --border:#E5E8EE;
+  --border-light:#EFF1F5;
+  --bg:#F4F6FA;
+  --bg-card:#FFFFFF;
+  --success:#1BB975;
+  --success-bg:#E8FCF4;
+  --success-border:#A7F3D0;
+  --warning:#F29100;
+  --warning-bg:#FFF5E5;
+  --warning-border:#FFE0B3;
+  --danger:#DF2027;
+  --danger-bg:#FCE8EA;
+  --danger-border:#F6BCBE;
+  --shadow-sm:0 1px 3px rgba(15,32,55,.05);
+  --shadow-md:0 4px 14px rgba(15,32,55,.06);
+  --shadow-lg:0 12px 32px rgba(15,32,55,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;font-size:14px;}
+body{min-height:100vh;display:flex;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+svg{display:block;flex-shrink:0;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D9DDE3;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#C0C5CD;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ====== Sidebar ====== */
+.sidebar{
+  width:232px;flex-shrink:0;background:#fff;
+  border-right:1px solid var(--border-light);
+  height:100vh;position:sticky;top:0;display:flex;flex-direction:column;
+}
+.brand{
+  padding:20px 20px 16px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border-light);
+}
+.brand-logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(48,135,204,.28);
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text strong{font-size:14px;font-weight:600;}
+.brand-text span{font-size:10px;color:var(--text-3);letter-spacing:.4px;margin-top:3px;}
+
+.nav-group{padding:16px 12px 8px;flex:1;overflow-y:auto;}
+.nav-group-title{
+  padding:8px 12px 6px;font-size:11px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;color:var(--text-2);
+  font-size:13px;cursor:pointer;transition:all .15s;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:var(--primary-50);color:var(--text-1);}
+.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:500;}
+.nav-item.active svg{color:var(--primary);}
+.nav-item .badge{
+  margin-left:auto;background:var(--danger);color:#fff;font-size:10px;
+  padding:1px 6px;border-radius:8px;font-weight:500;
+}
+.nav-item.active .badge{background:var(--primary);}
+
+.user-card{
+  margin:12px;padding:12px;border-radius:10px;
+  background:linear-gradient(135deg,#F4FAFE 0%,#E3F1F9 100%);
+  display:flex;align-items:center;gap:10px;
+}
+.user-card .ava{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:600;font-size:13px;
+}
+.user-card .info{flex:1;min-width:0;}
+.user-card .info h5{font-size:13px;font-weight:500;}
+.user-card .info p{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+/* ====== Main ====== */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{
+  height:60px;background:#fff;border-bottom:1px solid var(--border-light);
+  padding:0 28px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:10;
+}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--text-2);font-size:13px;}
+.crumb svg{color:var(--text-4);}
+.crumb a{color:var(--text-2);transition:color .15s;}
+.crumb a:hover{color:var(--primary);}
+.search{
+  margin-left:24px;width:320px;height:36px;border-radius:8px;
+  background:#F4F6FA;display:flex;align-items:center;padding:0 12px;gap:8px;
+  border:1px solid transparent;transition:all .15s;
+}
+.search:focus-within{background:#fff;border-color:var(--primary);}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:13px;color:var(--text-1);}
+.search input::placeholder{color:var(--text-4);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;position:relative;
+}
+.icon-btn:hover{background:#F4F6FA;color:var(--text-1);}
+.icon-btn .red-dot{
+  position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;
+  background:var(--danger);border:2px solid #fff;
+}
+.topbar-user{
+  display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;
+  border-radius:999px;cursor:pointer;
+}
+.topbar-user:hover{background:#F4F6FA;}
+.topbar-user .ava{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
+}
+.topbar-user span{font-size:13px;color:var(--text-1);}
+
+/* ====== Page Content ====== */
+.page{flex:1;padding:24px 28px;overflow-y:auto;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.page-head h1{font-size:22px;font-weight:600;}
+.page-head p{color:var(--text-3);font-size:13px;margin-top:6px;}
+.page-actions{display:flex;gap:8px;}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:500;
+  transition:all .15s;
+}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(48,135,204,.28);}
+.btn-secondary{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+.btn-secondary:hover{background:var(--primary-light);}
+.btn-ghost{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{height:30px;padding:0 10px;font-size:12px;}
+
+/* ====== Stat Cards ====== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.stats-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.stat-card{
+  background:#fff;border-radius:14px;padding:20px 22px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.stat-card .blob{
+  position:absolute;width:140px;height:140px;border-radius:50%;
+  right:-40px;top:-40px;opacity:.35;
+}
+.stat-card .blob-1{background:radial-gradient(circle,#BFDDF6,transparent 65%);}
+.stat-card .blob-2{background:radial-gradient(circle,#FFE0B3,transparent 65%);}
+.stat-card .blob-3{background:radial-gradient(circle,#A7F3D0,transparent 65%);}
+.stat-card .blob-4{background:radial-gradient(circle,#F6BCBE,transparent 65%);}
+.stat-card .ic{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.stat-card .label{font-size:13px;color:var(--text-2);}
+.stat-card .num{
+  font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.5px;
+  display:flex;align-items:baseline;gap:6px;
+}
+.stat-card .num small{font-size:13px;color:var(--text-3);font-weight:400;}
+.stat-card .delta{
+  font-size:12px;margin-top:8px;display:flex;align-items:center;gap:4px;
+}
+.delta.up{color:var(--success);}
+.delta.down{color:var(--danger);}
+.delta.neutral{color:var(--text-3);}
+
+/* ====== Layout grids ====== */
+.row-2{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:20px;}
+.row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+
+.panel{
+  background:#fff;border-radius:14px;padding:22px 24px;
+  box-shadow:var(--shadow-sm);
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;
+}
+.panel-head h3{font-size:16px;font-weight:600;}
+.panel-head p{font-size:12px;color:var(--text-3);margin-top:2px;}
+.panel-tabs{display:flex;gap:4px;background:#F4F6FA;border-radius:8px;padding:3px;}
+.panel-tabs button{
+  height:28px;padding:0 12px;border-radius:6px;font-size:12px;color:var(--text-2);transition:all .15s;
+}
+.panel-tabs button.active{background:#fff;color:var(--primary);font-weight:500;box-shadow:var(--shadow-sm);}
+
+/* ====== Chart ====== */
+.chart-wrap{height:280px;position:relative;}
+
+/* ====== Approval list ====== */
+.approval-list{display:flex;flex-direction:column;gap:10px;}
+.approval-item{
+  padding:14px;border:1px solid var(--border-light);border-radius:10px;
+  display:flex;align-items:center;gap:12px;transition:all .15s;
+}
+.approval-item:hover{border-color:var(--primary);background:var(--primary-50);}
+.approval-item .ava{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;
+  flex-shrink:0;
+}
+.approval-item .text{flex:1;min-width:0;}
+.approval-item .text h5{font-size:14px;font-weight:500;}
+.approval-item .text p{font-size:12px;color:var(--text-3);margin-top:3px;}
+.approval-item .actions{display:flex;gap:6px;}
+
+/* ====== Tag ====== */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500;
+  background:var(--primary-light);color:var(--primary);border:1px solid #BFDDF6;
+}
+.tag-success{background:var(--success-bg);color:var(--success);border-color:var(--success-border);}
+.tag-warning{background:var(--warning-bg);color:var(--warning);border-color:var(--warning-border);}
+.tag-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border);}
+.tag-grey{background:#F1F2F3;color:var(--text-3);border-color:var(--border);}
+
+/* ====== Star ====== */
+.stars{display:inline-flex;gap:2px;}
+.stars svg{width:14px;height:14px;color:#FFC53D;}
+.stars.empty svg{color:#E5E8EE;}
+
+/* ====== Filter Bar ====== */
+.filterbar{
+  background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:16px;
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+  box-shadow:var(--shadow-sm);
+}
+.filterbar .field{display:flex;align-items:center;gap:6px;}
+.filterbar label{font-size:13px;color:var(--text-2);}
+.input,.select{
+  height:34px;padding:0 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;color:var(--text-1);background:#fff;outline:none;min-width:140px;
+  transition:all .15s;font-family:inherit;
+}
+.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(48,135,204,.12);}
+.filterbar .spacer{flex:1;}
+
+/* ====== Table ====== */
+.table-wrap{
+  background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{
+  background:#F8FAFC;color:var(--text-2);font-weight:500;
+  text-align:left;padding:14px 16px;font-size:12px;
+  border-bottom:1px solid var(--border-light);
+}
+tbody td{padding:14px 16px;border-bottom:1px solid var(--border-light);color:var(--text-1);}
+tbody tr:hover{background:#FAFBFD;}
+tbody tr:last-child td{border-bottom:none;}
+.checkbox{width:14px;height:14px;border:1.5px solid var(--border);border-radius:3px;cursor:pointer;display:inline-block;vertical-align:middle;position:relative;}
+.checkbox.checked{background:var(--primary);border-color:var(--primary);}
+.checkbox.checked::after{
+  content:"";position:absolute;left:3px;top:0;width:5px;height:9px;
+  border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);
+}
+.row-action{display:inline-flex;gap:4px;align-items:center;}
+.row-action button{
+  width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;
+}
+.row-action button:hover{background:var(--primary-light);color:var(--primary);}
+.row-action button.danger:hover{background:var(--danger-bg);color:var(--danger);}
+
+.table-foot{
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border-light);
+}
+.table-foot .count{color:var(--text-3);font-size:12px;}
+.pager{display:flex;align-items:center;gap:4px;}
+.pager button{
+  min-width:30px;height:30px;padding:0 8px;border-radius:6px;font-size:12px;color:var(--text-2);
+}
+.pager button:hover:not(:disabled){background:#F4F6FA;color:var(--text-1);}
+.pager button.active{background:var(--primary);color:#fff;}
+.pager button:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ====== Tab nav inside page ====== */
+.seg{
+  display:inline-flex;background:#F4F6FA;border-radius:10px;padding:4px;margin-bottom:18px;flex-wrap:wrap;gap:4px;
+}
+.seg button{
+  height:34px;padding:0 18px;border-radius:7px;font-size:13px;color:var(--text-2);font-weight:500;
+  transition:all .15s;
+}
+.seg button.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);}
+
+/* ====== Schedule cards ====== */
+.sch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.sch-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;
+}
+.sch-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.sch-card .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;}
+.sch-card h5{font-size:14px;font-weight:600;}
+.sch-card .meta{font-size:12px;color:var(--text-3);margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sch-card .meta span{display:inline-flex;align-items:center;gap:4px;}
+
+/* ====== Group cards ====== */
+.group-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.group-card{
+  background:#fff;border-radius:14px;padding:20px;
+  box-shadow:var(--shadow-sm);position:relative;overflow:hidden;
+  transition:all .2s;cursor:pointer;
+}
+.group-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.group-card::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:4px;
+}
+.group-card.math::before{background:linear-gradient(90deg,#3087CC,#9CBFDA);}
+.group-card.physics::before{background:linear-gradient(90deg,#7C5BC1,#B59CE5);}
+.group-card.chem::before{background:linear-gradient(90deg,#1BB975,#A7F3D0);}
+.group-card.eng::before{background:linear-gradient(90deg,#F29100,#FFD68F);}
+.group-card.mech::before{background:linear-gradient(90deg,#DF2027,#F6BCBE);}
+.group-card.cs::before{background:linear-gradient(90deg,#0EA5E9,#7DD3FC);}
+.group-card .group-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.group-card .gi{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+}
+.group-card .gname{font-size:15px;font-weight:600;}
+.group-card .gleader{font-size:12px;color:var(--text-3);margin-top:2px;}
+.group-card .gstats{
+  display:flex;justify-content:space-between;padding:12px 0;
+  border-top:1px dashed var(--border-light);border-bottom:1px dashed var(--border-light);margin-bottom:12px;
+}
+.group-card .gstats div{text-align:center;flex:1;}
+.group-card .gstats div strong{font-size:18px;display:block;}
+.group-card .gstats div span{font-size:11px;color:var(--text-3);}
+.group-card .gmembers{display:flex;align-items:center;}
+.group-card .gmembers .ava{
+  width:26px;height:26px;border-radius:50%;border:2px solid #fff;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;
+  margin-left:-6px;
+}
+.group-card .gmembers .ava:first-child{margin-left:0;}
+.group-card .gmembers .more{margin-left:8px;font-size:12px;color:var(--text-3);}
+
+/* ====== Star milestone ====== */
+.star-track{
+  background:#fff;border-radius:14px;padding:24px;margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+}
+.star-bar{position:relative;height:8px;background:#F1F2F3;border-radius:4px;margin:32px 0 24px;}
+.star-bar .fill{
+  position:absolute;left:0;top:0;height:100%;border-radius:4px;
+  background:linear-gradient(90deg,#3087CC,#1BB975);
+}
+.star-bar .marker{
+  position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:#fff;
+  border:3px solid #E5E8EE;transform:translateX(-50%);
+}
+.star-bar .marker.done{border-color:var(--primary);}
+.star-bar .marker.current{border-color:var(--success);box-shadow:0 0 0 6px rgba(27,185,117,.18);}
+.star-bar .marker .lbl{
+  position:absolute;top:24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-2);
+  white-space:nowrap;
+}
+.star-bar .marker .lbl strong{display:block;font-size:13px;color:var(--text-1);font-weight:600;}
+
+/* ====== Library cards ====== */
+.lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.lib-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;cursor:pointer;
+}
+.lib-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.lib-card .ftype{
+  width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;font-size:11px;font-weight:600;color:#fff;
+}
+.ftype.pdf{background:linear-gradient(135deg,#DF2027,#FF6B6B);}
+.ftype.ppt{background:linear-gradient(135deg,#F29100,#FFAA33);}
+.ftype.doc{background:linear-gradient(135deg,#3087CC,#5BA8DE);}
+.ftype.xls{background:linear-gradient(135deg,#1BB975,#34D399);}
+.lib-card h5{font-size:13px;font-weight:500;margin-bottom:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.lib-card .meta{font-size:11px;color:var(--text-3);display:flex;justify-content:space-between;}
+.lib-card .stats{
+  margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-light);
+  display:flex;gap:12px;font-size:11px;color:var(--text-3);
+}
+.lib-card .stats span{display:inline-flex;align-items:center;gap:3px;}
+
+/* ====== Modal ====== */
+.modal-mask{
+  position:fixed;inset:0;background:rgba(15,32,55,.42);z-index:100;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-mask.show{opacity:1;pointer-events:auto;}
+.modal{
+  background:#fff;border-radius:14px;width:680px;max-width:92vw;max-height:88vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.94);transition:transform .2s;
+}
+.modal-mask.show .modal{transform:scale(1);}
+.modal-head{
+  padding:18px 24px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h3{font-size:16px;font-weight:600;}
+.modal-body{padding:22px 24px;overflow-y:auto;flex:1;}
+.modal-foot{
+  padding:14px 24px;border-top:1px solid var(--border-light);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;}
+.form-item{display:flex;flex-direction:column;}
+.form-item label{font-size:12px;color:var(--text-2);margin-bottom:6px;}
+.form-item label .req{color:var(--danger);}
+.form-item .input,.form-item textarea,.form-item .select{width:100%;}
+.form-item textarea{
+  padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;
+  font-family:inherit;outline:none;transition:all .15s;resize:vertical;
+}
+.form-item textarea:focus{border-color:var(--primary);}
+
+/* ====== Toast ====== */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#fff;border:1px solid var(--success-border);background:var(--success-bg);color:var(--success);
+  padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:8px;z-index:200;
+  opacity:0;pointer-events:none;transition:all .25s;
+  box-shadow:var(--shadow-lg);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Donut ring */
+.ring-row{display:flex;gap:18px;margin-top:16px;flex-wrap:wrap;}
+.ring-item{
+  flex:1;min-width:180px;background:#FAFBFD;border-radius:10px;padding:14px;
+  display:flex;align-items:center;gap:12px;
+}
+.ring-item .label{font-size:12px;color:var(--text-2);}
+.ring-item .val{font-size:18px;font-weight:600;margin-top:2px;}
+.ring-item .val small{font-size:11px;color:var(--text-3);font-weight:400;margin-left:4px;}
+
+/* Calendar */
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-day{
+  aspect-ratio:1.1;background:#FAFBFD;border-radius:8px;padding:8px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  transition:all .15s;cursor:pointer;border:1px solid transparent;
+  position:relative;
+}
+.cal-day:hover{background:var(--primary-light);}
+.cal-day .d{font-size:13px;font-weight:500;}
+.cal-day .t{font-size:10px;color:var(--text-3);text-align:right;}
+.cal-day.has-event::after{
+  content:"";position:absolute;bottom:6px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--primary);
+}
+.cal-day.today{background:var(--primary);color:#fff;}
+.cal-day.today .t{color:rgba(255,255,255,.8);}
+.cal-day.today.has-event::after{background:#fff;}
+.cal-day.muted{opacity:.35;}
+
+/* Approval timeline */
+.timeline{padding:8px 0;}
+.tl-item{display:flex;gap:14px;position:relative;padding-bottom:18px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{
+  content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--border-light);
+}
+.tl-item:last-child::before{display:none;}
+.tl-item .dot{
+  width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;
+}
+.tl-item.done .dot{background:var(--success);border-color:var(--success);color:#fff;}
+.tl-item.current .dot{background:#fff;border-color:var(--primary);}
+.tl-item.current .dot::after{
+  content:"";width:8px;height:8px;border-radius:50%;background:var(--primary);
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(1.4);}}
+.tl-item .tl-content{flex:1;}
+.tl-item .tl-content h6{font-size:13px;font-weight:500;}
+.tl-item .tl-content p{font-size:12px;color:var(--text-3);margin-top:3px;}
+
+/* Charts inside */
+.horiz-bar{margin-top:8px;}
+.hb-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.hb-row .name{width:84px;font-size:12px;color:var(--text-2);}
+.hb-row .track{flex:1;height:8px;background:#F1F2F3;border-radius:4px;overflow:hidden;position:relative;}
+.hb-row .track .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#3087CC,#5BA8DE);transition:width .8s ease;}
+.hb-row .val{width:50px;text-align:right;font-size:12px;font-weight:600;color:var(--text-1);}
+
+/* Star levels grid */
+.star-levels{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:48px;}
+.sl{border-radius:10px;padding:14px;text-align:center;}
+.sl-1{background:#F4FAFE;border:1px solid #BFDDF6;}
+.sl-2{background:#FFF8E6;border:1px solid #FFE0B3;}
+.sl-3{background:#FFF5E5;border:1px solid #FFE0B3;}
+.sl-4{background:#E8FCF4;border:1px solid #A7F3D0;}
+.sl-5{background:linear-gradient(135deg,#FFE0B3,#FFD68F);border:1px solid #F29100;color:#fff;}
+.sl strong{font-size:20px;font-weight:700;display:block;margin-top:6px;}
+.sl span{font-size:11px;color:var(--text-3);}
+.sl-5 strong, .sl-5 span{color:#fff;}
+.sl-5 span{opacity:.85;}
+
+@media(max-width:1280px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .row-2{grid-template-columns:1fr;}
+  .lib-grid{grid-template-columns:repeat(3,1fr);}
+  .group-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:980px){
+  .lib-grid{grid-template-columns:repeat(2,1fr);}
+  .group-grid{grid-template-columns:1fr;}
+  .star-levels{grid-template-columns:repeat(5,1fr);}
+}
+
+</style>
+</head>
+<body>
+<aside class="sidebar"></aside>
+<main class="main">
+  <header class="topbar"></header>
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>问答内容管理</h1>
+        <p>对系统内问题、回答、追问内容进行审核、修改、删除或屏蔽</p>
+      </div>
+    </div>
+
+    <div class="stats stats-3">
+      <div class="stat-card">
+        <div class="blob blob-1"></div>
+        <div class="ic" style="background:var(--primary-light);color:var(--primary);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="label">本周新增提问</div>
+        <div class="num">432 <small>条</small></div>
+        <div class="delta up">↑ 18% 较上周</div>
+      </div>
+      <div class="stat-card">
+        <div class="blob blob-3"></div>
+        <div class="ic" style="background:var(--success-bg);color:var(--success);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="label">已解决问题</div>
+        <div class="num">368 <small>条 · 85.2%</small></div>
+        <div class="delta up">平均回答 1.2h</div>
+      </div>
+      <div class="stat-card">
+        <div class="blob blob-4"></div>
+        <div class="ic" style="background:var(--danger-bg);color:var(--danger);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+        </div>
+        <div class="label">违规待处理</div>
+        <div class="num">3 <small>条</small></div>
+        <div class="delta neutral">敏感词触发</div>
+      </div>
+    </div>
+
+    <div class="filterbar" style="flex-wrap:nowrap;overflow-x:auto;">
+      <div class="field" style="flex-shrink:0;">
+        <label>学科</label>
+        <select class="select" id="fSub" style="min-width:88px;"><option value="">全部</option><option>数学</option><option>英语</option><option>物理</option><option>化学</option><option>力学</option><option>计算机</option><option>力学</option></select>
+      </div>
+      <div class="field" style="flex-shrink:0;">
+        <label>提问标题</label>
+        <input class="input" id="fTitle" placeholder="关键词" style="min-width:130px;" />
+      </div>
+      <div class="field" style="flex-shrink:0;">
+        <label>提问者</label>
+        <input class="input" id="fAsker" placeholder="姓名或学号" style="min-width:120px;" />
+      </div>
+      <div class="field" style="flex-shrink:0;">
+        <label>指定义工</label>
+        <input class="input" id="fSpec" placeholder="姓名或学号" style="min-width:120px;" />
+      </div>
+      <div class="field" style="flex-shrink:0;">
+        <label>状态</label>
+        <select class="select" id="fStatus" style="min-width:88px;"><option value="">全部</option><option>已回答</option><option>未回答</option><option>已关闭</option></select>
+      </div>
+      <div class="field" style="flex-shrink:0;">
+        <label>投诉</label>
+        <select class="select" id="fComplaint" style="min-width:88px;"><option value="">全部</option><option value="pending">待处理</option><option value="handled">已处理</option><option value="none">无投诉</option></select>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn btn-ghost btn-sm" style="flex-shrink:0;" onclick="resetFilter()">重置</button>
+      <button class="btn btn-primary btn-sm" style="flex-shrink:0;" onclick="renderTable()">查询</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="max-width:300px;">提问标题</th>
+            <th>提问者</th>
+            <th style="width:80px;">学科</th>
+            <th>指定义工</th>
+            <th style="width:110px;">互动数据</th>
+            <th style="width:88px;">状态</th>
+            <th style="width:78px;text-align:center;">投诉</th>
+            <th style="width:220px;">操作</th>
+          </tr>
+        </thead>
+        <tbody id="qaTable"></tbody>
+      </table>
+      <div class="table-foot">
+        <div class="count">共 832 条问题记录</div>
+        <div class="pager">
+          <button disabled>‹</button>
+          <button class="active">1</button><button>2</button><button>3</button><button>...</button><button>83</button>
+          <button>›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="modal-mask" id="qaDetailModal">
+  <div class="modal" style="width:820px;max-height:90vh;">
+    <div class="modal-head">
+      <h3>问题详情</h3>
+      <button class="icon-btn" onclick="closeModal('qaDetailModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="qaBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('qaDetailModal')">关闭</button>
+      <button class="btn" id="qaDetailBlockBtn" style="color:var(--warning);border:1px solid var(--warning-border);background:var(--warning-bg);" onclick="openBlockModalFromDetail()">屏蔽</button>
+    </div>
+  </div>
+</div>
+
+<!-- 投诉详情 Modal -->
+<div class="modal-mask" id="complaintModal">
+  <div class="modal" style="width:580px;">
+    <div class="modal-head">
+      <div>
+        <h3 style="display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          投诉详情
+        </h3>
+        <p id="complaintQaTitle" style="font-size:12px;color:var(--text-3);margin-top:4px;max-width:460px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></p>
+      </div>
+      <button class="icon-btn" onclick="closeModal('complaintModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="complaintBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('complaintModal')">关闭</button>
+      <button class="btn" id="complaintHandleBtn" style="color:var(--success);border:1px solid var(--success-border);background:var(--success-bg);" onclick="markComplaintHandled()">标记已处理</button>
+      <button class="btn" style="color:var(--warning);border:1px solid var(--warning-border);background:var(--warning-bg);" onclick="closeModal('complaintModal');openBlockModal(_currentComplaintQaId)">屏蔽此问题</button>
+    </div>
+  </div>
+</div>
+
+<!-- 屏蔽说明 Modal -->
+<div class="modal-mask" id="blockModal">
+  <div class="modal" style="width:520px;">
+    <div class="modal-head">
+      <div>
+        <h3 style="display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          屏蔽问题
+        </h3>
+        <p style="font-size:12px;color:var(--text-3);margin-top:4px;">屏蔽后该问题对学生不可见，操作不可撤销</p>
+      </div>
+      <button class="icon-btn" onclick="closeModal('blockModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text-2);border-left:3px solid var(--warning);">
+        <strong style="color:var(--text-1);">问题：</strong><span id="blockQaTitle" style="color:var(--text-2);"></span>
+      </div>
+      <div class="form-item" style="margin-bottom:14px;">
+        <label style="font-size:13px;font-weight:500;color:var(--text-1);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">屏蔽原因 <span style="color:var(--danger);">*</span><button type="button" class="xfjs-ai-inline-btn" id="btnAiBlockReason" onclick="aiGenBlockReason()" style="margin-left:auto;flex-shrink:0;"><svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> AI 帮我写</button></label>
+        <textarea id="blockReason" placeholder="请填写屏蔽原因，该记录将留档备查（必填）" style="width:100%;min-height:90px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;outline:none;resize:vertical;color:var(--text-1);transition:border-color .15s;" onfocus="this.style.borderColor='var(--warning)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      </div>
+      <div class="form-item">
+        <label style="font-size:13px;font-weight:500;color:var(--text-1);margin-bottom:8px;display:block;">上传附件 <span style="font-size:11px;color:var(--text-3);font-weight:400;">（可选，支持图片、PDF、Word）</span></label>
+        <div id="blockUploadArea" onclick="document.getElementById('blockFileInput').click()" style="border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .15s;background:var(--bg);" onmouseover="this.style.borderColor='var(--primary)';this.style.background='var(--primary-50)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg)'">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.5" style="margin:0 auto 8px;display:block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p style="font-size:13px;color:var(--text-3);margin:0;">点击或拖拽上传文件</p>
+          <p style="font-size:11px;color:var(--text-4);margin-top:4px;">支持 JPG、PNG、PDF、DOC，单文件不超过 10MB</p>
+        </div>
+        <input type="file" id="blockFileInput" style="display:none;" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" onchange="handleBlockFileSelect(this)" />
+        <div id="blockFileList" style="display:flex;flex-direction:column;gap:6px;margin-top:10px;"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('blockModal')">取消</button>
+      <button class="btn" style="color:#fff;background:var(--warning);border:none;" onclick="confirmBlock()">确认屏蔽</button>
+    </div>
+  </div>
+</div>
+
+<!-- 指派义工 modal -->
+<div class="modal-mask" id="assignModal">
+  <div class="modal" style="width:500px;">
+    <div class="modal-head">
+      <h3>指派义工</h3>
+      <button class="icon-btn" onclick="closeModal('assignModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text-2);">
+        <strong>问题：</strong><span id="assignQaTitle" style="color:var(--text-1);"></span>
+      </div>
+      <div class="form-row">
+        <div class="form-item">
+          <label>搜索义工</label>
+          <input class="input" id="assignSearch" placeholder="姓名或学号" style="width:100%;" oninput="searchVolunteer(this.value)" />
+        </div>
+        <div class="form-item">
+          <label>学科专长</label>
+          <select class="select" id="assignSubFilter" style="width:100%;" onchange="searchVolunteer(document.getElementById('assignSearch').value)">
+            <option value="">全部</option><option>数学</option><option>英语</option><option>物理</option><option>化学</option><option>计算机</option><option>力学</option>
+          </select>
+        </div>
+      </div>
+      <div id="volList" style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;"></div>
+      <input type="hidden" id="selectedVolId" />
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('assignModal')">取消</button>
+      <button class="btn btn-primary" onclick="confirmAssign()">确认指派</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== PC 管理端公共脚本（侧边栏渲染、Toast、Modal、Checkbox、Pager 交互） ======
+
+const PC_NAV = [
+  {group:'首页',items:[
+    {id:'dashboard',name:'数据概览',href:'dashboard.html',icon:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'}
+  ]},
+  {group:'辅学义工',items:[
+    {id:'volunteers',name:'申请管理',href:'volunteers.html',badge:12,icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>'},
+    {id:'hours',name:'时长记录',href:'hours.html',icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'},
+    {id:'stars',name:'星级评定',href:'stars.html',badge:5,icon:'<polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/>'},
+    {id:'groups',name:'分组管理',href:'groups.html',icon:'<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="9" r="3"/><path d="M22 21v-1a3 3 0 0 0-2-2.83"/>'},
+    {id:'appeals',name:'意见反馈',href:'appeals.html',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/>'},
+    {id:'volunteer-manage',name:'义工管理',href:'volunteer-manage.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'}
+  ]},
+  {group:'知新选课',items:[
+    {id:'courses',name:'课程管理',href:'courses.html',badge:8,icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'},
+    {id:'course-categories',name:'课程分类',href:'course-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'venue-bookings',name:'场地预约',href:'venue-bookings.html',badge:6,icon:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'},
+    {id:'posters',name:'开屏海报',href:'posters.html',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'}
+  ]},
+  {group:'即问即答',items:[
+    {id:'qa-content',name:'内容管理',href:'qa-content.html',badge:3,icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+    {id:'qa-categories',name:'学科分类',href:'qa-categories.html',icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'},
+    {id:'qa-users',name:'用户管理',href:'qa-users.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+  ]},
+  {group:'宝藏资料库',items:[
+    {id:'library',name:'资料库管理',href:'library.html',badge:11,icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {id:'library-categories',name:'资料分类',href:'library-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'uploaders',name:'上传者管理',href:'uploaders.html',icon:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>'},
+    {id:'library-feedback',name:'反馈与需求池',href:'library-feedback.html',icon:'<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><line x1="7" y1="22" x2="7" y2="11"/>'}
+  ]},
+  {group:'系统配置',items:[
+    {id:'analytics',name:'数据分析',href:'analytics.html',icon:'<path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/>'},
+    {id:'settings',name:'系统配置',href:'settings.html',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+    {id:'ai-settings',name:'AI 助手配置',href:'ai-settings.html',icon:'<path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/><circle cx="19" cy="5" r="1.5"/>'}
+  ]}
+];
+
+function renderSidebar(activeId){
+  const sidebar = document.querySelector('.sidebar');
+  if(!sidebar) return;
+  const navHTML = PC_NAV.map((g,i)=>`
+    <div class="nav-group-title" ${i>0?'style="margin-top:14px;"':''}>${g.group}</div>
+    ${g.items.map(it=>`
+      <a class="nav-item ${it.id===activeId?'active':''}" href="${it.href}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg>
+        ${it.name}
+        ${it.badge?`<span class="badge">${it.badge}</span>`:''}
+      </a>
+    `).join('')}
+  `).join('');
+  sidebar.innerHTML = `
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="brand-text">
+        <strong>学风建设系统</strong>
+        <span>管理后台 v2.0</span>
+      </div>
+    </div>
+    <nav class="nav-group">${navHTML}</nav>
+    <div class="user-card">
+      <div class="ava">王</div>
+      <div class="info"><h5>王老师</h5><p>学工部管理员</p></div>
+      <button class="icon-btn" style="width:24px;height:24px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function renderTopbar(crumb){
+  const tb = document.querySelector('.topbar');
+  if(!tb) return;
+  tb.innerHTML = `
+    <button class="icon-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="crumb">
+      <a href="../index.html">学风建设</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span style="color:var(--text-1);font-weight:500;">${crumb}</span>
+    </div>
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input placeholder="搜索学生、课程、资料..." />
+      <span style="font-size:11px;color:var(--text-4);background:#fff;padding:2px 6px;border-radius:4px;border:1px solid var(--border);">⌘K</span>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="刷新">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
+      <button class="icon-btn" title="消息">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="red-dot"></span>
+      </button>
+      <button class="icon-btn" title="帮助">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+      <div class="topbar-user">
+        <div class="ava">王</div>
+        <span>王老师</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  `;
+}
+
+// ============= Toast =============
+function showToast(msg){
+  let toast = document.getElementById('toast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id='toast';toast.className='toast';
+    toast.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
+    document.body.appendChild(toast);
+  }
+  toast.querySelector('span').textContent=msg;
+  toast.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>toast.classList.remove('show'),2400);
+}
+
+// ============= Modal =============
+function openModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.add('show');
+}
+function closeModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.remove('show');
+}
+
+// ============= Checkbox =============
+document.addEventListener('click',e=>{
+  if(e.target.classList && e.target.classList.contains('checkbox')){
+    e.target.classList.toggle('checked');
+  }
+});
+
+// ============= Segments / Panel tabs =============
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.seg, .panel-tabs').forEach(g=>{
+    g.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        g.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        // Show corresponding tab content if exists
+        const tab=b.getAttribute('data-tab');
+        if(tab){
+          const wrap=g.closest('.panel,.page,.tab-wrap')||document;
+          wrap.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+          const target=wrap.querySelector('.tab-content[data-tab="'+tab+'"]');
+          if(target)target.style.display='';
+        }
+      });
+    });
+  });
+  document.querySelectorAll('.modal-mask').forEach(m=>{
+    m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');});
+  });
+});
+
+</script>
+<script>
+  renderSidebar('qa-content');
+  renderTopbar('即问即答 / 内容管理');
+
+  const qaData=[
+    {id:1,title:'高数中证明数列收敛的常用方法有哪些？尤其是单调有界与夹逼准则区别？',
+     body:'我在学习数列极限时，遇到多种证明收敛的方法，感觉区分不清。请问单调有界准则、夹逼准则、Cauchy准则分别适合什么场景？另外证明极限定义（ε-N语言）一般什么时候用？希望能结合具体例子解释。',
+     attachments:[
+       {name:'数列收敛笔记.pdf',type:'pdf',size:'245 KB'},
+       {name:'课堂截图.png',type:'img',size:'128 KB'},
+     ],
+     asker:'陈志远',askerId:'2023020234',sub:'数学',spec:'王诗韵',specId:'2021141101',like:128,score:4.8,status:'已回答',time:'2026-04-26 14:32',
+     complaint:{reporter:'刘明浩',reporterId:'2023050112',time:'2026-04-27 09:30',type:'内容错误',reason:'该问题下有回答存在明显错误，将单调有界准则的适用条件描述反了，容易误导同学复习。',attachments:[{name:'错误截图.png',type:'img',size:'156 KB'}],status:'待处理'},
+     answers:[
+       {name:'王诗韵',sid:'2021141101',time:'2026-04-26 16:05',best:true,
+        content:'证明数列收敛主要有以下方法：① 单调有界准则（上下有界单调数列必有极限）；② 夹逼准则（两个收敛于同一极限的数列夹逼）；③ Cauchy 收敛准则（数列后段任两项之差可任意小）；④ 利用极限定义（ε-N 语言）。单调有界适合已知单调性的数列；夹逼适合有上下界估算的情形。',
+        attachments:[
+          {name:'收敛证明方法总结.pdf',type:'pdf',size:'312 KB'},
+        ],
+        replies:[
+          {name:'陈志远',sid:'2023020234',time:'2026-04-26 16:30',content:'非常感谢！请问夹逼准则中两侧的极限是否必须完全相同？'},
+          {name:'王诗韵',sid:'2021141101',time:'2026-04-26 16:45',content:'是的，两侧极限必须都收敛且趋向同一个值，才能保证中间数列有同样的极限。'},
+        ]},
+       {name:'陈思远',sid:'2022020011',time:'2026-04-26 17:18',best:false,
+        content:'补充王同学的回答：夹逼准则中两侧函数都要收敛到同一极限才有效。另外单调有界中的"有界"要求上确界存在，注意不能只有下界没有上界。',
+        attachments:[],
+        replies:[
+          {name:'陈志远',sid:'2023020234',time:'2026-04-26 17:50',content:'明白了，那如果只能证明有下界没有上界，就不能用单调有界准则了？'},
+          {name:'陈思远',sid:'2022020011',time:'2026-04-26 18:02',content:'对，有下界的单调递减数列才能用。你可以转化：令 b_n = -a_n，如果 a_n 单调递增有下界，b_n 就单调递减有上界。'},
+        ]},
+     ],
+     followUps:[
+       {time:'2026-04-27 09:15',
+        content:'请问 Cauchy 收敛准则在实际做题中怎么用？感觉比较抽象，能举一个具体例子吗？',
+        attachments:[],
+        answers:[
+          {name:'王诗韵',sid:'2021141101',time:'2026-04-27 10:02',best:true,
+           content:'举例：证明 a_n = 1 + 1/2 + … + 1/n 发散。对任意 N，取 m=2N, n=N，则 |a_m - a_n| = 1/(N+1)+…+1/(2N) ≥ N·(1/2N) = 1/2，不趋于0，故发散。反过来，若数列满足 Cauchy 条件，则对任意 ε>0 存在 N，使得 n,m>N 时 |a_n-a_m|<ε，常用于无法求出显式极限的场合。',
+           attachments:[{name:'Cauchy准则例题.pdf',type:'pdf',size:'98 KB'}],
+           replies:[]},
+        ]},
+       {time:'2026-04-28 14:30',
+        content:'最后想再问一下，ε-N 语言的证明步骤是固定的吗？每次都要先"设 ε>0"吗？',
+        attachments:[],
+        answers:[
+          {name:'陈思远',sid:'2022020011',time:'2026-04-28 15:10',best:false,
+           content:'是的，格式基本固定：① 设 ε>0（任意给定）；② 找 N（依赖于 ε）；③ 当 n>N 时验证 |a_n - L| < ε。关键在于第②步如何从 |a_n-L|<ε 反推 N 的表达式，这需要对不等式进行放缩。',
+           attachments:[],
+           replies:[
+             {name:'陈志远',sid:'2023020234',time:'2026-04-28 15:45',content:'明白了，感谢！放缩那一步需要多练习才能熟练对吧？'},
+             {name:'陈思远',sid:'2022020011',time:'2026-04-28 16:00',content:'对，多看几道例题就会找到感觉，常见的放缩技巧就那几种。'},
+           ]},
+        ]},
+     ]},
+    {id:2,title:'英语六级写作如何积累高级词汇和句型？有没有推荐的资料和练习方式？',
+     body:'我六级写作总是用简单词，想提升表达，有什么好的词汇积累方法和推荐书单吗？特别是议论文句型。',
+     attachments:[
+       {name:'六级写作高分范文.docx',type:'doc',size:'89 KB'},
+     ],
+     asker:'王雅琪',askerId:'2023141203',sub:'英语',spec:'-',specId:'',like:89,score:4.5,status:'已回答',time:'2026-04-25 10:14',
+     complaint:null,
+     answers:[
+       {name:'李明远',sid:'2022030112',time:'2026-04-25 11:30',best:true,
+        content:'推荐《王道论坛六级词汇》配合真题句子积累，每天背10-15个高频词，重点抄写在作文中。另推荐使用"substitution method"——把自己写的低级词替换成高级同义词。同时精读高分范文，摘录句式结构。',
+        attachments:[
+          {name:'高级词汇替换表.xlsx',type:'xls',size:'56 KB'},
+          {name:'议论文句型模板.pdf',type:'pdf',size:'178 KB'},
+        ],
+        replies:[
+          {name:'王雅琪',sid:'2023141203',time:'2026-04-25 12:00',content:'请问有没有具体推荐的范文资源？'},
+          {name:'李明远',sid:'2022030112',time:'2026-04-25 12:20',content:'可以看"新东方六级写作"系列和历年高分范文精析，重点摘录转折、递进、让步等逻辑连接词。'},
+        ]},
+     ],
+     followUps:[
+       {time:'2026-04-26 09:00',
+        content:'谢谢！我用了一段时间感觉有进步。但是写作时间控制总是做不好，30分钟内写完有什么技巧吗？',
+        attachments:[{name:'写作时间分配规划.docx',type:'doc',size:'34 KB'}],
+        answers:[
+          {name:'李明远',sid:'2022030112',time:'2026-04-26 10:15',best:true,
+           content:'建议：① 审题5分钟（读题目，想提纲，确定论点）；② 写作20分钟（按开头-正文-结尾分段推进）；③ 检查5分钟（查语法、拼写、标点）。开头可用"It is widely acknowledged that…"套句秒开，不要花太多时间想开头。',
+           attachments:[],
+           replies:[]},
+        ]},
+     ]},
+    {id:3,title:'Python 中 list 和 tuple 的本质区别是什么？什么时候应该用 tuple？',
+     body:'在学Python时对list和tuple的选择很困惑，除了可变性以外还有什么区别？性能上有差异吗？有没有具体的使用场景对比？',
+     attachments:[],
+     asker:'李航',askerId:'2024050078',sub:'计算机',spec:'刘子轩',specId:'2021050143',like:67,score:0,status:'已回答',time:'2026-04-24 19:55',
+     complaint:{reporter:'周晨曦',reporterId:'2023010233',time:'2026-04-25 20:11',type:'不当言论',reason:'回答中有义工言辞态度较为傲慢，对提问者不礼貌，请管理员核查处理。',attachments:[],status:'已处理'},
+     answers:[
+       {name:'刘子轩',sid:'2021050143',time:'2026-04-24 21:00',best:false,
+        content:'主要区别：① tuple不可变，list可变；② tuple内存占用更小，访问速度略快；③ tuple可作为字典key，list不行；④ tuple表示固定结构（如坐标），list表示可变集合。建议数据不需变动时优先用tuple。',
+        attachments:[
+          {name:'Python数据结构对比.png',type:'img',size:'204 KB'},
+        ],
+        replies:[]},
+     ],followUps:[]},
+    {id:4,title:'电磁学中安培环路定理什么时候用？感觉和高斯定理总是搞混。',
+     body:'安培环路定理和高斯定理在电磁学里都是求场强，但适用条件和计算方式我总分不清楚，能给个对比总结吗？',
+     attachments:[
+       {name:'电磁学公式总结.pdf',type:'pdf',size:'330 KB'},
+     ],
+     asker:'刘云',askerId:'2023030095',sub:'物理',spec:'-',specId:'',like:45,score:0,status:'未回答',time:'2026-04-27 08:20',
+     complaint:null,
+     answers:[],followUps:[]},
+    {id:5,title:'有机化学羰基反应机理总是混淆怎么办？',
+     body:'亲核加成、亲核取代、氧化还原这些涉及羰基的反应机理总是记不住，有什么好的记忆方式？',
+     attachments:[],
+     asker:'赵欣',askerId:'2023080067',sub:'化学',spec:'-',specId:'',like:38,score:0,status:'未回答',time:'2026-04-28 16:44',
+     complaint:null,
+     answers:[],followUps:[]},
+    {id:6,title:'考研数学复习有哪些容易踩的坑？重点说一下时间分配的问题',
+     body:'备考考研数学，想了解一下前辈们踩过的坑，特别是复习策略和时间分配方面的建议，现在大三上刚开始准备。',
+     attachments:[
+       {name:'考研数学复习计划表.xlsx',type:'xls',size:'42 KB'},
+     ],
+     asker:'孙磊',askerId:'2023020188',sub:'数学',spec:'陈思远',specId:'2022020011',like:67,score:4.2,status:'已关闭',time:'2026-04-20 10:05',
+     complaint:null,
+     answers:[
+       {name:'陈思远',sid:'2022020011',time:'2026-04-20 11:30',best:true,
+        content:'常见坑：① 前期只看书不刷题；② 刷题不总结错题；③ 高数花时间太多而忽略线代概率；④ 真题做太早（建议11月前打好基础）。推荐张宇全书+1000题，李林880，然后刷真题。大三上先打基础，寒假开始系统刷题。',
+        attachments:[
+          {name:'考研数学备考时间轴.pdf',type:'pdf',size:'156 KB'},
+        ],
+        replies:[
+          {name:'孙磊',sid:'2023020188',time:'2026-04-20 12:00',content:'线代和概率各应该分配多少时间比较合理？'},
+          {name:'陈思远',sid:'2022020011',time:'2026-04-20 12:30',content:'一般建议高数50%、线代30%、概率20%。备考后期根据薄弱项调整。'},
+        ]},
+     ],followUps:[]},
+  ];
+
+  const VOLUNTEERS=[
+    {name:'王诗韵',sid:'2021141101',sub:'英语',star:3,ans:68},
+    {name:'陈思远',sid:'2022020011',sub:'数学',star:3,ans:52},
+    {name:'刘子轩',sid:'2021050143',sub:'计算机',star:2,ans:45},
+    {name:'周泽宇',sid:'2021030095',sub:'物理',star:3,ans:38},
+    {name:'李明远',sid:'2022030112',sub:'英语',star:2,ans:30},
+    {name:'张力',sid:'2023020118',sub:'数学',star:2,ans:28},
+  ];
+
+  const stTagMap={'已回答':'tag-success','未回答':'tag-warning','已关闭':'tag-grey'};
+  let _currentAssignId=null;
+
+  function renderTable(){
+    const fSub=(document.getElementById('fSub').value||'').trim();
+    const fTitle=(document.getElementById('fTitle').value||'').toLowerCase().trim();
+    const fAsker=(document.getElementById('fAsker').value||'').toLowerCase().trim();
+    const fSpec=(document.getElementById('fSpec').value||'').toLowerCase().trim();
+    const fStatus=(document.getElementById('fStatus').value||'').trim();
+    const fComplaint=(document.getElementById('fComplaint').value||'').trim();
+    const list=qaData.filter(d=>{
+      if(fSub&&d.sub!==fSub)return false;
+      if(fTitle&&!d.title.toLowerCase().includes(fTitle))return false;
+      if(fAsker&&!d.asker.toLowerCase().includes(fAsker)&&!d.askerId.includes(fAsker))return false;
+      if(fSpec&&d.spec!=='-'&&!d.spec.toLowerCase().includes(fSpec)&&!d.specId.includes(fSpec))return false;
+      if(fStatus&&d.status!==fStatus)return false;
+      if(fComplaint==='pending'&&(!d.complaint||d.complaint.status!=='待处理'))return false;
+      if(fComplaint==='handled'&&(!d.complaint||d.complaint.status!=='已处理'))return false;
+      if(fComplaint==='none'&&d.complaint)return false;
+      return true;
+    });
+    document.getElementById('qaTable').innerHTML=list.map(d=>{
+      const specHtml=d.spec!=='-'
+        ?`<span style="white-space:nowrap;">${d.spec} <span style="color:var(--text-3);font-size:11px;">${d.specId}</span></span>`
+        :'<span style="color:var(--text-4);">—</span>';
+      const ansCnt=d.answers.length;
+      return`<tr style="white-space:nowrap;">
+        <td style="max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+          <div style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px;cursor:pointer;color:var(--primary);" title="${d.title}" onclick="openQaDetail(${d.id})">${d.title}</div>
+        </td>
+        <td style="white-space:nowrap;font-size:13px;">${d.asker} <span style="color:var(--text-3);font-size:11px;">${d.askerId}</span></td>
+        <td><span class="tag" style="font-size:11px;white-space:nowrap;">${d.sub}</span></td>
+        <td style="font-size:13px;">${specHtml}</td>
+        <td style="font-size:12px;color:var(--text-3);white-space:nowrap;">
+          <span style="display:inline-flex;align-items:center;gap:3px;margin-right:8px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/></svg>${d.like}</span>
+          <span style="display:inline-flex;align-items:center;gap:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>${ansCnt}</span>
+        </td>
+        <td><span class="tag ${stTagMap[d.status]||'tag'}" style="font-size:11px;white-space:nowrap;">${d.status}</span></td>
+        <td style="text-align:center;">
+          ${d.complaint
+            ?`<button onclick="openComplaintModal(${d.id})" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:5px;background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border);cursor:pointer;font-family:inherit;white-space:nowrap;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                ${d.complaint.status==='待处理'?'待处理':'已处理'}
+              </button>`
+            :'<span style="color:var(--text-4);font-size:12px;">—</span>'}
+        </td>
+        <td style="white-space:nowrap;">
+          <div style="display:flex;gap:5px;flex-wrap:nowrap;">
+            <button onclick="openQaDetail(${d.id})" style="font-size:12px;padding:2px 8px;border-radius:5px;background:var(--primary-light);color:var(--primary);border:1px solid #BFDDF6;cursor:pointer;font-family:inherit;white-space:nowrap;">详情</button>
+            <button onclick="openBlockModal(${d.id})" style="font-size:12px;padding:2px 8px;border-radius:5px;background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border);cursor:pointer;font-family:inherit;white-space:nowrap;">屏蔽</button>
+            <button onclick="if(confirm('确认删除？此操作不可撤销'))showToast('已删除')" style="font-size:12px;padding:2px 8px;border-radius:5px;background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border);cursor:pointer;font-family:inherit;white-space:nowrap;">删除</button>
+            <button onclick="openAssignModal(${d.id})" style="font-size:12px;padding:2px 8px;border-radius:5px;background:#F0FDF4;color:#15803d;border:1px solid #A7F3D0;cursor:pointer;font-family:inherit;white-space:nowrap;">指派义工</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+    document.querySelector('.table-foot .count').textContent='共 '+list.length+' 条问题记录';
+  }
+
+  function resetFilter(){
+    ['fSub','fStatus','fComplaint'].forEach(id=>document.getElementById(id).value='');
+    ['fTitle','fAsker','fSpec'].forEach(id=>document.getElementById(id).value='');
+    renderTable();
+  }
+
+  /* ===== Detail & Reply System ===== */
+  const avatarColors=['#3087CC','#F29100','#1BB975','#7C5BC1','#DF2027','#0EA5E9'];
+
+  const fileIconCfg={
+    pdf:{bg:'linear-gradient(135deg,#DF2027,#FF6B6B)',label:'PDF'},
+    doc:{bg:'linear-gradient(135deg,#3087CC,#5BA8DE)',label:'DOC'},
+    xls:{bg:'linear-gradient(135deg,#1BB975,#34D399)',label:'XLS'},
+    ppt:{bg:'linear-gradient(135deg,#F29100,#FFAA33)',label:'PPT'},
+    img:{bg:'linear-gradient(135deg,#7C5BC1,#B59CE5)',label:'IMG'},
+    zip:{bg:'linear-gradient(135deg,#9096A2,#ABB0BA)',label:'ZIP'},
+  };
+
+  function renderAttachments(files){
+    if(!files||files.length===0)return'';
+    const cards=files.map(f=>{
+      const cfg=fileIconCfg[f.type]||{bg:'linear-gradient(135deg,#9096A2,#C0C5CD)',label:'FILE'};
+      return`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--border-light);border-radius:8px;background:#FAFBFD;min-width:180px;max-width:240px;flex:0 0 auto;">
+        <div style="width:34px;height:34px;border-radius:8px;background:${cfg.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:#fff;">${cfg.label}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-1);" title="${f.name}">${f.name}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:2px;">${f.size}</div>
+        </div>
+        <button onclick="showToast('附件预览功能开发中')" title="查看" style="width:26px;height:26px;border-radius:6px;background:var(--primary-light);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>`;
+    }).join('');
+    return`<div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-light);">
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        附件（${files.length}）
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">${cards}</div>
+    </div>`;
+  }
+
+  function openQaDetail(id){
+    const d=qaData.find(x=>x.id===id);if(!d)return;
+    _currentDetailId=id;
+    document.getElementById('qaBody').innerHTML=renderDetailHTML(d);
+    openModal('qaDetailModal');
+  }
+
+  // AI 合规检查：判断问题/回答是否含违规、引战或学术不端等
+  function aiCheckCompliance(id){
+    const d = qaData.find(x=>x.id===id); if(!d) return;
+    const box = document.getElementById('aiComplianceResult');
+    if(!box) return;
+    box.style.display = '';
+    box.style.background = '#FAFBFD';
+    box.style.border = '1px solid var(--border-light)';
+    box.style.color = 'var(--text-2)';
+    box.innerHTML = '⏳ AI 正在进行合规检查...';
+    let full = '';
+    AICore.chat({
+      messages:[{ role:'user', content:`下面是问答平台中一条问答，请从五个维度做合规检查：1) 违规词/敏感词；2) 引战/人身攻击；3) 学术不端（求他人代写代考）；4) 广告/外链；5) 答非所问/灌水。每个维度给出"通过/警告/不通过"+一句话理由。最后给出总体结论：✅ 建议保留 / ⚠️ 建议关注 / ❌ 建议下架。\n标题：${d.title}\n描述：${d.body}\n第一条回答：${(d.answers&&d.answers[0]&&d.answers[0].content)||'(暂无回答)'}` }],
+      pageContext:{ pageId:'qa-content', pageName:'问答内容管理', pageContext:'管理员请求 AI 对一条问答内容进行合规检查' },
+      onChunk:(c)=>{ if(full==='') box.innerHTML=''; full += c; box.textContent = full; },
+      onDone:(text)=>{
+        const t = text||full;
+        if(/❌|不通过|建议下架/.test(t)){
+          box.style.background = 'var(--danger-bg)';
+          box.style.border = '1px solid var(--danger-border)';
+          box.style.color = '#B91C1C';
+        } else if(/⚠️|警告|建议关注/.test(t)){
+          box.style.background = 'var(--warning-bg)';
+          box.style.border = '1px solid var(--warning-border)';
+          box.style.color = '#9A6500';
+        } else {
+          box.style.background = 'var(--success-bg)';
+          box.style.border = '1px solid var(--success-border)';
+          box.style.color = '#0F766E';
+        }
+      },
+      onError:(e)=>{ box.textContent = '检查失败：'+(e&&e.message||e); }
+    });
+  }
+
+  function renderDetailHTML(d){
+    return`
+      <div style="background:linear-gradient(135deg,#F4FAFE,#E3F1F9);border-radius:12px;padding:16px 18px;margin-bottom:16px;border:1px solid #BFDDF6;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+          <span class="tag">${d.sub}</span>
+          <span class="tag ${stTagMap[d.status]||'tag'}">${d.status}</span>
+        </div>
+        <h3 style="font-size:16px;font-weight:600;line-height:1.5;color:var(--text-1);">${d.title}</h3>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #BFDDF6;font-size:12px;color:var(--text-3);display:flex;gap:18px;flex-wrap:wrap;">
+          <span>提问者：<strong style="color:var(--text-1);">${d.asker}</strong>（${d.askerId}）</span>
+          <span>${d.time}</span>
+          ${d.spec!=='-'?`<span>指定义工：<strong style="color:var(--text-1);">${d.spec}</strong>（${d.specId}）</span>`:''}
+          <span>👍 ${d.like} 点赞</span>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:16px 18px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <h5 style="font-size:13px;font-weight:600;color:var(--text-2);">问题描述</h5>
+          <button type="button" class="xfjs-ai-inline-btn" onclick="aiCheckCompliance(${d.id})">
+            <svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg>
+            AI 合规检查
+          </button>
+        </div>
+        <p style="font-size:14px;color:var(--text-1);line-height:1.8;">${d.body}</p>
+        <div id="aiComplianceResult" style="display:none;margin-top:12px;padding:11px 13px;border-radius:9px;font-size:12px;line-height:1.7;"></div>
+        ${renderAttachments(d.attachments)}
+      </div>
+      <h4 style="font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+        全部回答 <span style="font-size:12px;font-weight:400;color:var(--text-3);">共 ${d.answers.length} 条</span>
+      </h4>
+      ${d.answers.length===0
+        ?'<div style="text-align:center;padding:28px 0;color:var(--text-3);font-size:13px;background:#FAFBFD;border-radius:10px;border:1px dashed var(--border);">暂无回答</div>'
+        :d.answers.map((a,ai)=>renderAnswerCard(d.id,'m',ai,a)).join('')}
+      ${d.followUps&&d.followUps.length>0
+        ?d.followUps.map((fup,fi)=>renderFollowUpBlock(d,fup,fi)).join('')
+        :''}
+    `;
+  }
+
+  function renderFollowUpBlock(d,fup,fi){
+    const ansSection=fup.answers&&fup.answers.length>0
+      ?fup.answers.map((a,ai)=>renderAnswerCard(d.id,'f'+fi,ai,a)).join('')
+      :'<div style="text-align:center;padding:16px 0;color:var(--text-3);font-size:13px;background:#FAFBFD;border-radius:8px;border:1px dashed var(--border);margin-bottom:12px;">暂无回答</div>';
+    return`
+    <div style="position:relative;margin:4px 0 0 0;">
+      <!-- 连接线 -->
+      <div style="display:flex;align-items:center;gap:10px;margin:12px 0 12px 14px;">
+        <div style="width:2px;height:18px;background:var(--warning-border);border-radius:1px;flex-shrink:0;"></div>
+        <span style="font-size:11px;color:var(--text-3);">提问者追问 · ${fup.time}</span>
+      </div>
+      <!-- 追问卡片 -->
+      <div style="border:1px solid var(--warning-border);background:var(--warning-bg);border-radius:12px;padding:14px 16px;margin-bottom:12px;position:relative;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#F29100;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;">${d.asker[0]}</div>
+          <div style="flex:1;">
+            <span style="font-size:13px;font-weight:600;">${d.asker}</span>
+            <span style="font-size:11px;color:var(--text-3);margin-left:6px;">${d.askerId}</span>
+          </div>
+          <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:var(--warning);color:#fff;font-weight:500;">追问</span>
+          <span style="font-size:11px;color:var(--text-3);">${fup.time}</span>
+        </div>
+        <p style="font-size:13px;color:var(--text-1);line-height:1.8;">${fup.content}</p>
+        ${renderAttachments(fup.attachments)}
+      </div>
+      <!-- 追问的回答 -->
+      <div style="padding-left:16px;border-left:2px dashed var(--border-light);">
+        <div style="font-size:12px;color:var(--text-3);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          针对该追问的回答（${fup.answers?fup.answers.length:0} 条）
+        </div>
+        ${ansSection}
+      </div>
+    </div>`;
+  }
+
+  function renderAnswerCard(qid,scope,ai,a){
+    const key=`${qid}-${scope}-${ai}`;
+    const repCount=a.replies?a.replies.length:0;
+    const repliesHTML=a.replies&&a.replies.length>0?a.replies.map((r,ri)=>`
+      <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-light);" id="rep-${key}-${ri}">
+        <div style="width:22px;height:22px;border-radius:50%;background:${avatarColors[(ai+ri+1)%avatarColors.length]};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;flex-shrink:0;">${r.name[0]}</div>
+        <div style="flex:1;">
+          <span style="font-size:12px;font-weight:600;">${r.name}</span>
+          <span style="font-size:11px;color:var(--text-3);margin-left:6px;">${r.time}</span>
+          <p style="font-size:13px;color:var(--text-1);margin-top:3px;line-height:1.6;">${r.content}</p>
+        </div>
+      </div>`).join(''):'';
+    return`
+    <div style="border:1px solid ${a.best?'var(--success-border)':'var(--border-light)'};background:${a.best?'var(--success-bg)':'#fff'};border-radius:12px;padding:14px;margin-bottom:12px;" id="ans-${key}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div style="width:30px;height:30px;border-radius:50%;background:${avatarColors[ai%avatarColors.length]};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;">${a.name[0]}</div>
+        <div style="flex:1;">
+          <span style="font-size:13px;font-weight:600;">${a.name}</span>
+          <span style="font-size:11px;color:var(--text-3);margin-left:6px;">${a.sid}</span>
+        </div>
+        ${a.best?'<span style="font-size:11px;padding:2px 8px;border-radius:4px;background:var(--success);color:#fff;font-weight:500;">✓ 最佳回答</span>':''}
+        <span style="font-size:11px;color:var(--text-3);">${a.time}</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-1);line-height:1.8;margin-bottom:10px;">${a.content}</p>
+      ${renderAttachments(a.attachments)}
+      <div style="display:flex;align-items:center;gap:16px;border-top:1px solid ${a.best?'var(--success-border)':'var(--border-light)'};padding-top:8px;margin-top:10px;">
+        <button onclick="toggleReplies('${key}')" style="font-size:12px;color:var(--text-3);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0;font-family:inherit;transition:color .15s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-3)'">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          ${repCount>0?repCount+'条回复':'暂无回复'}
+        </button>
+      </div>
+      <div id="replies-${key}" style="display:none;margin-top:10px;padding-top:8px;border-top:1px solid var(--border-light);">
+        <div id="replist-${key}">${repliesHTML}</div>
+      </div>
+    </div>`;
+  }
+
+  function toggleReplies(key){
+    const box=document.getElementById('replies-'+key);
+    if(!box)return;
+    box.style.display=box.style.display!=='none'?'none':'block';
+  }
+
+  /* ===== 投诉 & 屏蔽 ===== */
+  let _currentComplaintQaId=null;
+  let _currentBlockQaId=null;
+  let _blockFiles=[];
+
+  function openComplaintModal(id){
+    const d=qaData.find(x=>x.id===id);
+    if(!d||!d.complaint)return;
+    _currentComplaintQaId=id;
+    const c=d.complaint;
+    document.getElementById('complaintQaTitle').textContent=d.title;
+    const isHandled=c.status==='已处理';
+    const handleBtn=document.getElementById('complaintHandleBtn');
+    if(handleBtn){handleBtn.style.display=isHandled?'none':'';}
+    document.getElementById('complaintBody').innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <span style="font-size:12px;padding:3px 10px;border-radius:5px;background:${isHandled?'var(--success-bg)':'var(--danger-bg)'};color:${isHandled?'var(--success)':'var(--danger)'};border:1px solid ${isHandled?'var(--success-border)':'var(--danger-border)'};font-weight:500;">
+          ${isHandled?'✓ 已处理':'● 待处理'}
+        </span>
+        <span style="font-size:12px;padding:3px 10px;border-radius:5px;background:var(--bg);color:var(--text-2);border:1px solid var(--border);">${c.type}</span>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+        <div style="font-size:12px;color:var(--text-3);margin-bottom:10px;display:flex;gap:20px;flex-wrap:wrap;">
+          <span>投诉人：<strong style="color:var(--text-1);">${c.reporter}</strong>（${c.reporterId}）</span>
+          <span>投诉时间：${c.time}</span>
+        </div>
+        <div style="font-size:13px;font-weight:500;color:var(--text-2);margin-bottom:6px;">投诉内容</div>
+        <p style="font-size:14px;color:var(--text-1);line-height:1.8;">${c.reason}</p>
+        ${renderAttachments(c.attachments)}
+      </div>
+      ${isHandled?`<div style="background:var(--success-bg);border:1px solid var(--success-border);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--success);display:flex;align-items:center;gap:8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        该投诉已被管理员处理完毕
+      </div>`:''}
+    `;
+    openModal('complaintModal');
+  }
+
+  function markComplaintHandled(){
+    const d=qaData.find(x=>x.id===_currentComplaintQaId);
+    if(!d||!d.complaint)return;
+    d.complaint.status='已处理';
+    closeModal('complaintModal');
+    renderTable();
+    showToast('已标记投诉为已处理');
+  }
+
+  function openBlockModal(id){
+    const d=qaData.find(x=>x.id===id);if(!d)return;
+    _currentBlockQaId=id;
+    _blockFiles=[];
+    document.getElementById('blockQaTitle').textContent=d.title.length>50?d.title.slice(0,50)+'…':d.title;
+    document.getElementById('blockReason').value='';
+    document.getElementById('blockFileList').innerHTML='';
+    openModal('blockModal');
+  }
+
+  function openBlockModalFromDetail(){
+    if(_currentDetailId) openBlockModal(_currentDetailId);
+  }
+
+  function handleBlockFileSelect(input){
+    const files=Array.from(input.files);
+    files.forEach(f=>{
+      if(_blockFiles.find(x=>x.name===f.name))return;
+      _blockFiles.push(f);
+    });
+    renderBlockFileList();
+    input.value='';
+  }
+
+  function renderBlockFileList(){
+    const typeMap={pdf:'pdf',doc:'doc',docx:'doc',jpg:'img',jpeg:'img',png:'img'};
+    document.getElementById('blockFileList').innerHTML=_blockFiles.map((f,i)=>{
+      const ext=(f.name.split('.').pop()||'').toLowerCase();
+      const cfg=fileIconCfg[typeMap[ext]||'pdf']||{bg:'linear-gradient(135deg,#9096A2,#C0C5CD)',label:'FILE'};
+      const sizeStr=f.size>1024*1024?(f.size/1024/1024).toFixed(1)+' MB':(f.size/1024).toFixed(0)+' KB';
+      return`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--border-light);border-radius:8px;background:#fff;">
+        <div style="width:30px;height:30px;border-radius:6px;background:${cfg.bg};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;">${cfg.label}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</div>
+          <div style="font-size:11px;color:var(--text-3);">${sizeStr}</div>
+        </div>
+        <button onclick="removeBlockFile(${i})" style="width:22px;height:22px;border-radius:5px;border:none;background:var(--danger-bg);color:var(--danger);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>`;
+    }).join('');
+  }
+
+  function removeBlockFile(i){
+    _blockFiles.splice(i,1);
+    renderBlockFileList();
+  }
+
+  function confirmBlock(){
+    const reason=document.getElementById('blockReason').value.trim();
+    if(!reason){
+      const ta=document.getElementById('blockReason');
+      ta.style.borderColor='var(--danger)';
+      ta.focus();
+      ta.placeholder='屏蔽原因为必填项，请填写后提交';
+      setTimeout(()=>{ta.style.borderColor='var(--border)';},2000);
+      return;
+    }
+    const d=qaData.find(x=>x.id===_currentBlockQaId);
+    if(d){d.status='已关闭';}
+    closeModal('blockModal');
+    closeModal('qaDetailModal');
+    renderTable();
+    showToast('问题已屏蔽并关闭');
+  }
+
+  let _currentDetailId=null;
+
+  function openAssignModal(id){
+    const d=qaData.find(x=>x.id===id);if(!d)return;
+    _currentAssignId=id;
+    document.getElementById('assignQaTitle').textContent=d.title.length>40?d.title.slice(0,40)+'…':d.title;
+    document.getElementById('assignSearch').value='';
+    document.getElementById('assignSubFilter').value=d.sub||'';
+    document.getElementById('selectedVolId').value='';
+    renderVolList('');
+    openModal('assignModal');
+  }
+  function renderVolList(kw){
+    const sub=document.getElementById('assignSubFilter').value;
+    const list=VOLUNTEERS.filter(v=>{
+      if(sub&&v.sub!==sub)return false;
+      if(kw&&!v.name.includes(kw)&&!v.sid.includes(kw))return false;
+      return true;
+    });
+    document.getElementById('volList').innerHTML=list.length===0
+      ?'<div style="text-align:center;padding:20px;color:var(--text-3);font-size:13px;">无匹配义工</div>'
+      :list.map(v=>`
+      <div class="approval-item" style="cursor:pointer;padding:10px 12px;transition:all .15s;" onclick="selectVol('${v.sid}',this)">
+        <div class="ava" style="width:36px;height:36px;font-size:13px;">${v.name[0]}</div>
+        <div class="text" style="flex:1;">
+          <h5>${v.name} <span style="font-size:11px;color:var(--text-3);font-weight:400;">${v.sid}</span></h5>
+          <p>${v.sub} · ${'★'.repeat(v.star)} · 已回答 ${v.ans} 条</p>
+        </div>
+        <span class="tag tag-success" style="font-size:11px;">可指派</span>
+      </div>`).join('');
+  }
+  function searchVolunteer(kw){renderVolList(kw.trim());}
+  function selectVol(sid,el){
+    document.getElementById('selectedVolId').value=sid;
+    document.querySelectorAll('#volList .approval-item').forEach(e=>{e.style.background='';e.style.borderColor='';});
+    el.style.background='var(--primary-light)';el.style.borderColor='var(--primary)';
+  }
+  function confirmAssign(){
+    const sid=document.getElementById('selectedVolId').value;
+    if(!sid){showToast('请先选择一位义工');return;}
+    const vol=VOLUNTEERS.find(v=>v.sid===sid);
+    const d=qaData.find(x=>x.id===_currentAssignId);
+    if(d&&vol){d.spec=vol.name;d.specId=vol.sid;}
+    closeModal('assignModal');
+    renderTable();
+    showToast('已成功指派义工：'+vol.name);
+  }
+
+  renderTable();
+</script>
+
+<!-- AI 学工助手 -->
+<link rel="stylesheet" href="../assets/ai/ai-widget-pc.css">
+<script src="../assets/ai/ai-knowledge.js"></script>
+<script src="../assets/ai/ai-core.js"></script>
+<script src="../assets/ai/ai-widget-pc.js"></script>
+<script>
+  function aiGenBlockReason(){
+    var el = document.getElementById('blockReason');
+    if(!el) return;
+    var btn = document.getElementById('btnAiBlockReason');
+    var existing = el.value.trim();
+    var d = _currentBlockQaId ? qaData.find(function(x){return x.id===_currentBlockQaId;}) : null;
+    var title = d ? d.title : (document.getElementById('blockQaTitle')||{}).textContent || '';
+    var body = d ? (d.body||'').substring(0,200) : '';
+    el.disabled = true; el.value = '';
+    var origLabel = btn ? btn.innerHTML : '';
+    if(btn){ btn.disabled = true; btn.innerHTML = '<svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> AI 帮写中…'; }
+    var full = '';
+    AICore.chat({
+      messages:[{role:'user',content:'作为学风建设系统的管理员，我需要屏蔽一个问答帖子。请根据以下信息生成一段正式的屏蔽原因（80字以内），措辞规范得体，引用具体违规点：\n标题：'+(title||'未知')+'\n内容摘要：'+(body||'(无)')+'\n只给屏蔽原因文字。'}],
+      pageContext:{pageId:'qa-content',pageName:'问答内容管理',pageContext:'管理员正在屏蔽违规问题'},
+      onChunk:function(c){ full += c; el.value = full; },
+      onDone:function(t){ if(t) el.value = t; el.disabled = false; if(btn){ btn.disabled = false; btn.innerHTML = origLabel; } },
+      onError:function(){ el.disabled = false; el.value = existing; if(btn){ btn.disabled = false; btn.innerHTML = origLabel; } showToast('AI 生成失败'); }
+    });
+  }
+
+  AIWidget.init({
+    pageId: 'qa-content',
+    pageName: '内容管理',
+    pageContext: '管理员正在审核问答内容，可置顶/合规检查/删除。',
+    end: 'PC管理'
+  });
+</script>
+</body>
+</html>

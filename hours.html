@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>志愿时长管理 · 学风建设系统</title>
+<style>
+:root{
+  --primary:#3087CC;
+  --primary-light:#E3F1F9;
+  --primary-dark:#006DAD;
+  --primary-50:#F4FAFE;
+  --text-1:#3C444F;
+  --text-2:#696F7D;
+  --text-3:#9096A2;
+  --text-4:#ABB0BA;
+  --border:#E5E8EE;
+  --border-light:#EFF1F5;
+  --bg:#F4F6FA;
+  --bg-card:#FFFFFF;
+  --success:#1BB975;
+  --success-bg:#E8FCF4;
+  --success-border:#A7F3D0;
+  --warning:#F29100;
+  --warning-bg:#FFF5E5;
+  --warning-border:#FFE0B3;
+  --danger:#DF2027;
+  --danger-bg:#FCE8EA;
+  --danger-border:#F6BCBE;
+  --shadow-sm:0 1px 3px rgba(15,32,55,.05);
+  --shadow-md:0 4px 14px rgba(15,32,55,.06);
+  --shadow-lg:0 12px 32px rgba(15,32,55,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;font-size:14px;}
+body{min-height:100vh;display:flex;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+svg{display:block;flex-shrink:0;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D9DDE3;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#C0C5CD;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ====== Sidebar ====== */
+.sidebar{
+  width:232px;flex-shrink:0;background:#fff;
+  border-right:1px solid var(--border-light);
+  height:100vh;position:sticky;top:0;display:flex;flex-direction:column;
+}
+.brand{
+  padding:20px 20px 16px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border-light);
+}
+.brand-logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(48,135,204,.28);
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text strong{font-size:14px;font-weight:600;}
+.brand-text span{font-size:10px;color:var(--text-3);letter-spacing:.4px;margin-top:3px;}
+
+.nav-group{padding:16px 12px 8px;flex:1;overflow-y:auto;}
+.nav-group-title{
+  padding:8px 12px 6px;font-size:11px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;color:var(--text-2);
+  font-size:13px;cursor:pointer;transition:all .15s;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:var(--primary-50);color:var(--text-1);}
+.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:500;}
+.nav-item.active svg{color:var(--primary);}
+.nav-item .badge{
+  margin-left:auto;background:var(--danger);color:#fff;font-size:10px;
+  padding:1px 6px;border-radius:8px;font-weight:500;
+}
+.nav-item.active .badge{background:var(--primary);}
+
+.user-card{
+  margin:12px;padding:12px;border-radius:10px;
+  background:linear-gradient(135deg,#F4FAFE 0%,#E3F1F9 100%);
+  display:flex;align-items:center;gap:10px;
+}
+.user-card .ava{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:600;font-size:13px;
+}
+.user-card .info{flex:1;min-width:0;}
+.user-card .info h5{font-size:13px;font-weight:500;}
+.user-card .info p{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+/* ====== Main ====== */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{
+  height:60px;background:#fff;border-bottom:1px solid var(--border-light);
+  padding:0 28px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:10;
+}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--text-2);font-size:13px;}
+.crumb svg{color:var(--text-4);}
+.crumb a{color:var(--text-2);transition:color .15s;}
+.crumb a:hover{color:var(--primary);}
+.search{
+  margin-left:24px;width:320px;height:36px;border-radius:8px;
+  background:#F4F6FA;display:flex;align-items:center;padding:0 12px;gap:8px;
+  border:1px solid transparent;transition:all .15s;
+}
+.search:focus-within{background:#fff;border-color:var(--primary);}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:13px;color:var(--text-1);}
+.search input::placeholder{color:var(--text-4);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;position:relative;
+}
+.icon-btn:hover{background:#F4F6FA;color:var(--text-1);}
+.icon-btn .red-dot{
+  position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;
+  background:var(--danger);border:2px solid #fff;
+}
+.topbar-user{
+  display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;
+  border-radius:999px;cursor:pointer;
+}
+.topbar-user:hover{background:#F4F6FA;}
+.topbar-user .ava{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
+}
+.topbar-user span{font-size:13px;color:var(--text-1);}
+
+/* ====== Page Content ====== */
+.page{flex:1;padding:24px 28px;overflow-y:auto;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.page-head h1{font-size:22px;font-weight:600;}
+.page-head p{color:var(--text-3);font-size:13px;margin-top:6px;}
+.page-actions{display:flex;gap:8px;}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:500;
+  transition:all .15s;
+}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(48,135,204,.28);}
+.btn-secondary{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+.btn-secondary:hover{background:var(--primary-light);}
+.btn-ghost{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{height:30px;padding:0 10px;font-size:12px;}
+
+/* ====== Stat Cards ====== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.stats-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.stat-card{
+  background:#fff;border-radius:14px;padding:20px 22px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.stat-card .blob{
+  position:absolute;width:140px;height:140px;border-radius:50%;
+  right:-40px;top:-40px;opacity:.35;
+}
+.stat-card .blob-1{background:radial-gradient(circle,#BFDDF6,transparent 65%);}
+.stat-card .blob-2{background:radial-gradient(circle,#FFE0B3,transparent 65%);}
+.stat-card .blob-3{background:radial-gradient(circle,#A7F3D0,transparent 65%);}
+.stat-card .blob-4{background:radial-gradient(circle,#F6BCBE,transparent 65%);}
+.stat-card .ic{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.stat-card .label{font-size:13px;color:var(--text-2);}
+.stat-card .num{
+  font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.5px;
+  display:flex;align-items:baseline;gap:6px;
+}
+.stat-card .num small{font-size:13px;color:var(--text-3);font-weight:400;}
+.stat-card .delta{
+  font-size:12px;margin-top:8px;display:flex;align-items:center;gap:4px;
+}
+.delta.up{color:var(--success);}
+.delta.down{color:var(--danger);}
+.delta.neutral{color:var(--text-3);}
+
+/* ====== Layout grids ====== */
+.row-2{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:20px;}
+.row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+
+.panel{
+  background:#fff;border-radius:14px;padding:22px 24px;
+  box-shadow:var(--shadow-sm);
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;
+}
+.panel-head h3{font-size:16px;font-weight:600;}
+.panel-head p{font-size:12px;color:var(--text-3);margin-top:2px;}
+.panel-tabs{display:flex;gap:4px;background:#F4F6FA;border-radius:8px;padding:3px;}
+.panel-tabs button{
+  height:28px;padding:0 12px;border-radius:6px;font-size:12px;color:var(--text-2);transition:all .15s;
+}
+.panel-tabs button.active{background:#fff;color:var(--primary);font-weight:500;box-shadow:var(--shadow-sm);}
+
+/* ====== Chart ====== */
+.chart-wrap{height:280px;position:relative;}
+
+/* ====== Approval list ====== */
+.approval-list{display:flex;flex-direction:column;gap:10px;}
+.approval-item{
+  padding:14px;border:1px solid var(--border-light);border-radius:10px;
+  display:flex;align-items:center;gap:12px;transition:all .15s;
+}
+.approval-item:hover{border-color:var(--primary);background:var(--primary-50);}
+.approval-item .ava{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;
+  flex-shrink:0;
+}
+.approval-item .text{flex:1;min-width:0;}
+.approval-item .text h5{font-size:14px;font-weight:500;}
+.approval-item .text p{font-size:12px;color:var(--text-3);margin-top:3px;}
+.approval-item .actions{display:flex;gap:6px;}
+
+/* ====== Tag ====== */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500;
+  background:var(--primary-light);color:var(--primary);border:1px solid #BFDDF6;
+}
+.tag-success{background:var(--success-bg);color:var(--success);border-color:var(--success-border);}
+.tag-warning{background:var(--warning-bg);color:var(--warning);border-color:var(--warning-border);}
+.tag-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border);}
+.tag-grey{background:#F1F2F3;color:var(--text-3);border-color:var(--border);}
+
+/* ====== Star ====== */
+.stars{display:inline-flex;gap:2px;}
+.stars svg{width:14px;height:14px;color:#FFC53D;}
+.stars.empty svg{color:#E5E8EE;}
+
+/* ====== Filter Bar ====== */
+.filterbar{
+  background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:16px;
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+  box-shadow:var(--shadow-sm);
+}
+.filterbar .field{display:flex;align-items:center;gap:6px;}
+.filterbar label{font-size:13px;color:var(--text-2);}
+.input,.select{
+  height:34px;padding:0 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;color:var(--text-1);background:#fff;outline:none;min-width:140px;
+  transition:all .15s;font-family:inherit;
+}
+.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(48,135,204,.12);}
+.filterbar .spacer{flex:1;}
+
+/* ====== Table ====== */
+.table-wrap{
+  background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{
+  background:#F8FAFC;color:var(--text-2);font-weight:500;
+  text-align:left;padding:14px 16px;font-size:12px;
+  border-bottom:1px solid var(--border-light);
+}
+tbody td{padding:14px 16px;border-bottom:1px solid var(--border-light);color:var(--text-1);}
+tbody tr:hover{background:#FAFBFD;}
+tbody tr:last-child td{border-bottom:none;}
+.checkbox{width:14px;height:14px;border:1.5px solid var(--border);border-radius:3px;cursor:pointer;display:inline-block;vertical-align:middle;position:relative;}
+.checkbox.checked{background:var(--primary);border-color:var(--primary);}
+.checkbox.checked::after{
+  content:"";position:absolute;left:3px;top:0;width:5px;height:9px;
+  border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);
+}
+.row-action{display:inline-flex;gap:4px;align-items:center;}
+.row-action button{
+  width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;
+}
+.row-action button:hover{background:var(--primary-light);color:var(--primary);}
+.row-action button.danger:hover{background:var(--danger-bg);color:var(--danger);}
+
+.table-foot{
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border-light);
+}
+.table-foot .count{color:var(--text-3);font-size:12px;}
+.pager{display:flex;align-items:center;gap:4px;}
+.pager button{
+  min-width:30px;height:30px;padding:0 8px;border-radius:6px;font-size:12px;color:var(--text-2);
+}
+.pager button:hover:not(:disabled){background:#F4F6FA;color:var(--text-1);}
+.pager button.active{background:var(--primary);color:#fff;}
+.pager button:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ====== Tab nav inside page ====== */
+.seg{
+  display:inline-flex;background:#F4F6FA;border-radius:10px;padding:4px;margin-bottom:18px;flex-wrap:wrap;gap:4px;
+}
+.seg button{
+  height:34px;padding:0 18px;border-radius:7px;font-size:13px;color:var(--text-2);font-weight:500;
+  transition:all .15s;
+}
+.seg button.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);}
+
+.tab-content{display:block;animation:fadeIn .25s ease;}
+
+/* ====== Tab: 课表自动匹配 ====== */
+.upload-zone{
+  border:2px dashed var(--border);border-radius:12px;padding:28px 20px;text-align:center;
+  background:var(--primary-50);transition:all .15s;cursor:pointer;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--primary);background:#fff;}
+.upload-zone .uz-title{font-size:14px;font-weight:500;margin-top:10px;}
+.upload-zone .uz-sub{font-size:12px;color:var(--text-3);margin-top:6px;}
+.progress-bar{height:8px;background:#F1F2F3;border-radius:4px;overflow:hidden;margin-top:12px;}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--primary),#5BA8DE);border-radius:4px;transition:width .5s ease;}
+.kpi-inline{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;}
+.kpi-inline .k{font-size:12px;color:var(--text-3);}
+.kpi-inline .k strong{font-size:20px;color:var(--text-1);display:block;margin-top:2px;font-weight:700;}
+
+/* ====== Wizard Steps ====== */
+.wz-steps{display:flex;align-items:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border-light);}
+.wz-step{display:flex;align-items:center;gap:8px;}
+.wz-dot{
+  width:28px;height:28px;border-radius:50%;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+  color:var(--text-3);flex-shrink:0;transition:all .2s;
+}
+.wz-label{font-size:12px;color:var(--text-3);white-space:nowrap;transition:all .2s;}
+.wz-step.done .wz-dot{background:var(--success);border-color:var(--success);color:#fff;}
+.wz-step.active .wz-dot{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 0 0 4px rgba(48,135,204,.16);}
+.wz-step.active .wz-label{color:var(--primary);font-weight:600;}
+.wz-step.done .wz-label{color:var(--success);}
+.wz-line{flex:1;height:2px;background:var(--border);margin:0 6px;min-width:18px;border-radius:1px;transition:background .3s;}
+.wz-line.done{background:var(--success);}
+
+/* ====== Verify items ====== */
+.verify-item{
+  display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:10px;
+  border:1px solid var(--border-light);margin-bottom:8px;transition:all .15s;
+}
+.verify-item.pass{border-color:var(--success-border);background:var(--success-bg);}
+.verify-item.warn{border-color:var(--warning-border);background:var(--warning-bg);}
+.verify-item.fail{border-color:var(--danger-border);background:var(--danger-bg);}
+.vi-ic{
+  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.verify-item.pass .vi-ic{background:var(--success);color:#fff;}
+.verify-item.warn .vi-ic{background:var(--warning);color:#fff;}
+.verify-item.fail .vi-ic{background:var(--danger);color:#fff;}
+
+/* ====== Submit summary grid ====== */
+.submit-summary-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;
+}
+.ss-item{
+  background:var(--bg);border-radius:12px;padding:16px;text-align:center;
+  border:1px solid var(--border-light);
+}
+.ss-label{font-size:11px;color:var(--text-3);}
+.ss-val{font-size:22px;font-weight:700;margin-top:6px;color:var(--text-1);}
+
+/* ====== Import preview table ====== */
+.import-preview{background:var(--bg);border-radius:10px;padding:12px 14px;margin-top:14px;}
+.import-preview .imp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.import-preview h5{font-size:13px;font-weight:600;}
+
+/* ====== Edit table input ====== */
+.edit-input{
+  height:28px;padding:0 8px;border:1px solid var(--border);border-radius:6px;
+  font-size:13px;font-family:inherit;outline:none;transition:all .15s;width:70px;text-align:center;
+}
+.edit-input:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(48,135,204,.12);}
+
+/* ====== Detail modal override ====== */
+.modal-lg{width:900px;}
+.modal-xl{width:960px;}
+
+/* ====== Tab: 通过记录 表格列 ====== */
+.td-muted{color:var(--text-2);font-size:12px;}
+
+/* ====== Schedule cards ====== */
+.sch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.sch-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;
+}
+.sch-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.sch-card .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;}
+.sch-card h5{font-size:14px;font-weight:600;}
+.sch-card .meta{font-size:12px;color:var(--text-3);margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sch-card .meta span{display:inline-flex;align-items:center;gap:4px;}
+
+/* ====== Group cards ====== */
+.group-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.group-card{
+  background:#fff;border-radius:14px;padding:20px;
+  box-shadow:var(--shadow-sm);position:relative;overflow:hidden;
+  transition:all .2s;cursor:pointer;
+}
+.group-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.group-card::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:4px;
+}
+.group-card.math::before{background:linear-gradient(90deg,#3087CC,#9CBFDA);}
+.group-card.physics::before{background:linear-gradient(90deg,#7C5BC1,#B59CE5);}
+.group-card.chem::before{background:linear-gradient(90deg,#1BB975,#A7F3D0);}
+.group-card.eng::before{background:linear-gradient(90deg,#F29100,#FFD68F);}
+.group-card.mech::before{background:linear-gradient(90deg,#DF2027,#F6BCBE);}
+.group-card.cs::before{background:linear-gradient(90deg,#0EA5E9,#7DD3FC);}
+.group-card .group-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.group-card .gi{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+}
+.group-card .gname{font-size:15px;font-weight:600;}
+.group-card .gleader{font-size:12px;color:var(--text-3);margin-top:2px;}
+.group-card .gstats{
+  display:flex;justify-content:space-between;padding:12px 0;
+  border-top:1px dashed var(--border-light);border-bottom:1px dashed var(--border-light);margin-bottom:12px;
+}
+.group-card .gstats div{text-align:center;flex:1;}
+.group-card .gstats div strong{font-size:18px;display:block;}
+.group-card .gstats div span{font-size:11px;color:var(--text-3);}
+.group-card .gmembers{display:flex;align-items:center;}
+.group-card .gmembers .ava{
+  width:26px;height:26px;border-radius:50%;border:2px solid #fff;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;
+  margin-left:-6px;
+}
+.group-card .gmembers .ava:first-child{margin-left:0;}
+.group-card .gmembers .more{margin-left:8px;font-size:12px;color:var(--text-3);}
+
+/* ====== Star milestone ====== */
+.star-track{
+  background:#fff;border-radius:14px;padding:24px;margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+}
+.star-bar{position:relative;height:8px;background:#F1F2F3;border-radius:4px;margin:32px 0 24px;}
+.star-bar .fill{
+  position:absolute;left:0;top:0;height:100%;border-radius:4px;
+  background:linear-gradient(90deg,#3087CC,#1BB975);
+}
+.star-bar .marker{
+  position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:#fff;
+  border:3px solid #E5E8EE;transform:translateX(-50%);
+}
+.star-bar .marker.done{border-color:var(--primary);}
+.star-bar .marker.current{border-color:var(--success);box-shadow:0 0 0 6px rgba(27,185,117,.18);}
+.star-bar .marker .lbl{
+  position:absolute;top:24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-2);
+  white-space:nowrap;
+}
+.star-bar .marker .lbl strong{display:block;font-size:13px;color:var(--text-1);font-weight:600;}
+
+/* ====== Library cards ====== */
+.lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.lib-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;cursor:pointer;
+}
+.lib-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.lib-card .ftype{
+  width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;font-size:11px;font-weight:600;color:#fff;
+}
+.ftype.pdf{background:linear-gradient(135deg,#DF2027,#FF6B6B);}
+.ftype.ppt{background:linear-gradient(135deg,#F29100,#FFAA33);}
+.ftype.doc{background:linear-gradient(135deg,#3087CC,#5BA8DE);}
+.ftype.xls{background:linear-gradient(135deg,#1BB975,#34D399);}
+.lib-card h5{font-size:13px;font-weight:500;margin-bottom:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.lib-card .meta{font-size:11px;color:var(--text-3);display:flex;justify-content:space-between;}
+.lib-card .stats{
+  margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-light);
+  display:flex;gap:12px;font-size:11px;color:var(--text-3);
+}
+.lib-card .stats span{display:inline-flex;align-items:center;gap:3px;}
+
+/* ====== Modal ====== */
+.modal-mask{
+  position:fixed;inset:0;background:rgba(15,32,55,.42);z-index:100;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-mask.show{opacity:1;pointer-events:auto;}
+.modal{
+  background:#fff;border-radius:14px;width:680px;max-width:92vw;max-height:88vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.94);transition:transform .2s;
+}
+.modal-mask.show .modal{transform:scale(1);}
+.modal-head{
+  padding:18px 24px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h3{font-size:16px;font-weight:600;}
+.modal-body{padding:22px 24px;overflow-y:auto;flex:1;}
+.modal-foot{
+  padding:14px 24px;border-top:1px solid var(--border-light);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;}
+.form-item{display:flex;flex-direction:column;}
+.form-item label{font-size:12px;color:var(--text-2);margin-bottom:6px;}
+.form-item label .req{color:var(--danger);}
+.form-item .input,.form-item textarea,.form-item .select{width:100%;}
+.form-item textarea{
+  padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;
+  font-family:inherit;outline:none;transition:all .15s;resize:vertical;
+}
+.form-item textarea:focus{border-color:var(--primary);}
+
+/* ====== Toast ====== */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#fff;border:1px solid var(--success-border);background:var(--success-bg);color:var(--success);
+  padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:8px;z-index:200;
+  opacity:0;pointer-events:none;transition:all .25s;
+  box-shadow:var(--shadow-lg);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Donut ring */
+.ring-row{display:flex;gap:18px;margin-top:16px;flex-wrap:wrap;}
+.ring-item{
+  flex:1;min-width:180px;background:#FAFBFD;border-radius:10px;padding:14px;
+  display:flex;align-items:center;gap:12px;
+}
+.ring-item .label{font-size:12px;color:var(--text-2);}
+.ring-item .val{font-size:18px;font-weight:600;margin-top:2px;}
+.ring-item .val small{font-size:11px;color:var(--text-3);font-weight:400;margin-left:4px;}
+
+/* Calendar */
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-day{
+  aspect-ratio:1.1;background:#FAFBFD;border-radius:8px;padding:8px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  transition:all .15s;cursor:pointer;border:1px solid transparent;
+  position:relative;
+}
+.cal-day:hover{background:var(--primary-light);}
+.cal-day .d{font-size:13px;font-weight:500;}
+.cal-day .t{font-size:10px;color:var(--text-3);text-align:right;}
+.cal-day.has-event::after{
+  content:"";position:absolute;bottom:6px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--primary);
+}
+.cal-day.today{background:var(--primary);color:#fff;}
+.cal-day.today .t{color:rgba(255,255,255,.8);}
+.cal-day.today.has-event::after{background:#fff;}
+.cal-day.muted{opacity:.35;}
+
+/* Approval timeline */
+.timeline{padding:8px 0;}
+.tl-item{display:flex;gap:14px;position:relative;padding-bottom:18px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{
+  content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--border-light);
+}
+.tl-item:last-child::before{display:none;}
+.tl-item .dot{
+  width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;
+}
+.tl-item.done .dot{background:var(--success);border-color:var(--success);color:#fff;}
+.tl-item.current .dot{background:#fff;border-color:var(--primary);}
+.tl-item.current .dot::after{
+  content:"";width:8px;height:8px;border-radius:50%;background:var(--primary);
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(1.4);}}
+.tl-item .tl-content{flex:1;}
+.tl-item .tl-content h6{font-size:13px;font-weight:500;}
+.tl-item .tl-content p{font-size:12px;color:var(--text-3);margin-top:3px;}
+
+/* Charts inside */
+.horiz-bar{margin-top:8px;}
+.hb-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.hb-row .name{width:84px;font-size:12px;color:var(--text-2);}
+.hb-row .track{flex:1;height:8px;background:#F1F2F3;border-radius:4px;overflow:hidden;position:relative;}
+.hb-row .track .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#3087CC,#5BA8DE);transition:width .8s ease;}
+.hb-row .val{width:50px;text-align:right;font-size:12px;font-weight:600;color:var(--text-1);}
+
+/* Star levels grid */
+.star-levels{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:48px;}
+.sl{border-radius:10px;padding:14px;text-align:center;}
+.sl-1{background:#F4FAFE;border:1px solid #BFDDF6;}
+.sl-2{background:#FFF8E6;border:1px solid #FFE0B3;}
+.sl-3{background:#FFF5E5;border:1px solid #FFE0B3;}
+.sl-4{background:#E8FCF4;border:1px solid #A7F3D0;}
+.sl-5{background:linear-gradient(135deg,#FFE0B3,#FFD68F);border:1px solid #F29100;color:#fff;}
+.sl strong{font-size:20px;font-weight:700;display:block;margin-top:6px;}
+.sl span{font-size:11px;color:var(--text-3);}
+.sl-5 strong, .sl-5 span{color:#fff;}
+.sl-5 span{opacity:.85;}
+
+/* ====== Hour Detail Modal ====== */
+.hd-section{padding:24px 28px;}
+.hd-section+.hd-section{border-top:1px solid var(--border-light);}
+.hd-section h4{
+  font-size:16px;font-weight:600;color:var(--primary-dark);margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;
+  padding-bottom:10px;border-bottom:2px solid var(--primary-light);
+}
+.hd-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 32px;}
+.hd-grid .fi{display:flex;flex-direction:column;}
+.hd-grid .fi .fl{font-size:12px;color:var(--text-3);margin-bottom:4px;}
+.hd-grid .fi .fv{font-size:14px;color:var(--text-1);font-weight:500;}
+.hd-grid .fi.full{grid-column:1/-1;}
+.hd-photos{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;}
+.hd-photos img{width:140px;height:100px;object-fit:cover;border-radius:10px;border:1px solid var(--border-light);}
+.hd-text-block{
+  background:var(--bg);border-radius:10px;padding:14px 16px;
+  font-size:13px;line-height:1.8;color:var(--text-1);
+}
+.hd-audit-section{padding:24px 28px;background:#FAFBFD;border-top:1px solid var(--border-light);}
+.hd-audit-section h4{
+  font-size:16px;font-weight:600;color:var(--primary-dark);margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;
+  padding-bottom:10px;border-bottom:2px solid var(--primary-light);
+}
+.hd-audit-item{
+  padding:16px;border:1px solid var(--border-light);border-radius:10px;margin-bottom:10px;
+  background:#fff;
+}
+.hd-audit-item .hd-audit-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.hd-audit-item .hd-audit-head strong{font-size:13px;}
+.hd-audit-item .hd-audit-head span{font-size:12px;color:var(--text-3);}
+.hd-audit-item .hd-audit-result{display:inline-flex;padding:2px 10px;border-radius:4px;font-size:12px;font-weight:500;margin-bottom:6px;}
+.hd-audit-item .hd-audit-note{font-size:13px;color:var(--text-2);line-height:1.7;}
+.vol-actions{display:inline-flex;align-items:center;gap:12px;flex-wrap:nowrap;}
+
+@media(max-width:1280px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .row-2{grid-template-columns:1fr;}
+  .lib-grid{grid-template-columns:repeat(3,1fr);}
+  .group-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:980px){
+  .lib-grid{grid-template-columns:repeat(2,1fr);}
+  .group-grid{grid-template-columns:1fr;}
+  .star-levels{grid-template-columns:repeat(5,1fr);}
+}
+
+</style>
+</head>
+<body>
+<aside class="sidebar"></aside>
+<main class="main">
+  <header class="topbar"></header>
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>志愿时长管理</h1>
+        <p>知新选课课表自动匹配 + 学生自主申报，互斥校验保证时长不重复</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-ghost" onclick="showToast('正在导出...')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          导出
+        </button>
+      </div>
+    </div>
+
+    <div class="stats stats-3">
+      <div class="stat-card">
+        <div class="blob blob-1"></div>
+        <div class="ic" style="background:var(--primary-light);color:var(--primary);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 11.08 22 12 12 22 12 12 22 11.08"/><path d="M22 4 12 14.01l-3-3"/></svg>
+        </div>
+        <div class="label">本学期累计认定时长</div>
+        <div class="num">14,820 <small>小时</small></div>
+        <div class="delta up">↑ 12% 同比</div>
+      </div>
+      <div class="stat-card">
+        <div class="blob blob-2"></div>
+        <div class="ic" style="background:var(--warning-bg);color:var(--warning);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div class="label">课表自动匹配</div>
+        <div class="num">8,724 <small>小时 · 58.9%</small></div>
+        <div class="delta neutral">来源：知新选课</div>
+      </div>
+      <div class="stat-card">
+        <div class="blob blob-3"></div>
+        <div class="ic" style="background:var(--success-bg);color:var(--success);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="label">学生自主申报</div>
+        <div class="num">6,096 <small>小时 · 41.1%</small></div>
+        <div class="delta neutral">来源：自主填写</div>
+      </div>
+    </div>
+
+    <div class="seg">
+      <button type="button" class="active" data-tab="audit">学生申请审核</button>
+      <button type="button" data-tab="schedule">课表自动匹配</button>
+      <button type="button" data-tab="history">通过记录</button>
+    </div>
+
+    <div class="tab-content" data-tab="audit">
+    <div class="filterbar">
+      <div class="field">
+        <label>姓名/学号</label>
+        <input class="input" id="fHourName" placeholder="输入姓名或学号" style="min-width:150px;" />
+      </div>
+      <div class="field">
+        <label>义工类别</label>
+        <select class="select" id="fHourCat">
+          <option value="">全部</option><option>院级辅学义工</option><option>知新馆辅学义工</option><option>56度中南辅学义工</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>课程名称</label>
+        <input class="input" id="fHourCourse" placeholder="输入课程名称" style="min-width:150px;" />
+      </div>
+      <div class="field">
+        <label>上课地点</label>
+        <input class="input" id="fHourLoc" placeholder="输入地点" style="min-width:120px;" />
+      </div>
+      <div class="field">
+        <label>辅导类型</label>
+        <select class="select" id="fHourType">
+          <option value="">全部</option><option>一对一辅导</option><option>一对多辅导</option>
+        </select>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn btn-ghost btn-sm" onclick="resetHourFilter()">重置</button>
+      <button class="btn btn-primary btn-sm" onclick="renderHoursTable()">查询</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:40px;"><span class="checkbox"></span></th>
+            <th>义工姓名</th>
+            <th>义工类别</th>
+            <th>课程名称</th>
+            <th>上课时间</th>
+            <th>地点</th>
+            <th>类型</th>
+            <th>时长</th>
+            <th>人数</th>
+            <th>状态</th>
+            <th style="width:160px;">操作</th>
+          </tr>
+        </thead>
+        <tbody id="hoursTable"></tbody>
+      </table>
+      <div class="table-foot">
+        <div class="count">共 326 条记录</div>
+        <div class="pager">
+          <button disabled>‹</button>
+          <button class="active">1</button>
+          <button>2</button>
+          <button>3</button>
+          <button>...</button>
+          <button>33</button>
+          <button>›</button>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="tab-content" data-tab="schedule" style="display:none;">
+      <!-- 汇总 KPI -->
+      <div class="stats" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px;">
+        <div class="stat-card" style="padding:16px 18px;">
+          <div class="blob blob-1"></div>
+          <div class="ic" style="background:var(--primary-light);color:var(--primary);width:32px;height:32px;border-radius:8px;margin-bottom:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+          <div class="label">总课程数</div>
+          <div class="num" style="font-size:22px;">48 <small>门</small></div>
+        </div>
+        <div class="stat-card" style="padding:16px 18px;">
+          <div class="blob blob-2"></div>
+          <div class="ic" style="background:var(--warning-bg);color:var(--warning);width:32px;height:32px;border-radius:8px;margin-bottom:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="label">总上课学生数</div>
+          <div class="num" style="font-size:22px;">3,240 <small>人次</small></div>
+        </div>
+        <div class="stat-card" style="padding:16px 18px;">
+          <div class="blob blob-3"></div>
+          <div class="ic" style="background:var(--success-bg);color:var(--success);width:32px;height:32px;border-radius:8px;margin-bottom:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="label">总时长</div>
+          <div class="num" style="font-size:22px;">1,084 <small>h</small></div>
+        </div>
+        <div class="stat-card" style="padding:16px 18px;">
+          <div class="blob" style="background:radial-gradient(circle,#B59CE5,transparent 65%);position:absolute;width:140px;height:140px;border-radius:50%;right:-40px;top:-40px;opacity:.35;"></div>
+          <div class="ic" style="background:#F4F0FF;color:#7C5BC1;width:32px;height:32px;border-radius:8px;margin-bottom:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg>
+          </div>
+          <div class="label">总上课义工数</div>
+          <div class="num" style="font-size:22px;">186 <small>人</small></div>
+        </div>
+        <div class="stat-card" style="padding:16px 18px;">
+          <div class="blob blob-4"></div>
+          <div class="ic" style="background:#FFF8E1;color:#F29100;width:32px;height:32px;border-radius:8px;margin-bottom:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>
+          </div>
+          <div class="label">总积分认定</div>
+          <div class="num" style="font-size:22px;color:var(--warning);">2,168 <small>分</small></div>
+        </div>
+      </div>
+
+      <!-- 筛选栏 -->
+      <div class="filterbar">
+        <div class="field">
+          <label>提交名称</label>
+          <input class="input" id="schSearchInput" placeholder="搜索提交名称..." style="min-width:180px;" />
+        </div>
+        <div class="field">
+          <label>提交状态</label>
+          <select class="select" id="schStatusFilter">
+            <option value="">全部</option>
+            <option value="待提交">待提交</option>
+            <option value="审核中">审核中</option>
+            <option value="已通过">已通过</option>
+            <option value="已驳回">已驳回</option>
+          </select>
+        </div>
+        <div class="spacer"></div>
+        <button class="btn btn-ghost btn-sm" onclick="resetSchFilter()">重置</button>
+        <button class="btn btn-primary btn-sm" onclick="applySchFilter()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          查询
+        </button>
+      </div>
+
+      <!-- 操作栏 -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:13px;color:var(--text-3);">共 <strong id="schTableCount" style="color:var(--text-1);">7</strong> 条提交记录</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary" onclick="openNewScheduleModal()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            新增课表自动匹配
+          </button>
+        </div>
+      </div>
+
+      <!-- 列表表格 -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>提交名称</th>
+              <th>总节次</th>
+              <th>学生人次</th>
+              <th>总时长</th>
+              <th>义工数</th>
+              <th>积分认定</th>
+              <th>提交时间</th>
+              <th>提交状态</th>
+              <th style="width:140px;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleTable"></tbody>
+        </table>
+        <div class="table-foot">
+          <div class="count" id="schCountLabel">共 7 条记录</div>
+          <div class="pager">
+            <button disabled>‹</button>
+            <button class="active">1</button>
+            <button>›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" data-tab="history" style="display:none;">
+      <div class="filterbar">
+        <div class="field">
+          <label>来源</label>
+          <select class="select" id="fPassSrc">
+            <option value="">全部</option><option>课表自动匹配</option><option>学生自主申报</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>通过时间</label>
+          <input type="date" class="input" id="fPassDateFrom" style="min-width:130px;" />
+          <span style="color:var(--text-3);font-size:12px;margin:0 2px;">至</span>
+          <input type="date" class="input" id="fPassDateTo" style="min-width:130px;" />
+        </div>
+        <div class="field">
+          <label>关键字</label>
+          <input class="input" id="fPassKw" placeholder="义工姓名、学号、课程名称" style="min-width:180px;" />
+        </div>
+        <div class="spacer"></div>
+        <button class="btn btn-ghost btn-sm" onclick="resetPassFilter()">重置</button>
+        <button class="btn btn-primary btn-sm" onclick="renderPassTable()">查询</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>来源</th>
+              <th>义工姓名/学号</th>
+              <th>课程名称</th>
+              <th>时长</th>
+              <th>上课人数</th>
+              <th>积分认定</th>
+              <th>上课时间</th>
+              <th>通过时间</th>
+              <th style="width:80px;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="historyTable"></tbody>
+        </table>
+        <div class="table-foot">
+          <div class="count" id="passCountLabel">共 0 条通过记录</div>
+          <div class="pager">
+            <button disabled>‹</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>...</button>
+            <button>18</button>
+            <button>›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- ============ Modal: 时长详情 (z-index higher to overlay other modals) ============ -->
+<div class="modal-mask" id="hourDetailModal" style="z-index:200;">
+  <div class="modal" style="width:780px;">
+    <div class="modal-head">
+      <h3 id="hdTitle">辅学时长详情</h3>
+      <button class="icon-btn" onclick="closeModal('hourDetailModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="hdBody" style="padding:0;"></div>
+    <div class="modal-foot" id="hdFoot">
+      <button class="btn btn-ghost" onclick="closeModal('hourDetailModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Modal: 课程匹配记录详情（提交详情/编辑） ============ -->
+<div class="modal-mask" id="schDetailModal" style="z-index:110;">
+  <div class="modal" style="width:1280px;max-width:95vw;max-height:90vh;">
+    <div class="modal-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <h3 id="schDetailTitle">课程匹配记录详情</h3>
+        <span class="tag" id="schDetailStatus"></span>
+      </div>
+      <button class="icon-btn" onclick="closeModal('schDetailModal')" style="font-size:18px;color:var(--text-3);">×</button>
+    </div>
+    <div class="modal-body" id="schDetailBody" style="padding:20px 24px;"></div>
+    <div class="modal-foot" id="schDetailFoot"></div>
+  </div>
+</div>
+
+<!-- ============ Modal: 新增课表自动匹配 ============ -->
+<div class="modal-mask" id="newScheduleModal">
+  <div class="modal" style="width:1280px;max-width:95vw;max-height:90vh;">
+    <div class="modal-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#3087CC,#006DAD);color:#fff;display:flex;align-items:center;justify-content:center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <h3>新增课表自动匹配</h3>
+      </div>
+      <button class="icon-btn" onclick="closeModal('newScheduleModal')" style="font-size:18px;color:var(--text-3);">×</button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px;">
+      <!-- 提交名称 -->
+      <div style="margin-bottom:16px;">
+        <label style="font-size:13px;font-weight:500;color:var(--text-2);margin-bottom:6px;display:block;">提交名称</label>
+        <input class="input" id="newSchName" placeholder="请输入，示例：2026第一周课程" style="width:360px;" />
+      </div>
+
+      <!-- 时间段筛选 -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:14px 16px;background:var(--bg);border-radius:10px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        <label style="font-size:13px;font-weight:500;">时间段筛选</label>
+        <input type="date" class="input" id="newSchDateFrom" style="min-width:130px;" value="2026-01-01" />
+        <span style="color:var(--text-3);font-size:12px;">至</span>
+        <input type="date" class="input" id="newSchDateTo" style="min-width:130px;" value="2026-04-30" />
+        <button class="btn btn-primary btn-sm" onclick="doNewSchFilter()">筛选</button>
+        <button class="btn btn-primary btn-sm" onclick="doNewSchVerify()" style="background:var(--success);">开始校验</button>
+      </div>
+
+      <!-- 全选/取消全选 -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text-2);" onclick="toggleNewSchAll()">
+          <input type="checkbox" id="newSchAllCheck" style="width:15px;height:15px;" />
+          全选/取消全选
+        </label>
+      </div>
+
+      <!-- 课程表格 -->
+      <div class="table-wrap" style="max-height:380px;overflow:auto;">
+        <table style="min-width:1400px;white-space:nowrap;">
+          <thead>
+            <tr>
+              <th style="width:36px;"></th>
+              <th>课程ID</th>
+              <th>课程名称</th>
+              <th>课程分类</th>
+              <th>课程子类</th>
+              <th>义工姓名/学号</th>
+              <th>上课学生数</th>
+              <th>上课地点</th>
+              <th>上课时间</th>
+              <th>上课时长</th>
+              <th>积分系数</th>
+              <th>认定积分</th>
+              <th>校验结果</th>
+              <th style="width:60px;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="newSchTableBody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-3);" id="newSchCountLabel">共 4 条记录，已选 0 条</div>
+    </div>
+    <div class="modal-foot">
+      <div style="flex:1;"></div>
+      <button class="btn btn-ghost" onclick="doNewSchSaveDraft()">保存草稿</button>
+      <button class="btn btn-primary" onclick="doNewSchSubmit()">提交审核</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ====== PC 管理端公共脚本（侧边栏渲染、Toast、Modal、Checkbox、Pager 交互） ======
+
+const PC_NAV = [
+  {group:'首页',items:[
+    {id:'dashboard',name:'数据概览',href:'dashboard.html',icon:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'}
+  ]},
+  {group:'辅学义工',items:[
+    {id:'volunteers',name:'申请管理',href:'volunteers.html',badge:12,icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>'},
+    {id:'hours',name:'时长记录',href:'hours.html',icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'},
+    {id:'stars',name:'星级评定',href:'stars.html',badge:5,icon:'<polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/>'},
+    {id:'groups',name:'分组管理',href:'groups.html',icon:'<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="9" r="3"/><path d="M22 21v-1a3 3 0 0 0-2-2.83"/>'},
+    {id:'appeals',name:'意见反馈',href:'appeals.html',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/>'},
+    {id:'volunteer-manage',name:'义工管理',href:'volunteer-manage.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'}
+  ]},
+  {group:'知新选课',items:[
+    {id:'courses',name:'课程管理',href:'courses.html',badge:8,icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'},
+    {id:'course-categories',name:'课程分类',href:'course-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'venue-bookings',name:'场地预约',href:'venue-bookings.html',badge:6,icon:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'},
+    {id:'posters',name:'开屏海报',href:'posters.html',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'}
+  ]},
+  {group:'即问即答',items:[
+    {id:'qa-content',name:'内容管理',href:'qa-content.html',badge:3,icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+    {id:'qa-categories',name:'学科分类',href:'qa-categories.html',icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'},
+    {id:'qa-users',name:'用户管理',href:'qa-users.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+  ]},
+  {group:'宝藏资料库',items:[
+    {id:'library',name:'资料库管理',href:'library.html',badge:11,icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {id:'library-categories',name:'资料分类',href:'library-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'uploaders',name:'上传者管理',href:'uploaders.html',icon:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>'},
+    {id:'library-feedback',name:'反馈与需求池',href:'library-feedback.html',icon:'<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><line x1="7" y1="22" x2="7" y2="11"/>'}
+  ]},
+  {group:'系统配置',items:[
+    {id:'analytics',name:'数据分析',href:'analytics.html',icon:'<path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/>'},
+    {id:'settings',name:'系统配置',href:'settings.html',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+    {id:'ai-settings',name:'AI 助手配置',href:'ai-settings.html',icon:'<path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/><circle cx="19" cy="5" r="1.5"/>'}
+  ]}
+];
+
+function renderSidebar(activeId){
+  const sidebar = document.querySelector('.sidebar');
+  if(!sidebar) return;
+  const navHTML = PC_NAV.map((g,i)=>`
+    <div class="nav-group-title" ${i>0?'style="margin-top:14px;"':''}>${g.group}</div>
+    ${g.items.map(it=>`
+      <a class="nav-item ${it.id===activeId?'active':''}" href="${it.href}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg>
+        ${it.name}
+        ${it.badge?`<span class="badge">${it.badge}</span>`:''}
+      </a>
+    `).join('')}
+  `).join('');
+  sidebar.innerHTML = `
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="brand-text">
+        <strong>学风建设系统</strong>
+        <span>管理后台 v2.0</span>
+      </div>
+    </div>
+    <nav class="nav-group">${navHTML}</nav>
+    <div class="user-card">
+      <div class="ava">王</div>
+      <div class="info"><h5>王老师</h5><p>学工部管理员</p></div>
+      <button class="icon-btn" style="width:24px;height:24px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function renderTopbar(crumb){
+  const tb = document.querySelector('.topbar');
+  if(!tb) return;
+  tb.innerHTML = `
+    <button class="icon-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="crumb">
+      <a href="../index.html">学风建设</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span style="color:var(--text-1);font-weight:500;">${crumb}</span>
+    </div>
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input placeholder="搜索学生、课程、资料..." />
+      <span style="font-size:11px;color:var(--text-4);background:#fff;padding:2px 6px;border-radius:4px;border:1px solid var(--border);">⌘K</span>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="刷新">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
+      <button class="icon-btn" title="消息">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="red-dot"></span>
+      </button>
+      <button class="icon-btn" title="帮助">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+      <div class="topbar-user">
+        <div class="ava">王</div>
+        <span>王老师</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  `;
+}
+
+// ============= Toast =============
+function showToast(msg){
+  let toast = document.getElementById('toast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id='toast';toast.className='toast';
+    toast.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
+    document.body.appendChild(toast);
+  }
+  toast.querySelector('span').textContent=msg;
+  toast.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>toast.classList.remove('show'),2400);
+}
+
+// ============= Modal =============
+function openModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.add('show');
+}
+function closeModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.remove('show');
+}
+
+// ============= Checkbox =============
+document.addEventListener('click',e=>{
+  if(e.target.classList && e.target.classList.contains('checkbox')){
+    e.target.classList.toggle('checked');
+  }
+});
+
+// ============= Segments / Panel tabs =============
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.seg, .panel-tabs').forEach(g=>{
+    g.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        g.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        // Show corresponding tab content if exists
+        const tab=b.getAttribute('data-tab');
+        if(tab){
+          const wrap=g.closest('.panel,.page,.tab-wrap')||document;
+          wrap.querySelectorAll('.tab-content').forEach(c=>{c.style.display='none';});
+          const target=wrap.querySelector('.tab-content[data-tab="'+tab+'"]');
+          if(target)target.style.display='block';
+        }
+      });
+    });
+  });
+  document.querySelectorAll('.modal-mask').forEach(m=>{
+    m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');});
+  });
+});
+
+</script>
+<script>
+  renderSidebar('hours');
+  renderTopbar('辅学义工 / 时长记录');
+
+  // =================== 课表自动匹配列表 ===================
+  const SCHEDULE_DATA = [
+    {id:1, course:'2026春学期第11周课表',           sessions:12, students:286, hours:24, vols:3, points:36,  submitTime:'2026-04-28 09:00', status:'已通过'},
+    {id:2, course:'2026春学期第10周课表',           sessions:8,  students:240, hours:16, vols:2, points:24,  submitTime:'2026-04-25 14:30', status:'审核中'},
+    {id:3, course:'2026春学期第9周课表',            sessions:6,  students:168, hours:12, vols:2, points:18,  submitTime:'2026-04-22 10:15', status:'已通过'},
+    {id:4, course:'2026春学期第8周课表',            sessions:4,  students:80,  hours:8,  vols:1, points:12,  submitTime:'2026-04-20 16:00', status:'已通过'},
+    {id:5, course:'2026春学期第7周课表',            sessions:5,  students:110, hours:10, vols:2, points:15,  submitTime:'2026-04-18 11:00', status:'已驳回'},
+    {id:6, course:'2026春学期第12周课表',           sessions:3,  students:90,  hours:6,  vols:1, points:9,   submitTime:'2026-05-05 09:00', status:'待提交'},
+    {id:7, course:'2026春学期第6周课表',            sessions:4,  students:96,  hours:8,  vols:1, points:12,  submitTime:'2026-04-10 14:00', status:'已驳回'},
+  ];
+
+  const STATUS_CLASS = {'已通过':'tag-success','审核中':'tag-warning','待提交':'tag-grey','已驳回':'tag-danger'};
+
+  function renderScheduleTable(data){
+    const tbody = document.getElementById('scheduleTable');
+    const countEl = document.getElementById('schTableCount');
+    const countLbl = document.getElementById('schCountLabel');
+    if(countEl) countEl.textContent = data.length;
+    if(countLbl) countLbl.textContent = '共 ' + data.length + ' 条记录';
+    if(!tbody) return;
+    tbody.innerHTML = data.map(d=>{
+      let actionsHtml='';
+      if(d.status==='待提交'||d.status==='已驳回'){
+        actionsHtml=`<a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;" onclick="openSchDetail(${d.id},'edit')">编辑</a>
+          <a style="color:var(--danger);cursor:pointer;font-size:13px;font-weight:500;" onclick="if(confirm('确定删除「${d.course}」？')){SCHEDULE_DATA.splice(SCHEDULE_DATA.findIndex(x=>x.id===${d.id}),1);renderScheduleTable(SCHEDULE_DATA);showToast('已删除');}">删除</a>`;
+      } else {
+        actionsHtml=`<a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;" onclick="openSchDetail(${d.id},'view')">详情</a>`;
+      }
+      return`<tr>
+        <td><strong style="font-size:13px;">${d.course}</strong></td>
+        <td>${d.sessions} 节</td>
+        <td>${d.students.toLocaleString()} 人次</td>
+        <td><strong>${d.hours}h</strong></td>
+        <td>${d.vols} 人</td>
+        <td><strong style="color:var(--warning);">${d.points} 分</strong></td>
+        <td style="color:var(--text-2);font-size:12px;">${d.submitTime}</td>
+        <td><span class="tag ${STATUS_CLASS[d.status]||''}">${d.status}</span></td>
+        <td><div style="display:flex;gap:12px;align-items:center;">${actionsHtml}</div></td>
+      </tr>`;
+    }).join('');
+  }
+
+  renderScheduleTable(SCHEDULE_DATA);
+
+  function applySchFilter(){
+    const kw = (document.getElementById('schSearchInput')||{}).value||'';
+    const st = (document.getElementById('schStatusFilter')||{}).value||'';
+    const res = SCHEDULE_DATA.filter(d=>{
+      if(kw && !d.course.includes(kw)) return false;
+      if(st && d.status!==st) return false;
+      return true;
+    });
+    renderScheduleTable(res);
+    showToast('已筛选出 '+res.length+' 条记录');
+  }
+  function resetSchFilter(){
+    ['schSearchInput','schStatusFilter'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.value='';
+    });
+    renderScheduleTable(SCHEDULE_DATA);
+  }
+
+  // =================== 新增课表自动匹配 Modal ===================
+  const NEW_SCH_DEMO = [
+    {id:'20251106231', name:'C++ STL 容器专题讲解', cat:'智慧辅导', subcat:'朋辈辅导', vol:'张三/20254157', students:23, loc:'知新馆301', time:'2026-04-20 15:30:00 ~ 17:30:00', duration:2, rate:2, points:4, verify:'', semester:'2025-2026秋学期[第1学期]', type:'一对多辅导', content:'STL容器vector/map/set使用与性能分析', photos:['https://picsum.photos/seed/cpp1/200/140','https://picsum.photos/seed/cpp2/200/140']},
+    {id:'20251106232', name:'大学物理 电磁学综合辅导', cat:'志趣坊', subcat:'兴趣未来', vol:'李四/20254158', students:30, loc:'知新馆102', time:'2026-04-21 19:00:00 ~ 21:00:00', duration:2, rate:1.5, points:3, verify:'', semester:'2025-2026秋学期[第1学期]', type:'一对多辅导', content:'电磁学公式推导与典型例题讲解', photos:['https://picsum.photos/seed/phy1/200/140']},
+    {id:'20251106233', name:'高等数学A 微分方程专题', cat:'智慧辅导', subcat:'朋辈辅导', vol:'王五/20254160', students:28, loc:'知新馆408', time:'2026-04-22 10:00:00 ~ 12:00:00', duration:2, rate:1.5, points:3, verify:'', semester:'2025-2026秋学期[第1学期]', type:'一对多辅导', content:'辅导学生微分方程解题思路', photos:['https://picsum.photos/seed/math1/200/140','https://picsum.photos/seed/math2/200/140','https://picsum.photos/seed/math3/200/140']},
+    {id:'20251106234', name:'大学英语六级真题精讲', cat:'智慧辅导', subcat:'朋辈辅导', vol:'赵六/20254162', students:32, loc:'知新馆205', time:'2026-04-23 14:00:00 ~ 16:00:00', duration:2, rate:1.5, points:3, verify:'', semester:'2025-2026秋学期[第1学期]', type:'一对多辅导', content:'六级阅读理解真题讲解与答题技巧分析', photos:['https://picsum.photos/seed/eng1/200/140','https://picsum.photos/seed/eng2/200/140']},
+  ];
+  let newSchData = [];
+  let newSchSelected = new Set();
+  let newSchVerified = false;
+
+  function openNewScheduleModal(){
+    newSchData = NEW_SCH_DEMO.map(d=>({...d}));
+    newSchSelected.clear();
+    newSchVerified = false;
+    renderNewSchTable();
+    const nameInput = document.getElementById('newSchName');
+    if(nameInput) nameInput.value='';
+    openModal('newScheduleModal');
+  }
+
+  function renderNewSchTable(){
+    const tbody = document.getElementById('newSchTableBody');
+    const lbl = document.getElementById('newSchCountLabel');
+    if(!tbody) return;
+    tbody.innerHTML = newSchData.map((d,i)=>{
+      const canCheck = d.verify==='通过';
+      const isChecked = newSchSelected.has(i);
+      const verifyHtml = d.verify
+        ? (d.verify==='通过'
+          ? '<span style="color:var(--success);font-weight:500;">通过</span>'
+          : '<span style="color:var(--danger);font-weight:500;">'+d.verify+'</span>')
+        : '';
+      return `<tr style="${!canCheck && newSchVerified?'opacity:.6;':''}">
+        <td><input type="checkbox" ${isChecked?'checked':''} ${canCheck?'':'disabled'} onclick="toggleNewSchRow(${i})" style="width:15px;height:15px;" /></td>
+        <td>${d.id}</td>
+        <td>${d.name}</td>
+        <td>${d.cat}</td>
+        <td>${d.subcat}</td>
+        <td>${d.vol}</td>
+        <td>${d.students}</td>
+        <td>${d.loc}</td>
+        <td>${d.time}</td>
+        <td><input type="number" class="edit-input" value="${d.duration}" min="0.5" max="8" step="0.5" style="width:60px;" onchange="newSchData[${i}].duration=parseFloat(this.value)||0;newSchData[${i}].points=+(newSchData[${i}].duration*newSchData[${i}].rate).toFixed(1);" /></td>
+        <td>${d.rate}</td>
+        <td><input type="number" class="edit-input" value="${d.points}" min="0" step="0.5" style="width:60px;color:var(--warning);font-weight:600;" onchange="newSchData[${i}].points=parseFloat(this.value)||0;" /></td>
+        <td>${verifyHtml}</td>
+        <td><a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;" onclick="showNewSchDetail(${i})">详情</a></td>
+      </tr>`;
+    }).join('');
+    if(lbl) lbl.textContent='共 '+newSchData.length+' 条记录，已选 '+newSchSelected.size+' 条';
+  }
+
+  function toggleNewSchRow(i){
+    if(newSchData[i].verify!=='通过') return;
+    if(newSchSelected.has(i)) newSchSelected.delete(i);
+    else newSchSelected.add(i);
+    renderNewSchTable();
+  }
+
+  function toggleNewSchAll(){
+    const chk = document.getElementById('newSchAllCheck');
+    const passIdxs = newSchData.map((d,i)=>d.verify==='通过'?i:-1).filter(x=>x>=0);
+    if(passIdxs.length===0){ showToast('请先开始校验'); return; }
+    if(newSchSelected.size===passIdxs.length){ newSchSelected.clear(); if(chk)chk.checked=false; }
+    else { passIdxs.forEach(i=>newSchSelected.add(i)); if(chk)chk.checked=true; }
+    renderNewSchTable();
+  }
+
+  function doNewSchFilter(){
+    showToast('已按时间段筛选课程数据');
+  }
+
+  function doNewSchVerify(){
+    const verifyResults = ['通过','通过','重复申报','通过'];
+    newSchData.forEach((d,i)=>{ d.verify = verifyResults[i] || '缺课'; });
+    newSchVerified = true;
+    newSchSelected.clear();
+    renderNewSchTable();
+    const passCount = newSchData.filter(d=>d.verify==='通过').length;
+    showToast('校验完成：'+passCount+' 条通过，'+(newSchData.length-passCount)+' 条异常');
+  }
+
+  function doNewSchSaveDraft(){
+    closeModal('newScheduleModal');
+    const name = (document.getElementById('newSchName')||{}).value || '未命名草稿';
+    const sel = [...newSchSelected].map(i=>newSchData[i]);
+    SCHEDULE_DATA.unshift({id:Date.now(), course:name, sessions:sel.length||newSchData.length, students:sel.reduce((s,d)=>s+(d.students||0),0), hours:sel.reduce((s,d)=>s+(d.duration||0),0), vols:sel.length||newSchData.length, points:sel.reduce((s,d)=>s+(d.points||0),0), submitTime:new Date().toLocaleString('zh-CN').slice(0,-3), status:'待提交'});
+    renderScheduleTable(SCHEDULE_DATA);
+    showToast('已保存草稿');
+  }
+
+  function doNewSchSubmit(){
+    if(newSchSelected.size===0){ showToast('请先校验并勾选通过的课程'); return; }
+    closeModal('newScheduleModal');
+    const name = (document.getElementById('newSchName')||{}).value || '未命名提交';
+    const sel = [...newSchSelected].map(i=>newSchData[i]);
+    SCHEDULE_DATA.unshift({id:Date.now(), course:name, sessions:sel.length, students:sel.reduce((s,d)=>s+(d.students||0),0), hours:sel.reduce((s,d)=>s+(d.duration||0),0), vols:sel.length, points:sel.reduce((s,d)=>s+(d.points||0),0), submitTime:new Date().toLocaleString('zh-CN').slice(0,-3), status:'审核中'});
+    renderScheduleTable(SCHEDULE_DATA);
+    showToast('已提交审核，共 '+sel.length+' 条记录');
+  }
+
+  function showNewSchDetail(i){
+    const d = newSchData[i];
+    const timeArr = d.time ? d.time.split(' ~ ') : ['',''];
+    const photosHTML = d.photos && d.photos.length
+      ? d.photos.map(p=>`<img src="${p}" alt="辅导照片" />`).join('')
+      : '<span style="color:var(--text-4);font-size:13px;">暂无照片</span>';
+
+    document.getElementById('hdBody').innerHTML=`
+      <div class="hd-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          基本信息
+        </h4>
+        <div class="hd-grid">
+          <div class="fi"><div class="fl">姓名/学号</div><div class="fv">${d.vol}</div></div>
+          <div class="fi"><div class="fl">辅学义工类别</div><div class="fv"><span class="tag" style="border-radius:6px;">院级辅学义工</span></div></div>
+        </div>
+      </div>
+      <div class="hd-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          上课信息
+        </h4>
+        <div class="hd-grid">
+          <div class="fi"><div class="fl">辅导课程名称 <span style="color:var(--danger);">*</span></div><div class="fv">${d.name}</div></div>
+          <div class="fi"><div class="fl">学期 <span style="color:var(--danger);">*</span></div><div class="fv">${d.semester||'—'}</div></div>
+          <div class="fi"><div class="fl">上课时间 <span style="color:var(--danger);">*</span></div><div class="fv" style="display:flex;gap:12px;"><span style="background:var(--bg);padding:4px 12px;border-radius:6px;border:1px solid var(--border-light);font-size:13px;">${timeArr[0]}</span><span style="background:var(--bg);padding:4px 12px;border-radius:6px;border:1px solid var(--border-light);font-size:13px;">${timeArr[1]}</span></div></div>
+          <div class="fi"><div class="fl">上课地点 <span style="color:var(--danger);">*</span></div><div class="fv">${d.loc}</div></div>
+          <div class="fi"><div class="fl">辅导类型 <span style="color:var(--danger);">*</span></div><div class="fv">${d.type||'一对多辅导'}</div></div>
+          <div class="fi"><div class="fl">辅导时长 <span style="color:var(--danger);">*</span></div><div class="fv">${d.duration}h</div></div>
+          <div class="fi"><div class="fl">上课人数 <span style="color:var(--danger);">*</span></div><div class="fv">${d.students} 人</div></div>
+          <div class="fi"><div class="fl">辅导内容 <span style="color:var(--danger);">*</span></div><div class="fv">${d.content||'—'}</div></div>
+          <div class="fi full"><div class="fl">辅导照片 <span style="color:var(--danger);">*</span></div><div class="hd-photos">${photosHTML}</div></div>
+        </div>
+      </div>
+    `;
+    document.getElementById('hdFoot').innerHTML='<button class="btn btn-ghost" onclick="closeModal(\'hourDetailModal\')">关闭</button>';
+    openModal('hourDetailModal');
+  }
+
+  // =================== 课程匹配记录详情（主表操作列） ===================
+  const SCH_DETAIL_RECORDS = {
+    1: [
+      {id:'20251106231', name:'C++ STL 容器专题讲解', cat:'智慧辅导', subcat:'朋辈辅导', vol:'张三/20254157', students:23, loc:'知新馆301', time:'2026-04-20 15:30:00 ~ 17:30:00', duration:2, rate:2, points:4, verify:'通过', semester:'2025-2026秋学期[第1学期]', type:'一对多辅导', content:'STL容器vector/map/set使用与性能分析', photos:['https://picsum.photos/seed/cpp1/200/140']},
+      {id:'20251106235', name:'线性代数 行列式专题', cat:'智慧辅导', subcat:'朋辈辅导', vol:'王五/20254160', students:28, loc:'知新馆408', time:'2026-04-22 10:00:00 ~ 12:00:00', duration:2, rate:1.5, points:3, verify:'通过', semester:'2025-2026秋学期[第1学期]', type:'一对多辅导', content:'行列式性质与展开定理讲解', photos:['https://picsum.photos/seed/math1/200/140']},
+    ],
+    2: [
+      {id:'20251106232', name:'大学物理 电磁学综合辅导', cat:'志趣坊', subcat:'兴趣未来', vol:'李四/20254158', students:30, loc:'知新馆102', time:'2026-04-21 19:00:00 ~ 21:00:00', duration:2, rate:1.5, points:3, verify:'通过', semester:'2025-2026秋学期[第1学期]', type:'一对多辅导', content:'电磁学公式推导与典型例题讲解', photos:['https://picsum.photos/seed/phy1/200/140']},
+      {id:'20251106234', name:'大学英语六级真题精讲', cat:'智慧辅导', subcat:'朋辈辅导', vol:'赵六/20254162', students:32, loc:'知新馆205', time:'2026-04-23 14:00:00 ~ 16:00:00', duration:2, rate:1.5, points:3, verify:'通过', semester:'2025-2026秋学期[第1学期]', type:'一对多辅导', content:'六级阅读理解真题讲解与答题技巧分析', photos:['https://picsum.photos/seed/eng1/200/140']},
+    ],
+  };
+
+  const SCH_AUDIT_RECORDS = [
+    {step:'一审 · 分管老师', who:'张老师', date:'2026-04-29', result:'通过', note:'数据核实无误，课程匹配准确。'},
+    {step:'二审 · 学工部长', who:'李部长', date:'2026-04-30', result:'通过', note:'同意通过，积分认定合规。'},
+  ];
+  const SCH_REJECT_AUDIT = [
+    {step:'一审 · 分管老师', who:'张老师', date:'2026-04-19', result:'驳回', note:'第3条记录上课时间与已认定记录冲突，请修改后重新提交。'},
+  ];
+
+  let _schDetailData = [];
+  let _schDetailId = null;
+  let _schDetailMode = 'view';
+
+  function openSchDetail(id, mode){
+    const record = SCHEDULE_DATA.find(d=>d.id===id);
+    if(!record) return;
+    _schDetailId = id;
+    _schDetailMode = mode;
+    _schDetailData = (SCH_DETAIL_RECORDS[id] || SCH_DETAIL_RECORDS[1]).map(d=>({...d}));
+
+    document.getElementById('schDetailTitle').textContent = record.course;
+    const statusEl = document.getElementById('schDetailStatus');
+    statusEl.textContent = record.status;
+    statusEl.className = 'tag ' + (STATUS_CLASS[record.status]||'');
+
+    renderSchDetailBody(record);
+    openModal('schDetailModal');
+  }
+
+  let _schDetailSelected = new Set();
+  let _schDetailVerified = false;
+
+  function renderSchDetailBody(record){
+    const isPending = record.status==='待提交';
+    const isRejected = record.status==='已驳回';
+    const isReadonly = !isPending && !isRejected;
+    const showAudit = (record.status==='已通过'||record.status==='已驳回'||record.status==='审核中');
+
+    if(isPending){
+      _schDetailSelected.clear();
+      _schDetailVerified = false;
+      renderSchDetailPending(record);
+    } else if(isRejected){
+      renderSchDetailRejected(record);
+    } else {
+      renderSchDetailReadonly(record);
+    }
+  }
+
+  // ---- 待提交：与新增页面一致，支持筛选/校验/勾选 ----
+  function renderSchDetailPending(record){
+    const body = document.getElementById('schDetailBody');
+    const tableRows = _schDetailData.map((d,i)=>{
+      const canCheck = d.verify==='通过';
+      const isChecked = _schDetailSelected.has(i);
+      const verifyHtml = d.verify
+        ? (d.verify==='通过' ? '<span style="color:var(--success);font-weight:500;">通过</span>' : '<span style="color:var(--danger);font-weight:500;">'+d.verify+'</span>')
+        : '';
+      return `<tr style="${!canCheck && _schDetailVerified?'opacity:.6;':''}">
+        <td><input type="checkbox" ${isChecked?'checked':''} ${canCheck?'':'disabled'} onclick="toggleSchDetailRow(${i})" style="width:15px;height:15px;" /></td>
+        <td>${d.id}</td>
+        <td>${d.name}</td>
+        <td>${d.cat}</td>
+        <td>${d.subcat}</td>
+        <td>${d.vol}</td>
+        <td>${d.students}</td>
+        <td>${d.loc}</td>
+        <td>${d.time}</td>
+        <td><input type="number" class="edit-input" value="${d.duration}" min="0.5" max="8" step="0.5" style="width:60px;" onchange="_schDetailData[${i}].duration=parseFloat(this.value)||0;_schDetailData[${i}].points=+(_schDetailData[${i}].duration*_schDetailData[${i}].rate).toFixed(1);" /></td>
+        <td>${d.rate}</td>
+        <td><input type="number" class="edit-input" value="${d.points}" min="0" step="0.5" style="width:60px;color:var(--warning);font-weight:600;" onchange="_schDetailData[${i}].points=parseFloat(this.value)||0;" /></td>
+        <td>${verifyHtml}</td>
+        <td><a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;" onclick="showSchDetailItem(${i})">详情</a></td>
+      </tr>`;
+    }).join('');
+
+    body.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:14px 16px;background:var(--bg);border-radius:10px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        <label style="font-size:13px;font-weight:500;">时间段筛选</label>
+        <input type="date" class="input" id="schDtlDateFrom" style="min-width:130px;" value="2026-01-01" />
+        <span style="color:var(--text-3);font-size:12px;">至</span>
+        <input type="date" class="input" id="schDtlDateTo" style="min-width:130px;" value="2026-04-30" />
+        <button class="btn btn-primary btn-sm" onclick="showToast('已按时间段筛选')">筛选</button>
+        <button class="btn btn-primary btn-sm" onclick="doSchDetailVerify()" style="background:var(--success);">开始校验</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text-2);" onclick="toggleSchDetailAll()">
+          <input type="checkbox" id="schDtlAllCheck" style="width:15px;height:15px;" />
+          全选/取消全选
+        </label>
+      </div>
+      <div class="table-wrap" style="max-height:350px;overflow:auto;">
+        <table style="min-width:1400px;white-space:nowrap;">
+          <thead>
+            <tr>
+              <th style="width:36px;"></th>
+              <th>课程ID</th>
+              <th>课程名称</th>
+              <th>课程分类</th>
+              <th>课程子类</th>
+              <th>义工姓名/学号</th>
+              <th>上课学生数</th>
+              <th>上课地点</th>
+              <th>上课时间</th>
+              <th>上课时长</th>
+              <th>积分系数</th>
+              <th>认定积分</th>
+              <th>校验结果</th>
+              <th style="width:60px;">操作</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-3);">共 ${_schDetailData.length} 条记录，已选 ${_schDetailSelected.size} 条</div>
+    `;
+
+    document.getElementById('schDetailFoot').innerHTML = `
+      <div style="flex:1;"></div>
+      <button class="btn btn-ghost" onclick="closeModal('schDetailModal')">取消</button>
+      <button class="btn btn-ghost" onclick="saveSchDetailDraft()">保存草稿</button>
+      <button class="btn btn-primary" onclick="saveSchDetail()">提交审核</button>
+    `;
+  }
+
+  function toggleSchDetailRow(i){
+    if(_schDetailData[i].verify!=='通过') return;
+    if(_schDetailSelected.has(i)) _schDetailSelected.delete(i); else _schDetailSelected.add(i);
+    renderSchDetailPending(SCHEDULE_DATA.find(d=>d.id===_schDetailId));
+  }
+
+  function toggleSchDetailAll(){
+    const passIdxs = _schDetailData.map((d,i)=>d.verify==='通过'?i:-1).filter(x=>x>=0);
+    if(passIdxs.length===0){ showToast('请先开始校验'); return; }
+    if(_schDetailSelected.size===passIdxs.length) _schDetailSelected.clear();
+    else passIdxs.forEach(i=>_schDetailSelected.add(i));
+    renderSchDetailPending(SCHEDULE_DATA.find(d=>d.id===_schDetailId));
+  }
+
+  function doSchDetailVerify(){
+    const results = ['通过','通过','重复申报','通过'];
+    _schDetailData.forEach((d,i)=>{ d.verify = results[i%results.length] || '通过'; });
+    _schDetailVerified = true;
+    _schDetailSelected.clear();
+    renderSchDetailPending(SCHEDULE_DATA.find(d=>d.id===_schDetailId));
+    const pass = _schDetailData.filter(d=>d.verify==='通过').length;
+    showToast('校验完成：'+pass+' 条通过，'+(_schDetailData.length-pass)+' 条异常');
+  }
+
+  function saveSchDetailDraft(){
+    closeModal('schDetailModal');
+    showToast('草稿已保存');
+  }
+
+  // ---- 已驳回：可编辑时长/积分 + 移出 + 审核记录 ----
+  function renderSchDetailRejected(record){
+    const body = document.getElementById('schDetailBody');
+    const tableRows = _schDetailData.map((d,i)=>`<tr>
+      <td>${d.id}</td>
+      <td>${d.name}</td>
+      <td>${d.cat}</td>
+      <td>${d.subcat}</td>
+      <td>${d.vol}</td>
+      <td>${d.students}</td>
+      <td>${d.loc}</td>
+      <td>${d.time}</td>
+      <td><input type="number" class="edit-input" value="${d.duration}" min="0.5" max="8" step="0.5" style="width:60px;" onchange="_schDetailData[${i}].duration=parseFloat(this.value)||0;_schDetailData[${i}].points=+(_schDetailData[${i}].duration*_schDetailData[${i}].rate).toFixed(1);" /></td>
+      <td>${d.rate}</td>
+      <td><input type="number" class="edit-input" value="${d.points}" min="0" step="0.5" style="width:60px;color:var(--warning);font-weight:600;" onchange="_schDetailData[${i}].points=parseFloat(this.value)||0;" /></td>
+      <td><span style="color:var(--success);font-weight:500;">${d.verify}</span></td>
+      <td style="display:flex;gap:8px;align-items:center;">
+        <a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;" onclick="showSchDetailItem(${i})">详情</a>
+        <a style="color:var(--danger);cursor:pointer;font-size:13px;font-weight:500;" onclick="removeSchDetailRow(${i})">移出</a>
+      </td>
+    </tr>`).join('');
+
+    const auditHTML = `
+      <div class="hd-audit-section" style="margin-top:20px;padding:20px 0 0;border-top:1px solid var(--border-light);background:transparent;">
+        <h4 style="display:flex;align-items:center;gap:8px;color:var(--primary);font-size:14px;margin-bottom:14px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          审核记录
+        </h4>
+        ${SCH_REJECT_AUDIT.map(a=>`
+          <div class="hd-audit-item">
+            <div class="hd-audit-head"><strong>${a.step}</strong><span>${a.date}</span></div>
+            <div class="hd-audit-result" style="background:var(--danger-bg);color:var(--danger);">${a.result}</div>
+            <div class="hd-audit-note">${a.note}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    body.innerHTML = `
+      <div class="table-wrap" style="max-height:380px;overflow:auto;">
+        <table style="min-width:1300px;white-space:nowrap;">
+          <thead>
+            <tr>
+              <th>课程ID</th>
+              <th>课程名称</th>
+              <th>课程分类</th>
+              <th>课程子类</th>
+              <th>义工姓名/学号</th>
+              <th>上课学生数</th>
+              <th>上课地点</th>
+              <th>上课时间</th>
+              <th>上课时长</th>
+              <th>积分系数</th>
+              <th>认定积分</th>
+              <th>校验结果</th>
+              <th style="width:90px;">操作</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-3);">共 ${_schDetailData.length} 条课程记录</div>
+      ${auditHTML}
+    `;
+
+    document.getElementById('schDetailFoot').innerHTML = `
+      <div style="flex:1;"></div>
+      <button class="btn btn-ghost" onclick="closeModal('schDetailModal')">取消</button>
+      <button class="btn btn-primary" onclick="saveSchDetail()">保存并重新提交</button>
+    `;
+  }
+
+  function removeSchDetailRow(i){
+    if(!confirm('确定移出该条课程记录？')) return;
+    _schDetailData.splice(i, 1);
+    const record = SCHEDULE_DATA.find(d=>d.id===_schDetailId);
+    if(record) renderSchDetailRejected(record);
+    showToast('已移出');
+  }
+
+  // ---- 已通过/审核中：只读 + 审核记录 ----
+  function renderSchDetailReadonly(record){
+    const body = document.getElementById('schDetailBody');
+    const tableRows = _schDetailData.map((d,i)=>`<tr>
+      <td>${d.id}</td>
+      <td>${d.name}</td>
+      <td>${d.cat}</td>
+      <td>${d.subcat}</td>
+      <td>${d.vol}</td>
+      <td>${d.students}</td>
+      <td>${d.loc}</td>
+      <td>${d.time}</td>
+      <td>${d.duration}h</td>
+      <td>${d.rate}</td>
+      <td><strong style="color:var(--warning);">${d.points}分</strong></td>
+      <td><span style="color:var(--success);font-weight:500;">${d.verify}</span></td>
+      <td><a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;" onclick="showSchDetailItem(${i})">详情</a></td>
+    </tr>`).join('');
+
+    const auditHTML = `
+      <div class="hd-audit-section" style="margin-top:20px;padding:20px 0 0;border-top:1px solid var(--border-light);background:transparent;">
+        <h4 style="display:flex;align-items:center;gap:8px;color:var(--primary);font-size:14px;margin-bottom:14px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          审核记录
+        </h4>
+        ${SCH_AUDIT_RECORDS.map(a=>`
+          <div class="hd-audit-item">
+            <div class="hd-audit-head"><strong>${a.step}</strong><span>${a.date}</span></div>
+            <div class="hd-audit-result" style="background:${a.result==='通过'?'var(--success-bg)':'var(--danger-bg)'};color:${a.result==='通过'?'var(--success)':'var(--danger)'};">${a.result}</div>
+            <div class="hd-audit-note">${a.note}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    body.innerHTML = `
+      <div class="table-wrap" style="max-height:400px;overflow:auto;">
+        <table style="min-width:1300px;white-space:nowrap;">
+          <thead>
+            <tr>
+              <th>课程ID</th>
+              <th>课程名称</th>
+              <th>课程分类</th>
+              <th>课程子类</th>
+              <th>义工姓名/学号</th>
+              <th>上课学生数</th>
+              <th>上课地点</th>
+              <th>上课时间</th>
+              <th>上课时长</th>
+              <th>积分系数</th>
+              <th>认定积分</th>
+              <th>校验结果</th>
+              <th style="width:60px;">操作</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-3);">共 ${_schDetailData.length} 条课程记录</div>
+      ${auditHTML}
+    `;
+
+    document.getElementById('schDetailFoot').innerHTML = `<button class="btn btn-ghost" onclick="closeModal('schDetailModal')">关闭</button>`;
+  }
+
+  function showSchDetailItem(i){
+    const d = _schDetailData[i];
+    const timeArr = d.time ? d.time.split(' ~ ') : ['',''];
+    const photosHTML = d.photos && d.photos.length
+      ? d.photos.map(p=>`<img src="${p}" alt="辅导照片" />`).join('')
+      : '<span style="color:var(--text-4);font-size:13px;">暂无照片</span>';
+
+    document.getElementById('hdBody').innerHTML=`
+      <div class="hd-section">
+        <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg> 基本信息</h4>
+        <div class="hd-grid">
+          <div class="fi"><div class="fl">姓名/学号</div><div class="fv">${d.vol}</div></div>
+          <div class="fi"><div class="fl">辅学义工类别</div><div class="fv"><span class="tag" style="border-radius:6px;">院级辅学义工</span></div></div>
+        </div>
+      </div>
+      <div class="hd-section">
+        <h4><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> 上课信息</h4>
+        <div class="hd-grid">
+          <div class="fi"><div class="fl">辅导课程名称 <span style="color:var(--danger);">*</span></div><div class="fv">${d.name}</div></div>
+          <div class="fi"><div class="fl">学期 <span style="color:var(--danger);">*</span></div><div class="fv">${d.semester||'—'}</div></div>
+          <div class="fi"><div class="fl">上课时间 <span style="color:var(--danger);">*</span></div><div class="fv" style="display:flex;gap:12px;"><span style="background:var(--bg);padding:4px 12px;border-radius:6px;border:1px solid var(--border-light);font-size:13px;">${timeArr[0]}</span><span style="background:var(--bg);padding:4px 12px;border-radius:6px;border:1px solid var(--border-light);font-size:13px;">${timeArr[1]}</span></div></div>
+          <div class="fi"><div class="fl">上课地点 <span style="color:var(--danger);">*</span></div><div class="fv">${d.loc}</div></div>
+          <div class="fi"><div class="fl">辅导类型 <span style="color:var(--danger);">*</span></div><div class="fv">${d.type||'一对多辅导'}</div></div>
+          <div class="fi"><div class="fl">辅导时长 <span style="color:var(--danger);">*</span></div><div class="fv">${d.duration}h</div></div>
+          <div class="fi"><div class="fl">上课人数 <span style="color:var(--danger);">*</span></div><div class="fv">${d.students} 人</div></div>
+          <div class="fi"><div class="fl">辅导内容 <span style="color:var(--danger);">*</span></div><div class="fv">${d.content||'—'}</div></div>
+          <div class="fi full"><div class="fl">辅导照片 <span style="color:var(--danger);">*</span></div><div class="hd-photos">${photosHTML}</div></div>
+        </div>
+      </div>
+    `;
+    document.getElementById('hdFoot').innerHTML='<button class="btn btn-ghost" onclick="closeModal(\'hourDetailModal\')">关闭</button>';
+    openModal('hourDetailModal');
+  }
+
+  function saveSchDetail(){
+    const record = SCHEDULE_DATA.find(d=>d.id===_schDetailId);
+    if(!record) return;
+    if(record.status==='待提交'){
+      if(_schDetailSelected.size===0){ showToast('请先校验并勾选通过的课程'); return; }
+    }
+    record.status = '审核中';
+    record.submitTime = new Date().toLocaleString('zh-CN').slice(0,-3);
+    closeModal('schDetailModal');
+    renderScheduleTable(SCHEDULE_DATA);
+    showToast('已提交审核');
+  }
+
+  const hoursData=[
+    {id:'H001',n:'李明杰',sid:'2023110001',c:'院级辅学义工',course:'高等数学A · 微分方程专题',semester:'2025-2026秋学期[第1学期]',timeStart:'2025-11-11 15:30:00',timeEnd:'2025-11-11 18:00:00',loc:'知新馆201',type:'一对多辅导',h:'2.5h',ppl:24,content:'辅导学生关于数据方面的解题思路',st:'待审批',
+      photos:['https://picsum.photos/seed/globe/200/140','https://picsum.photos/seed/books/200/140','https://picsum.photos/seed/campus/200/140','https://picsum.photos/seed/garden/200/140'],
+      audit:[{step:'初审 · 学生验算',who:'学生验算',date:'2023-11-21',result:'通过',note:'申请材料完整，学业成绩优异，符合校级辅学义工基本要求。'},{step:'二审 · 指导老师',who:'指导老师',date:'2023-11-23',result:'通过',note:'申请人专业基础扎实，有丰富的辅学经验，同意成为校级辅学义工。建议分配至高等数学和程序设计课程组。'},{step:'备案 · 学工部',who:'学工部',date:'2023-11-25',result:'通过',note:'已备案，有效期至2024-07-01。'}]},
+    {id:'H002',n:'王诗韵',sid:'2023110045',c:'知新馆辅学义工',course:'大学英语六级真题精讲',semester:'2025-2026秋学期[第1学期]',timeStart:'2025-11-10 19:00:00',timeEnd:'2025-11-10 21:00:00',loc:'知新馆205',type:'一对多辅导',h:'2h',ppl:30,content:'六级阅读理解真题讲解与答题技巧分析',st:'已通过',
+      photos:['https://picsum.photos/seed/eng1/200/140','https://picsum.photos/seed/eng2/200/140'],
+      audit:[{step:'初审 · 学生验算',who:'学生验算',date:'2025-11-11',result:'通过',note:'材料齐全。'},{step:'二审 · 指导老师',who:'指导老师',date:'2025-11-12',result:'通过',note:'同意通过。'},{step:'备案 · 学工部',who:'学工部',date:'2025-11-13',result:'通过',note:'已备案。'}]},
+    {id:'H003',n:'陈思远',sid:'2022110023',c:'知新馆辅学义工',course:'线性代数 · 行列式专题',semester:'2025-2026秋学期[第1学期]',timeStart:'2025-11-09 10:00:00',timeEnd:'2025-11-09 12:00:00',loc:'知新馆408',type:'一对多辅导',h:'2h',ppl:28,content:'行列式性质与展开定理讲解',st:'已通过',
+      photos:['https://picsum.photos/seed/math1/200/140','https://picsum.photos/seed/math2/200/140','https://picsum.photos/seed/math3/200/140'],
+      audit:[{step:'初审 · 学生验算',who:'学生验算',date:'2025-11-10',result:'通过',note:'材料齐全。'},{step:'二审 · 指导老师',who:'指导老师',date:'2025-11-11',result:'通过',note:'同意。'},{step:'备案 · 学工部',who:'学工部',date:'2025-11-12',result:'通过',note:'已备案。'}]},
+    {id:'H004',n:'刘子轩',sid:'2022110134',c:'知新馆辅学义工',course:'C++ · STL 容器讲解',semester:'2025-2026秋学期[第1学期]',timeStart:'2025-11-08 16:30:00',timeEnd:'2025-11-08 18:30:00',loc:'知新馆102',type:'一对多辅导',h:'2h',ppl:20,content:'STL容器vector/map/set使用与性能分析',st:'已通过',
+      photos:['https://picsum.photos/seed/cpp1/200/140'],
+      audit:[{step:'初审 · 学生验算',who:'学生验算',date:'2025-11-09',result:'通过',note:'材料齐全。'},{step:'二审 · 指导老师',who:'指导老师',date:'2025-11-10',result:'通过',note:'同意。'},{step:'备案 · 学工部',who:'学工部',date:'2025-11-11',result:'通过',note:'已备案。'}]},
+    {id:'H005',n:'张语涵',sid:'2024110089',c:'56度中南辅学义工',course:'雅思口语 · 1对1强化',semester:'2025-2026春学期[第2学期]',timeStart:'2026-04-22 14:00:00',timeEnd:'2026-04-22 15:00:00',loc:'56度中南',type:'一对一辅导',h:'1h',ppl:1,content:'雅思口语Part2话题卡练习及纠音',st:'待审批',
+      photos:['https://picsum.photos/seed/ielts1/200/140','https://picsum.photos/seed/ielts2/200/140'],
+      audit:[{step:'初审 · 学生验算',who:'学生验算',date:'2026-04-23',result:'通过',note:'申请材料完整。'}]},
+    {id:'H006',n:'周泽宇',sid:'2023110066',c:'知新馆辅学义工',course:'大学物理 · 电磁学综合',semester:'2025-2026春学期[第2学期]',timeStart:'2026-04-21 19:00:00',timeEnd:'2026-04-21 21:00:00',loc:'知新馆102',type:'一对多辅导',h:'2h',ppl:22,content:'电磁学公式推导与典型例题讲解',st:'已通过',
+      photos:['https://picsum.photos/seed/phy1/200/140','https://picsum.photos/seed/phy2/200/140','https://picsum.photos/seed/phy3/200/140'],
+      audit:[{step:'初审 · 学生验算',who:'学生验算',date:'2026-04-22',result:'通过',note:'材料齐全。'},{step:'二审 · 指导老师',who:'指导老师',date:'2026-04-23',result:'通过',note:'同意。'},{step:'备案 · 学工部',who:'学工部',date:'2026-04-24',result:'通过',note:'已备案。'}]},
+  ];
+
+  function resetHourFilter(){
+    ['fHourName','fHourCourse','fHourLoc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    ['fHourCat','fHourType'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    renderHoursTable();
+  }
+
+  function renderHoursTable(){
+    const fn=(document.getElementById('fHourName')||{}).value||'';
+    const fc=(document.getElementById('fHourCat')||{}).value||'';
+    const fcr=(document.getElementById('fHourCourse')||{}).value||'';
+    const fl=(document.getElementById('fHourLoc')||{}).value||'';
+    const ft=(document.getElementById('fHourType')||{}).value||'';
+    const list=hoursData.filter(d=>{
+      if(fn&&!d.n.includes(fn)&&!d.sid.includes(fn))return false;
+      if(fc&&d.c!==fc)return false;
+      if(fcr&&!d.course.includes(fcr))return false;
+      if(fl&&!d.loc.includes(fl))return false;
+      if(ft&&d.type!==ft)return false;
+      return true;
+    });
+    const tbody=document.getElementById('hoursTable');
+    tbody.innerHTML=list.map(d=>`
+    <tr>
+      <td><span class="checkbox"></span></td>
+      <td><strong>${d.n}</strong></td>
+      <td><span class="tag">${d.c}</span></td>
+      <td>${d.course}</td>
+      <td style="color:var(--text-2);">${d.timeStart.slice(0,16)}</td>
+      <td>${d.loc}</td>
+      <td>${d.type}</td>
+      <td><strong>${d.h}</strong></td>
+      <td>${d.ppl}人</td>
+      <td><span class="tag ${d.st==='已通过'?'tag-success':d.st==='待审批'?'tag-warning':'tag-danger'}">${d.st}</span></td>
+      <td>
+        <div class="vol-actions">
+          <a role="button" style="color:var(--primary);font-weight:500;font-size:13px;cursor:pointer;" onclick="openHourDetail('${d.id}')">查看详情</a>
+          ${d.st==='待审批'?`<a role="button" style="color:#C4884D;font-weight:500;font-size:13px;cursor:pointer;" onclick="showToast('请前往待办中心完成审核')">去审核</a>`:''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+    const cnt=document.querySelector('.tab-content[data-tab="audit"] .table-foot .count');
+    if(cnt)cnt.innerHTML='共 <strong>'+list.length+'</strong> 条记录';
+  }
+  renderHoursTable();
+
+  function openHourDetail(id){
+    const d=hoursData.find(x=>x.id===id);if(!d)return;
+    const checkSvg='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+
+    const photosHTML=d.photos&&d.photos.length
+      ? d.photos.map(p=>`<img src="${p}" alt="辅导照片" />`).join('')
+      : '<span style="color:var(--text-4);font-size:13px;">暂无照片</span>';
+
+    const auditHTML=d.audit.map(a=>`
+      <div class="hd-audit-item">
+        <div class="hd-audit-head">
+          <strong>${a.step}</strong>
+          <span>${a.date}</span>
+        </div>
+        <div class="hd-audit-result" style="background:${a.result==='通过'?'var(--success-bg)':'var(--danger-bg)'};color:${a.result==='通过'?'var(--success)':'var(--danger)'};">${a.result}</div>
+        <div class="hd-audit-note">${a.note}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('hdBody').innerHTML=`
+      <div class="hd-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          基本信息
+        </h4>
+        <div class="hd-grid">
+          <div class="fi"><div class="fl">姓名/学号</div><div class="fv">${d.n} / ${d.sid}</div></div>
+          <div class="fi"><div class="fl">辅学义工类别</div><div class="fv"><span class="tag" style="border-radius:6px;">${d.c}</span></div></div>
+        </div>
+      </div>
+
+      <div class="hd-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          上课信息
+        </h4>
+        <div class="hd-grid">
+          <div class="fi"><div class="fl">辅导课程名称 <span style="color:var(--danger);">*</span></div><div class="fv">${d.course}</div></div>
+          <div class="fi"><div class="fl">学期 <span style="color:var(--danger);">*</span></div><div class="fv">${d.semester}</div></div>
+          <div class="fi"><div class="fl">上课时间 <span style="color:var(--danger);">*</span></div><div class="fv" style="display:flex;gap:12px;"><span style="background:var(--bg);padding:4px 12px;border-radius:6px;border:1px solid var(--border-light);font-size:13px;">${d.timeStart}</span><span style="background:var(--bg);padding:4px 12px;border-radius:6px;border:1px solid var(--border-light);font-size:13px;">${d.timeEnd}</span></div></div>
+          <div class="fi"><div class="fl">上课地点 <span style="color:var(--danger);">*</span></div><div class="fv">${d.loc}</div></div>
+          <div class="fi"><div class="fl">辅导类型 <span style="color:var(--danger);">*</span></div><div class="fv">${d.type}</div></div>
+          <div class="fi"><div class="fl">辅导时长 <span style="color:var(--danger);">*</span></div><div class="fv">${d.h}</div></div>
+          <div class="fi"><div class="fl">上课人数 <span style="color:var(--danger);">*</span></div><div class="fv">${d.ppl} 人</div></div>
+          <div class="fi"><div class="fl">辅导内容 <span style="color:var(--danger);">*</span></div><div class="fv">${d.content}</div></div>
+          <div class="fi full"><div class="fl">辅导照片 <span style="color:var(--danger);">*</span></div><div class="hd-photos">${photosHTML}</div></div>
+        </div>
+      </div>
+
+      <div class="hd-audit-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          审核记录
+        </h4>
+        ${auditHTML}
+      </div>
+    `;
+
+    const foot=document.getElementById('hdFoot');
+    if(d.st==='待审批'){
+      foot.innerHTML=`
+        <button class="btn btn-ghost" onclick="closeModal('hourDetailModal')">关闭</button>
+        <button class="btn btn-primary" onclick="closeModal('hourDetailModal');showToast('请前往待办中心完成审核')">去审核</button>
+      `;
+    } else {
+      foot.innerHTML=`<button class="btn btn-ghost" onclick="closeModal('hourDetailModal')">关闭</button>`;
+    }
+
+    openModal('hourDetailModal');
+  }
+
+  const passData=[
+    {id:'P001',src:'学生自主申报',n:'李明杰',sid:'2023110001',course:'高等数学A · 微分方程专题',h:'2.5h',ppl:24,points:5,classTime:'2025-11-11 15:30',passTime:'2026-04-30 10:22',
+      semester:'2025-2026秋学期[第1学期]',timeStart:'2025-11-11 15:30:00',timeEnd:'2025-11-11 18:00:00',loc:'知新馆201',type:'一对多辅导',content:'辅导学生关于数据方面的解题思路',c:'院级辅学义工',
+      photos:['https://picsum.photos/seed/globe/200/140','https://picsum.photos/seed/books/200/140','https://picsum.photos/seed/campus/200/140','https://picsum.photos/seed/garden/200/140'],
+      audit:[{step:'初审 · 学生验算',who:'学生验算',date:'2025-11-21',result:'通过',note:'申请材料完整，学业成绩优异。'},{step:'二审 · 指导老师',who:'指导老师',date:'2025-11-23',result:'通过',note:'同意通过。'},{step:'备案 · 学工部',who:'学工部',date:'2025-11-25',result:'通过',note:'已备案。'}]},
+    {id:'P002',src:'学生自主申报',n:'王诗韵',sid:'2023110045',course:'大学英语六级真题精讲',h:'2h',ppl:30,points:3,classTime:'2025-11-10 19:00',passTime:'2026-04-28 11:18',
+      semester:'2025-2026秋学期[第1学期]',timeStart:'2025-11-10 19:00:00',timeEnd:'2025-11-10 21:00:00',loc:'知新馆205',type:'一对多辅导',content:'六级阅读理解真题讲解与答题技巧分析',c:'知新馆辅学义工',
+      photos:['https://picsum.photos/seed/eng1/200/140','https://picsum.photos/seed/eng2/200/140'],
+      audit:[{step:'初审 · 学生验算',who:'学生验算',date:'2025-11-11',result:'通过',note:'材料齐全。'},{step:'二审 · 指导老师',who:'指导老师',date:'2025-11-12',result:'通过',note:'同意通过。'},{step:'备案 · 学工部',who:'学工部',date:'2025-11-13',result:'通过',note:'已备案。'}]},
+    {id:'P003',src:'课表自动匹配',n:'陈思远',sid:'2022110023',course:'线性代数 · 行列式专题',h:'2h',ppl:28,points:3,classTime:'2025-11-09 10:00',passTime:'2026-04-27 20:01',
+      semester:'2025-2026秋学期[第1学期]',timeStart:'2025-11-09 10:00:00',timeEnd:'2025-11-09 12:00:00',loc:'知新馆408',type:'一对多辅导',content:'行列式性质与展开定理讲解',c:'知新馆辅学义工',
+      photos:['https://picsum.photos/seed/math1/200/140','https://picsum.photos/seed/math2/200/140','https://picsum.photos/seed/math3/200/140'],
+      audit:[{step:'初审 · 学生验算',who:'学生验算',date:'2025-11-10',result:'通过',note:'材料齐全。'},{step:'二审 · 指导老师',who:'指导老师',date:'2025-11-11',result:'通过',note:'同意。'},{step:'备案 · 学工部',who:'学工部',date:'2025-11-12',result:'通过',note:'已备案。'}]},
+    {id:'P004',src:'课表自动匹配',n:'刘子轩',sid:'2022110134',course:'C++ · STL 容器讲解',h:'2h',ppl:20,points:4,classTime:'2025-11-08 16:30',passTime:'2026-04-27 20:01',
+      semester:'2025-2026秋学期[第1学期]',timeStart:'2025-11-08 16:30:00',timeEnd:'2025-11-08 18:30:00',loc:'知新馆102',type:'一对多辅导',content:'STL容器vector/map/set使用与性能分析',c:'知新馆辅学义工',
+      photos:['https://picsum.photos/seed/cpp1/200/140'],
+      audit:[{step:'初审 · 学生验算',who:'学生验算',date:'2025-11-09',result:'通过',note:'材料齐全。'},{step:'二审 · 指导老师',who:'指导老师',date:'2025-11-10',result:'通过',note:'同意。'},{step:'备案 · 学工部',who:'学工部',date:'2025-11-11',result:'通过',note:'已备案。'}]},
+    {id:'P005',src:'学生自主申报',n:'周泽宇',sid:'2023110066',course:'大学物理 · 电磁学综合',h:'2h',ppl:22,points:3,classTime:'2026-04-21 19:00',passTime:'2026-04-24 14:30',
+      semester:'2025-2026春学期[第2学期]',timeStart:'2026-04-21 19:00:00',timeEnd:'2026-04-21 21:00:00',loc:'知新馆102',type:'一对多辅导',content:'电磁学公式推导与典型例题讲解',c:'知新馆辅学义工',
+      photos:['https://picsum.photos/seed/phy1/200/140','https://picsum.photos/seed/phy2/200/140','https://picsum.photos/seed/phy3/200/140'],
+      audit:[{step:'初审 · 学生验算',who:'学生验算',date:'2026-04-22',result:'通过',note:'材料齐全。'},{step:'二审 · 指导老师',who:'指导老师',date:'2026-04-23',result:'通过',note:'同意。'},{step:'备案 · 学工部',who:'学工部',date:'2026-04-24',result:'通过',note:'已备案。'}]},
+    {id:'P006',src:'课表自动匹配',n:'张三',sid:'2025415700',course:'C++ STL 容器专题讲解',h:'2h',ppl:23,points:4,classTime:'2026-04-20 15:30',passTime:'2026-04-29 09:00',
+      semester:'2025-2026秋学期[第1学期]',timeStart:'2026-04-20 15:30:00',timeEnd:'2026-04-20 17:30:00',loc:'知新馆301',type:'一对多辅导',content:'STL容器vector/map/set使用与性能分析',c:'院级辅学义工',
+      photos:['https://picsum.photos/seed/cpp1/200/140','https://picsum.photos/seed/cpp2/200/140'],
+      audit:[{step:'一审 · 分管老师',who:'张老师',date:'2026-04-29',result:'通过',note:'数据核实无误。'},{step:'二审 · 学工部长',who:'李部长',date:'2026-04-30',result:'通过',note:'同意通过。'}]},
+  ];
+
+  function resetPassFilter(){
+    ['fPassKw'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    ['fPassSrc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    ['fPassDateFrom','fPassDateTo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    renderPassTable();
+  }
+
+  function renderPassTable(){
+    const src=(document.getElementById('fPassSrc')||{}).value||'';
+    const kw=(document.getElementById('fPassKw')||{}).value||'';
+    const df=(document.getElementById('fPassDateFrom')||{}).value||'';
+    const dt=(document.getElementById('fPassDateTo')||{}).value||'';
+    const list=passData.filter(d=>{
+      if(src&&d.src!==src)return false;
+      if(kw&&!d.n.includes(kw)&&!d.sid.includes(kw)&&!d.course.includes(kw))return false;
+      if(df&&d.passTime.slice(0,10)<df)return false;
+      if(dt&&d.passTime.slice(0,10)>dt)return false;
+      return true;
+    });
+    const tbody=document.getElementById('historyTable');
+    if(!tbody)return;
+    tbody.innerHTML=list.map(d=>{
+      const srcTag=d.src==='课表自动匹配'?'tag-success':'tag-grey';
+      return `<tr>
+        <td><span class="tag ${srcTag}">${d.src}</span></td>
+        <td><strong>${d.n}</strong> / ${d.sid}</td>
+        <td>${d.course}</td>
+        <td><strong>${d.h}</strong></td>
+        <td>${d.ppl} 人</td>
+        <td><strong style="color:var(--warning);">${d.points} 分</strong></td>
+        <td style="color:var(--text-2);font-size:12px;">${d.classTime}</td>
+        <td style="color:var(--text-2);font-size:12px;">${d.passTime}</td>
+        <td><a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;" onclick="openPassDetail('${d.id}')">详情</a></td>
+      </tr>`;
+    }).join('');
+    const lbl=document.getElementById('passCountLabel');
+    if(lbl)lbl.textContent='共 '+list.length+' 条通过记录';
+  }
+  renderPassTable();
+
+  function openPassDetail(id){
+    const d=passData.find(x=>x.id===id);if(!d)return;
+    const photosHTML=d.photos&&d.photos.length
+      ? d.photos.map(p=>`<img src="${p}" alt="辅导照片" />`).join('')
+      : '<span style="color:var(--text-4);font-size:13px;">暂无照片</span>';
+    const auditHTML=d.audit.map(a=>`
+      <div class="hd-audit-item">
+        <div class="hd-audit-head"><strong>${a.step}</strong><span>${a.date}</span></div>
+        <div class="hd-audit-result" style="background:${a.result==='通过'?'var(--success-bg)':'var(--danger-bg)'};color:${a.result==='通过'?'var(--success)':'var(--danger)'};">${a.result}</div>
+        <div class="hd-audit-note">${a.note}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('hdBody').innerHTML=`
+      <div class="hd-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          基本信息
+        </h4>
+        <div class="hd-grid">
+          <div class="fi"><div class="fl">姓名/学号</div><div class="fv">${d.n} / ${d.sid}</div></div>
+          <div class="fi"><div class="fl">辅学义工类别</div><div class="fv"><span class="tag" style="border-radius:6px;">${d.c}</span></div></div>
+        </div>
+      </div>
+      <div class="hd-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          上课信息
+        </h4>
+        <div class="hd-grid">
+          <div class="fi"><div class="fl">辅导课程名称 <span style="color:var(--danger);">*</span></div><div class="fv">${d.course}</div></div>
+          <div class="fi"><div class="fl">学期 <span style="color:var(--danger);">*</span></div><div class="fv">${d.semester}</div></div>
+          <div class="fi"><div class="fl">上课时间 <span style="color:var(--danger);">*</span></div><div class="fv" style="display:flex;gap:12px;"><span style="background:var(--bg);padding:4px 12px;border-radius:6px;border:1px solid var(--border-light);font-size:13px;">${d.timeStart}</span><span style="background:var(--bg);padding:4px 12px;border-radius:6px;border:1px solid var(--border-light);font-size:13px;">${d.timeEnd}</span></div></div>
+          <div class="fi"><div class="fl">上课地点 <span style="color:var(--danger);">*</span></div><div class="fv">${d.loc}</div></div>
+          <div class="fi"><div class="fl">辅导类型 <span style="color:var(--danger);">*</span></div><div class="fv">${d.type}</div></div>
+          <div class="fi"><div class="fl">辅导时长 <span style="color:var(--danger);">*</span></div><div class="fv">${d.h}</div></div>
+          <div class="fi"><div class="fl">上课人数 <span style="color:var(--danger);">*</span></div><div class="fv">${d.ppl} 人</div></div>
+          <div class="fi"><div class="fl">辅导内容 <span style="color:var(--danger);">*</span></div><div class="fv">${d.content}</div></div>
+          <div class="fi full"><div class="fl">辅导照片 <span style="color:var(--danger);">*</span></div><div class="hd-photos">${photosHTML}</div></div>
+        </div>
+      </div>
+      <div class="hd-audit-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          审核记录
+        </h4>
+        ${auditHTML}
+      </div>
+    `;
+    document.getElementById('hdFoot').innerHTML='<button class="btn btn-ghost" onclick="closeModal(\'hourDetailModal\')">关闭</button>';
+    openModal('hourDetailModal');
+  }
+
+  // runScheduleMatchDemo 已由新增向导替代
+</script>
+<!-- AI 学工助手 -->
+<link rel="stylesheet" href="../assets/ai/ai-widget-pc.css">
+<script src="../assets/ai/ai-knowledge.js"></script>
+<script src="../assets/ai/ai-core.js"></script>
+<script src="../assets/ai/ai-widget-pc.js"></script>
+<script>
+  AIWidget.init({
+    pageId: 'hours',
+    pageName: '时长记录',
+    pageContext: '管理员正在查看义工时长记录与课表自动匹配。',
+    end: 'PC管理'
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>意见反馈 · 学风建设系统</title>
+<style>
+:root{
+  --primary:#3087CC;
+  --primary-light:#E3F1F9;
+  --primary-dark:#006DAD;
+  --primary-50:#F4FAFE;
+  --text-1:#3C444F;
+  --text-2:#696F7D;
+  --text-3:#9096A2;
+  --text-4:#ABB0BA;
+  --border:#E5E8EE;
+  --border-light:#EFF1F5;
+  --bg:#F4F6FA;
+  --bg-card:#FFFFFF;
+  --success:#1BB975;
+  --success-bg:#E8FCF4;
+  --success-border:#A7F3D0;
+  --warning:#F29100;
+  --warning-bg:#FFF5E5;
+  --warning-border:#FFE0B3;
+  --danger:#DF2027;
+  --danger-bg:#FCE8EA;
+  --danger-border:#F6BCBE;
+  --shadow-sm:0 1px 3px rgba(15,32,55,.05);
+  --shadow-md:0 4px 14px rgba(15,32,55,.06);
+  --shadow-lg:0 12px 32px rgba(15,32,55,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;font-size:14px;}
+body{min-height:100vh;display:flex;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+svg{display:block;flex-shrink:0;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D9DDE3;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#C0C5CD;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ====== Sidebar ====== */
+.sidebar{
+  width:232px;flex-shrink:0;background:#fff;
+  border-right:1px solid var(--border-light);
+  height:100vh;position:sticky;top:0;display:flex;flex-direction:column;
+}
+.brand{
+  padding:20px 20px 16px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border-light);
+}
+.brand-logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(48,135,204,.28);
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text strong{font-size:14px;font-weight:600;}
+.brand-text span{font-size:10px;color:var(--text-3);letter-spacing:.4px;margin-top:3px;}
+
+.nav-group{padding:16px 12px 8px;flex:1;overflow-y:auto;}
+.nav-group-title{
+  padding:8px 12px 6px;font-size:11px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;color:var(--text-2);
+  font-size:13px;cursor:pointer;transition:all .15s;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:var(--primary-50);color:var(--text-1);}
+.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:500;}
+.nav-item.active svg{color:var(--primary);}
+.nav-item .badge{
+  margin-left:auto;background:var(--danger);color:#fff;font-size:10px;
+  padding:1px 6px;border-radius:8px;font-weight:500;
+}
+.nav-item.active .badge{background:var(--primary);}
+
+.user-card{
+  margin:12px;padding:12px;border-radius:10px;
+  background:linear-gradient(135deg,#F4FAFE 0%,#E3F1F9 100%);
+  display:flex;align-items:center;gap:10px;
+}
+.user-card .ava{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:600;font-size:13px;
+}
+.user-card .info{flex:1;min-width:0;}
+.user-card .info h5{font-size:13px;font-weight:500;}
+.user-card .info p{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+/* ====== Main ====== */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{
+  height:60px;background:#fff;border-bottom:1px solid var(--border-light);
+  padding:0 28px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:10;
+}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--text-2);font-size:13px;}
+.crumb svg{color:var(--text-4);}
+.crumb a{color:var(--text-2);transition:color .15s;}
+.crumb a:hover{color:var(--primary);}
+.search{
+  margin-left:24px;width:320px;height:36px;border-radius:8px;
+  background:#F4F6FA;display:flex;align-items:center;padding:0 12px;gap:8px;
+  border:1px solid transparent;transition:all .15s;
+}
+.search:focus-within{background:#fff;border-color:var(--primary);}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:13px;color:var(--text-1);}
+.search input::placeholder{color:var(--text-4);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;position:relative;
+}
+.icon-btn:hover{background:#F4F6FA;color:var(--text-1);}
+.icon-btn .red-dot{
+  position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;
+  background:var(--danger);border:2px solid #fff;
+}
+.topbar-user{
+  display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;
+  border-radius:999px;cursor:pointer;
+}
+.topbar-user:hover{background:#F4F6FA;}
+.topbar-user .ava{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
+}
+.topbar-user span{font-size:13px;color:var(--text-1);}
+
+/* ====== Page Content ====== */
+.page{flex:1;padding:24px 28px;overflow-y:auto;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.page-head h1{font-size:22px;font-weight:600;}
+.page-head p{color:var(--text-3);font-size:13px;margin-top:6px;}
+.page-actions{display:flex;gap:8px;}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:500;
+  transition:all .15s;
+}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(48,135,204,.28);}
+.btn-ghost{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{height:30px;padding:0 10px;font-size:12px;}
+
+/* ====== Stat Cards ====== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.stat-card{
+  background:#fff;border-radius:14px;padding:20px 22px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.stat-card .blob{
+  position:absolute;width:140px;height:140px;border-radius:50%;
+  right:-40px;top:-40px;opacity:.35;
+}
+.stat-card .blob-1{background:radial-gradient(circle,#BFDDF6,transparent 65%);}
+.stat-card .blob-2{background:radial-gradient(circle,#FFE0B3,transparent 65%);}
+.stat-card .blob-3{background:radial-gradient(circle,#A7F3D0,transparent 65%);}
+.stat-card .blob-4{background:radial-gradient(circle,#F6BCBE,transparent 65%);}
+.stat-card .ic{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.stat-card .label{font-size:13px;color:var(--text-2);}
+.stat-card .num{
+  font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.5px;
+  display:flex;align-items:baseline;gap:6px;
+}
+.stat-card .num small{font-size:13px;color:var(--text-3);font-weight:400;}
+
+/* ====== Tag ====== */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500;
+  background:var(--primary-light);color:var(--primary);border:1px solid #BFDDF6;
+}
+.tag-success{background:var(--success-bg);color:var(--success);border-color:var(--success-border);}
+.tag-warning{background:var(--warning-bg);color:var(--warning);border-color:var(--warning-border);}
+.tag-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border);}
+.tag-grey{background:#F1F2F3;color:var(--text-3);border-color:var(--border);}
+
+/* ====== Filter Bar ====== */
+.filterbar{
+  background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:16px;
+  display:flex;flex-wrap:nowrap;gap:12px;align-items:center;
+  box-shadow:var(--shadow-sm);
+}
+.filterbar .field{display:flex;align-items:center;gap:6px;}
+.filterbar label{font-size:13px;color:var(--text-2);white-space:nowrap;}
+.input,.select{
+  height:34px;padding:0 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;color:var(--text-1);background:#fff;outline:none;min-width:0;
+  transition:all .15s;font-family:inherit;
+}
+.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(48,135,204,.12);}
+.filterbar .spacer{flex:1;}
+
+/* ====== Table ====== */
+.table-wrap{
+  background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{
+  background:#F8FAFC;color:var(--text-2);font-weight:500;
+  text-align:left;padding:14px 16px;font-size:12px;
+  border-bottom:1px solid var(--border-light);
+}
+tbody td{padding:14px 16px;border-bottom:1px solid var(--border-light);color:var(--text-1);}
+tbody tr:hover{background:#FAFBFD;}
+tbody tr:last-child td{border-bottom:none;}
+
+.table-foot{
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border-light);
+}
+.table-foot .count{color:var(--text-3);font-size:12px;}
+.pager{display:flex;align-items:center;gap:4px;}
+.pager button{
+  min-width:30px;height:30px;padding:0 8px;border-radius:6px;font-size:12px;color:var(--text-2);
+}
+.pager button:hover:not(:disabled){background:#F4F6FA;color:var(--text-1);}
+.pager button.active{background:var(--primary);color:#fff;}
+.pager button:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ====== Seg Tab ====== */
+.seg{
+  display:inline-flex;background:#F4F6FA;border-radius:10px;padding:4px;margin-bottom:18px;flex-wrap:wrap;gap:4px;
+}
+.seg button{
+  height:34px;padding:0 18px;border-radius:7px;font-size:13px;color:var(--text-2);font-weight:500;
+  transition:all .15s;
+}
+.seg button.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);}
+.seg button .seg-cnt{opacity:.65;margin-left:4px;font-size:12px;}
+
+/* ====== Modal ====== */
+.modal-mask{
+  position:fixed;inset:0;background:rgba(15,32,55,.42);z-index:100;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-mask.show{opacity:1;pointer-events:auto;}
+.modal{
+  background:#fff;border-radius:14px;width:720px;max-width:92vw;max-height:88vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.94);transition:transform .2s;
+}
+.modal-mask.show .modal{transform:scale(1);}
+.modal-head{
+  padding:18px 24px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h3{font-size:16px;font-weight:600;}
+.modal-body{padding:22px 24px;overflow-y:auto;flex:1;}
+.modal-foot{
+  padding:14px 24px;border-top:1px solid var(--border-light);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+
+/* ====== Detail Section ====== */
+.detail-section{margin-bottom:20px;background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:18px 20px;}
+.ds-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;
+  border-bottom:2px solid var(--primary);
+}
+.ds-ic{
+  width:28px;height:28px;border-radius:8px;background:var(--primary-light);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.ds-head h4{font-size:15px;font-weight:700;color:var(--text-1);margin:0;}
+.detail-section h4{font-size:14px;font-weight:600;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border-light);}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;}
+.detail-item{display:flex;gap:8px;font-size:13px;}
+.detail-item .dt{color:var(--text-3);min-width:70px;flex-shrink:0;}
+.detail-item .dd{color:var(--text-1);word-break:break-all;}
+.detail-full{grid-column:1/-1;}
+
+/* ====== Timeline ====== */
+.timeline{position:relative;padding-left:20px;}
+.timeline::before{content:"";position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:var(--border-light);}
+.tl-item{position:relative;padding-bottom:16px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-dot{
+  position:absolute;left:-20px;top:3px;width:12px;height:12px;border-radius:50%;
+  background:var(--border);border:2px solid #fff;box-shadow:0 0 0 2px var(--border-light);
+}
+.tl-item.active .tl-dot{background:var(--primary);box-shadow:0 0 0 2px var(--primary-light);}
+.tl-item.done .tl-dot{background:var(--success);box-shadow:0 0 0 2px var(--success-bg);}
+.tl-item.rejected .tl-dot{background:var(--danger);box-shadow:0 0 0 2px var(--danger-bg);}
+.tl-content{font-size:13px;color:var(--text-1);}
+.tl-content .tl-time{font-size:12px;color:var(--text-3);margin-top:2px;}
+.tl-content .tl-op{font-weight:500;color:var(--primary);}
+
+/* ====== Reply Box ====== */
+.reply-box{margin-top:16px;padding:16px;background:var(--bg);border-radius:10px;}
+.reply-box textarea{
+  width:100%;height:80px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;font-family:inherit;outline:none;resize:vertical;transition:all .15s;
+}
+.reply-box textarea:focus{border-color:var(--primary);}
+.reply-box .reply-actions{display:flex;gap:8px;margin-top:10px;justify-content:flex-end;}
+
+/* ====== Toast ====== */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#fff;border:1px solid var(--success-border);background:var(--success-bg);color:var(--success);
+  padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:8px;z-index:200;
+  opacity:0;pointer-events:none;transition:all .25s;
+  box-shadow:var(--shadow-lg);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- ====== Sidebar ====== -->
+<aside class="sidebar"></aside>
+
+<!-- ====== Main ====== -->
+<div class="main">
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="crumb">
+      <a href="dashboard.html">首页</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      <span>辅学义工</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      <span style="color:var(--text-1);font-weight:500;">意见反馈</span>
+    </div>
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="搜索反馈…" />
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="red-dot"></span>
+      </button>
+      <div class="topbar-user">
+        <div class="ava">王</div>
+        <span>王老师</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page -->
+  <div class="page">
+    <!-- Page Head -->
+    <div class="page-head">
+      <div>
+        <h1>意见反馈</h1>
+        <p>受理辅学义工提出的时长异议、积分异议、星级异议等各类意见反馈</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-ghost" onclick="exportData()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          导出
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="blob blob-1"></div>
+        <div class="ic" style="background:var(--primary-light);color:var(--primary);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="label">反馈总数</div>
+        <div class="num">28</div>
+      </div>
+      <div class="stat-card">
+        <div class="blob blob-2"></div>
+        <div class="ic" style="background:var(--warning-bg);color:var(--warning);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div class="label">待处理</div>
+        <div class="num">8</div>
+      </div>
+      <div class="stat-card">
+        <div class="blob blob-3"></div>
+        <div class="ic" style="background:var(--success-bg);color:var(--success);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="label">已通过</div>
+        <div class="num">14</div>
+      </div>
+      <div class="stat-card">
+        <div class="blob blob-4"></div>
+        <div class="ic" style="background:var(--danger-bg);color:var(--danger);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <div class="label">已驳回</div>
+        <div class="num">6</div>
+      </div>
+    </div>
+
+    <!-- Seg Tabs -->
+    <div class="seg" id="segTabs">
+      <button class="active" data-tab="all" onclick="switchTab('all')">全部<span class="seg-cnt">28</span></button>
+      <button data-tab="pending" onclick="switchTab('pending')">待处理<span class="seg-cnt">8</span></button>
+      <button data-tab="processing" onclick="switchTab('processing')">处理中<span class="seg-cnt">3</span></button>
+      <button data-tab="resolved" onclick="switchTab('resolved')">已通过<span class="seg-cnt">14</span></button>
+      <button data-tab="rejected" onclick="switchTab('rejected')">已驳回<span class="seg-cnt">6</span></button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filterbar">
+      <div class="field">
+        <label>反馈类型</label>
+        <select class="select" id="fType" style="width:120px;" onchange="renderTable()">
+          <option value="">全部</option>
+          <option value="时长异议">时长异议</option>
+          <option value="积分异议">积分异议</option>
+          <option value="星级异议">星级异议</option>
+          <option value="考勤异议">考勤异议</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>提交时间</label>
+        <input type="date" class="input" id="fDateFrom" style="width:140px;" onchange="renderTable()">
+        <span style="color:var(--text-3);">—</span>
+        <input type="date" class="input" id="fDateTo" style="width:140px;" onchange="renderTable()">
+      </div>
+      <div class="field">
+        <label>关键字</label>
+        <input type="text" class="input" id="fKw" placeholder="姓名、学号" style="width:160px;" oninput="renderTable()">
+      </div>
+      <div class="spacer"></div>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button class="btn btn-ghost btn-sm" onclick="resetFilter()">重置</button>
+        <button class="btn btn-primary btn-sm" onclick="renderTable()">查询</button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>反馈编号</th>
+            <th>义工姓名/学号</th>
+            <th>反馈类型</th>
+            <th>反馈内容摘要</th>
+            <th>提交时间</th>
+            <th>状态</th>
+            <th>处理人</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="table-foot">
+        <span class="count" id="tableCount">共 0 条</span>
+        <div class="pager">
+          <button disabled>&lt;</button>
+          <button class="active">1</button>
+          <button>&gt;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-mask" id="detailModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">反馈详情</h3>
+      <button onclick="closeModal()" style="color:var(--text-3);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toastMsg">操作成功</span>
+</div>
+
+<script>
+const PC_NAV = [
+  {group:'首页',items:[
+    {id:'dashboard',name:'数据概览',href:'dashboard.html',icon:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'}
+  ]},
+  {group:'辅学义工',items:[
+    {id:'volunteers',name:'申请管理',href:'volunteers.html',badge:12,icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>'},
+    {id:'hours',name:'时长记录',href:'hours.html',icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'},
+    {id:'stars',name:'星级评定',href:'stars.html',badge:5,icon:'<polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/>'},
+    {id:'groups',name:'分组管理',href:'groups.html',icon:'<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="9" r="3"/><path d="M22 21v-1a3 3 0 0 0-2-2.83"/>'},
+    {id:'appeals',name:'意见反馈',href:'appeals.html',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/>'},
+    {id:'volunteer-manage',name:'义工管理',href:'volunteer-manage.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'}
+  ]},
+  {group:'知新选课',items:[
+    {id:'courses',name:'课程管理',href:'courses.html',badge:8,icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'},
+    {id:'course-categories',name:'课程分类',href:'course-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'venue-bookings',name:'场地预约',href:'venue-bookings.html',badge:6,icon:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'},
+    {id:'posters',name:'开屏海报',href:'posters.html',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'}
+  ]},
+  {group:'即问即答',items:[
+    {id:'qa-content',name:'内容管理',href:'qa-content.html',badge:3,icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+    {id:'qa-categories',name:'学科分类',href:'qa-categories.html',icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'},
+    {id:'qa-users',name:'用户管理',href:'qa-users.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+  ]},
+  {group:'宝藏资料库',items:[
+    {id:'library',name:'资料审库管理',href:'library.html',badge:11,icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {id:'library-categories',name:'资料分类',href:'library-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'uploaders',name:'上传者管理',href:'uploaders.html',icon:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>'},
+    {id:'library-feedback',name:'反馈与需求池',href:'library-feedback.html',icon:'<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><line x1="7" y1="22" x2="7" y2="11"/>'}
+  ]},
+  {group:'系统配置',items:[
+    {id:'analytics',name:'数据分析',href:'analytics.html',icon:'<path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/>'},
+    {id:'settings',name:'系统配置',href:'settings.html',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+    {id:'ai-settings',name:'AI 助手配置',href:'ai-settings.html',icon:'<path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/><circle cx="19" cy="5" r="1.5"/>'}
+  ]}
+];
+
+function renderSidebar(activeId){
+  const sidebar = document.querySelector('.sidebar');
+  if(!sidebar) return;
+  const navHTML = PC_NAV.map((g,i)=>`
+    <div class="nav-group-title" ${i>0?'style="margin-top:14px;"':''}>${g.group}</div>
+    ${g.items.map(it=>`
+      <a class="nav-item ${it.id===activeId?'active':''}" href="${it.href}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg>
+        ${it.name}
+        ${it.badge?`<span class="badge">${it.badge}</span>`:''}
+      </a>
+    `).join('')}
+  `).join('');
+  sidebar.innerHTML = `
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="brand-text">
+        <strong>学风建设系统</strong>
+        <span>管理后台 v2.0</span>
+      </div>
+    </div>
+    <nav class="nav-group">${navHTML}</nav>
+    <div class="user-card">
+      <div class="ava">王</div>
+      <div class="info"><h5>王老师</h5><p>管理员</p></div>
+    </div>
+  `;
+}
+
+const feedbackData = [
+  {id:'FB2025001',name:'张三',sid:'2022301001',type:'时长异议',summary:'5月6日辅导课实际时长2小时，系统仅记录1小时，请核实',submitTime:'2025-05-10 14:30',status:'待处理',handler:'—',
+    detail:'5月6日下午在B203辅导"高等数学"课程，实际辅导时间为14:00-16:00共2小时，但系统只记录了1小时。附有签到照片和学生确认截图。',
+    course:'高等数学',claimValue:'2小时',systemValue:'1小时',evidence:['签到照片.jpg','学生确认截图.png'],
+    timeline:[{time:'2025-05-10 14:30',op:'张三',action:'提交反馈',status:'active'}]},
+  {id:'FB2025002',name:'李四',sid:'2022301002',type:'积分异议',summary:'4月积分统计缺少2次辅导记录的积分',submitTime:'2025-05-09 10:15',status:'处理中',handler:'王老师',
+    detail:'4月15日和4月22日分别进行了两次辅导，每次应获得5积分，但月度统计中未计入这两次的积分。',
+    course:'大学英语',claimValue:'10积分',systemValue:'0积分',evidence:['辅导记录截图.png'],
+    timeline:[{time:'2025-05-09 10:15',op:'李四',action:'提交反馈',status:'done'},{time:'2025-05-09 16:00',op:'王老师',action:'开始处理，核实中',status:'active'}]},
+  {id:'FB2025003',name:'王五',sid:'2022301003',type:'星级异议',summary:'符合三星评定条件但当前仅二星，申请重新评定',submitTime:'2025-05-08 09:20',status:'已通过',handler:'李老师',
+    detail:'累计辅导时长已达100小时，学生评价均分4.8，满足三星义工评定标准，但系统显示当前为二星，申请重新评定。',
+    course:'—',claimValue:'三星义工',systemValue:'二星义工',evidence:['时长统计截图.png','学生评价汇总.pdf'],
+    timeline:[{time:'2025-05-08 09:20',op:'王五',action:'提交反馈',status:'done'},{time:'2025-05-08 14:00',op:'李老师',action:'核实通过，已更新星级',status:'done'}],
+    result:'经核实，该义工确已满足三星评定条件，星级已更新为三星。'},
+  {id:'FB2025004',name:'赵六',sid:'2022301004',type:'时长异议',summary:'系统考勤异常导致缺勤记录，实际已到场',submitTime:'2025-05-07 16:45',status:'已驳回',handler:'王老师',
+    detail:'5月3日的辅导课签到设备故障，未能正常签到，但本人确实在场辅导。',
+    course:'线性代数',claimValue:'出勤',systemValue:'缺勤',evidence:['现场照片.jpg'],
+    timeline:[{time:'2025-05-07 16:45',op:'赵六',action:'提交反馈',status:'done'},{time:'2025-05-08 10:30',op:'王老师',action:'驳回：经调取监控，未发现当日出勤记录',status:'rejected'}],
+    result:'经调取当日监控录像，未发现反馈人出勤记录，反馈驳回。'},
+  {id:'FB2025005',name:'孙七',sid:'2022301005',type:'积分异议',summary:'参加培训活动应获得额外积分未到账',submitTime:'2025-05-06 11:30',status:'已通过',handler:'李老师',
+    detail:'4月28日参加了义工技能提升培训，按规定应获得3积分奖励，目前未到账。',
+    course:'—',claimValue:'3积分',systemValue:'0积分',evidence:['培训签到表.jpg','培训通知.png'],
+    timeline:[{time:'2025-05-06 11:30',op:'孙七',action:'提交反馈',status:'done'},{time:'2025-05-07 09:00',op:'李老师',action:'核实通过，积分已补发',status:'done'}],
+    result:'经核实，培训积分确实遗漏，已补发3积分。'},
+  {id:'FB2025006',name:'周八',sid:'2022301006',type:'考勤异议',summary:'请假已获批但系统记录为旷课',submitTime:'2025-05-05 13:20',status:'待处理',handler:'—',
+    detail:'5月1日因病请假，已提前向负责老师请假并获批准，但系统记录为旷课。',
+    course:'大学物理',claimValue:'请假',systemValue:'旷课',evidence:['请假审批截图.png','医院诊断证明.jpg'],
+    timeline:[{time:'2025-05-05 13:20',op:'周八',action:'提交反馈',status:'active'}]},
+  {id:'FB2025007',name:'吴九',sid:'2022301007',type:'星级异议',summary:'星级降级通知不合理，存在数据统计错误',submitTime:'2025-05-04 08:50',status:'处理中',handler:'王老师',
+    detail:'收到星级由三星降至二星的通知，但个人统计的辅导时长和评价分数均达标，怀疑存在数据统计错误。',
+    course:'—',claimValue:'维持三星',systemValue:'降为二星',evidence:['个人统计截图.png'],
+    timeline:[{time:'2025-05-04 08:50',op:'吴九',action:'提交反馈',status:'done'},{time:'2025-05-05 10:00',op:'王老师',action:'正在核实数据',status:'active'}]},
+  {id:'FB2025008',name:'郑十',sid:'2022301008',type:'其他',summary:'义工证书信息有误，姓名拼写错误',submitTime:'2025-05-03 15:10',status:'已通过',handler:'李老师',
+    detail:'下发的义工荣誉证书中，姓名拼写有误，"郑"字误写为"正"，申请更正并补发。',
+    course:'—',claimValue:'更正证书',systemValue:'—',evidence:['证书照片.jpg'],
+    timeline:[{time:'2025-05-03 15:10',op:'郑十',action:'提交反馈',status:'done'},{time:'2025-05-04 11:00',op:'李老师',action:'已更正并安排补发',status:'done'}],
+    result:'证书已更正，安排重新制作并发放。'},
+];
+
+let currentTab = 'all';
+
+function switchTab(tab){
+  currentTab = tab;
+  document.querySelectorAll('#segTabs button').forEach(b=>{
+    b.classList.toggle('active',b.dataset.tab===tab);
+  });
+  renderTable();
+}
+
+function resetFilter(){
+  document.getElementById('fType').value='';
+  document.getElementById('fDateFrom').value='';
+  document.getElementById('fDateTo').value='';
+  document.getElementById('fKw').value='';
+  renderTable();
+}
+
+function getStatusTag(s){
+  const map = {
+    '待处理':'tag-warning',
+    '处理中':'tag',
+    '已通过':'tag-success',
+    '已驳回':'tag-danger'
+  };
+  return `<span class="tag ${map[s]||'tag-grey'}">${s}</span>`;
+}
+
+function renderTable(){
+  const type = document.getElementById('fType').value;
+  const dateFrom = document.getElementById('fDateFrom').value;
+  const dateTo = document.getElementById('fDateTo').value;
+  const kw = document.getElementById('fKw').value.trim().toLowerCase();
+
+  let data = feedbackData.filter(d=>{
+    if(currentTab==='pending' && d.status!=='待处理') return false;
+    if(currentTab==='processing' && d.status!=='处理中') return false;
+    if(currentTab==='resolved' && d.status!=='已通过') return false;
+    if(currentTab==='rejected' && d.status!=='已驳回') return false;
+    if(type && d.type!==type) return false;
+    if(dateFrom && d.submitTime<dateFrom) return false;
+    if(dateTo && d.submitTime<dateTo+'T99') ;
+    if(kw && !d.name.toLowerCase().includes(kw) && !d.sid.includes(kw)) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = data.map(d=>`
+    <tr>
+      <td style="color:var(--primary);font-weight:500;">${d.id}</td>
+      <td>${d.name}<br><span style="color:var(--text-3);font-size:12px;">${d.sid}</span></td>
+      <td><span class="tag ${d.type==='时长异议'?'tag':d.type==='积分异议'?'tag-warning':d.type==='星级异议'?'tag-success':d.type==='考勤异议'?'tag-danger':'tag-grey'}">${d.type}</span></td>
+      <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.summary}</td>
+      <td style="color:var(--text-2);font-size:12px;">${d.submitTime}</td>
+      <td>${getStatusTag(d.status)}</td>
+      <td style="color:var(--text-2);">${d.handler}</td>
+      <td style="white-space:nowrap;">
+        <a href="javascript:void(0)" onclick="openDetail('${d.id}')" style="color:var(--primary);font-weight:500;margin-right:8px;">详情</a>
+        ${d.status==='待处理'||d.status==='处理中'?`<a href="javascript:void(0)" onclick="showToast('请前往代办业务进行处理')" style="color:var(--warning);font-weight:500;">去处理</a>`:''}
+      </td>
+    </tr>
+  `).join('');
+
+  document.getElementById('tableCount').textContent = `共 ${data.length} 条`;
+}
+
+function openDetail(id){
+  const d = feedbackData.find(x=>x.id===id);
+  if(!d) return;
+
+  const body = document.getElementById('modalBody');
+  const foot = document.getElementById('modalFoot');
+  document.getElementById('modalTitle').textContent = `反馈详情 - ${d.id}`;
+
+  let timelineHTML = d.timeline.map(t=>`
+    <div class="tl-item ${t.status}">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div><span class="tl-op">${t.op}</span> ${t.action}</div>
+        <div class="tl-time">${t.time}</div>
+      </div>
+    </div>
+  `).join('');
+
+  body.innerHTML = `
+    <div class="detail-section">
+      <div class="ds-head">
+        <div class="ds-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
+        <h4>基本信息</h4>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="dt">姓名</span><span class="dd">${d.name}</span></div>
+        <div class="detail-item"><span class="dt">学号</span><span class="dd">${d.sid}</span></div>
+        <div class="detail-item"><span class="dt">反馈类型</span><span class="dd"><span class="tag">${d.type}</span></span></div>
+        <div class="detail-item"><span class="dt">提交时间</span><span class="dd">${d.submitTime}</span></div>
+        <div class="detail-item"><span class="dt">当前状态</span><span class="dd">${getStatusTag(d.status)}</span></div>
+        <div class="detail-item"><span class="dt">处理人</span><span class="dd">${d.handler}</span></div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="ds-head" style="justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="ds-ic" style="background:var(--danger-bg);color:var(--danger);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <h4>反馈内容</h4>
+        </div>
+        <button type="button" id="aiVerifyBtn" onclick="aiVerifyFeedback('${d.id}')" style="padding:4px 11px;border-radius:6px;background:#fff;color:#5B3CA1;font-size:11px;font-weight:500;cursor:pointer;border:1px solid #D9D2F0;display:inline-flex;align-items:center;gap:4px;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg>
+          AI 核实真实性
+        </button>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="dt">反馈分类</span><span class="dd">${d.type}</span></div>
+        <div class="detail-item detail-full"><span class="dt">反馈内容</span><span class="dd" style="line-height:1.8;">${d.detail}</span></div>
+        <div class="detail-item detail-full"><span class="dt">证据材料</span><span class="dd">${d.evidence.map(e=>`
+          <span style="display:inline-flex;align-items:center;gap:6px;background:var(--primary-light);color:var(--primary);border-radius:5px;padding:3px 10px;font-size:12px;margin-right:8px;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            ${e}
+          </span>`).join('')}</span></div>
+      </div>
+      <!-- AI 核实结果 -->
+      <div id="aiVerifyResult" style="display:none;margin-top:12px;padding:11px 14px;border-radius:8px;font-size:12px;line-height:1.8;white-space:pre-line;border:1px solid #E0D8F6;background:linear-gradient(135deg,#F4F0FF,#F4FAFE);color:var(--text-1);"></div>
+    </div>
+
+    ${d.result?`
+    <div class="detail-section">
+      <div class="ds-head">
+        <div class="ds-ic" style="background:${d.status==='已通过'?'var(--success-bg)':'var(--danger-bg)'};color:${d.status==='已通过'?'var(--success)':'var(--danger)'};"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h4>处理结果</h4>
+      </div>
+      <div style="padding:12px 16px;background:${d.status==='已通过'?'var(--success-bg)':'var(--danger-bg)'};border-radius:8px;font-size:13px;color:${d.status==='已通过'?'var(--success)':'var(--danger)'};">
+        ${d.result}
+      </div>
+    </div>`:''}
+
+    <div class="detail-section">
+      <div class="ds-head">
+        <div class="ds-ic" style="background:var(--success-bg);color:var(--success);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <h4>处理进度</h4>
+      </div>
+      <div class="timeline">${timelineHTML}</div>
+    </div>
+
+    ${d.status==='待处理'||d.status==='处理中'?`
+    <div class="reply-box">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="display:flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          处理回复
+        </span>
+        <span style="display:flex;gap:6px;">
+          <button type="button" class="xfjs-ai-inline-btn" onclick="aiDraftReply('${d.id}','approve')">
+            <svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg>
+            AI 起草通过回复
+          </button>
+          <button type="button" class="xfjs-ai-inline-btn" onclick="aiDraftReply('${d.id}','reject')">
+            <svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg>
+            AI 起草驳回回复
+          </button>
+        </span>
+      </div>
+      <textarea id="replyText" placeholder="请输入处理意见，可点击右上角"AI 起草"快速生成回复模板…"></textarea>
+    </div>`:''}
+  `;
+
+  if(d.status==='待处理'||d.status==='处理中'){
+    foot.innerHTML = `
+      <button class="btn btn-ghost" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="handleFeedback('${d.id}')">保存</button>`;
+  } else {
+    foot.innerHTML = `<button class="btn btn-ghost" onclick="closeModal()">关闭</button>`;
+  }
+
+  document.getElementById('detailModal').classList.add('show');
+}
+
+// AI 起草反馈回复
+function aiDraftReply(id, mode){
+  const d = (typeof feedbackData!=='undefined' ? feedbackData : (window.appealsData||[])).find(x=>x.id===id);
+  const ta = document.getElementById('replyText');
+  if(!ta) return;
+  const which = mode==='approve' ? '通过' : '驳回';
+  ta.value = '⏳ AI 正在起草' + which + '回复...';
+  ta.disabled = true;
+  let full = '';
+  AICore.chat({
+    messages:[{ role:'user', content:`请帮我起草一段"${which}"学生意见反馈的回复。要求：开头共情、说明依据、明确结论、给出后续动作或下一步。语气友善专业，控制在 80-120 字，直接输出回复正文，不要加签名。\n反馈分类：${d&&d.type||'未填写'}\n反馈内容：${d&&d.detail||'未填写'}` }],
+    pageContext:{ pageId:'appeals', pageName:'意见反馈', pageContext:'管理员正在起草意见反馈回复' },
+    onChunk:(c)=>{ if(full==='') ta.value=''; full += c; ta.value = full; },
+    onDone:()=>{ ta.disabled = false; showToast('AI 已起草回复，可继续修改'); },
+    onError:(e)=>{ ta.disabled = false; ta.value=''; showToast('生成失败：'+(e&&e.message||e)); }
+  });
+}
+
+// AI 核实反馈真实性
+function aiVerifyFeedback(id){
+  const btn    = document.getElementById('aiVerifyBtn');
+  const resBox = document.getElementById('aiVerifyResult');
+  if(!resBox) return;
+  const d = feedbackData.find(x=>x.id===id);
+  if(!d){ resBox.style.display='block'; resBox.textContent='暂无数据'; return; }
+
+  if(btn){ btn.disabled=true; btn.textContent='核实中…'; }
+  resBox.style.display = 'block';
+  resBox.textContent = '⏳ AI 正在分析反馈内容真实性…';
+
+  setTimeout(()=>{
+    const hasEvidence = d.evidence && d.evidence.length > 0;
+    const detailLen = (d.detail||'').length;
+    const submitDate = new Date(d.submitTime);
+    const now = new Date('2026-05-18');
+    const dayDiff = isNaN(submitDate.getTime()) ? null : Math.floor((now - submitDate) / 864e5);
+
+    // 根据反馈类型给出核实要点
+    const checkPoints = {
+      '时长异议':   ['建议调取该日期的课程签到系统记录进行核对', '确认课程实际时长是否与系统录入存在差异'],
+      '积分异议':   ['核查对应时间段内的积分流水明细', '确认是否存在漏录或计算错误情况'],
+      '星级异议':   ['调取星级评定原始数据与评定规则进行比对', '确认评定周期内时长数据是否完整'],
+      '考勤异议':   ['调阅当日考勤打卡或签到记录', '核查请假审批流程是否完成但未同步到考勤系统'],
+    };
+    const points = checkPoints[d.type] || ['建议调取相关系统记录进行核实', '确认反馈内容与实际数据是否一致'];
+
+    const credibility = hasEvidence
+      ? `反馈附有 ${d.evidence.length} 份证据材料，初步可信度较高。`
+      : `反馈未附证据材料，建议要求义工补充证明文件后再行处理。`;
+
+    const urgency = dayDiff !== null && dayDiff <= 3 ? '⚡ 该反馈提交时间较近，建议优先跟进。' : '';
+
+    const text = [
+      `【可信度评估】${credibility}`,
+      `\n【反馈内容分析】内容描述${detailLen > 30 ? '较为详细，信息完整' : '较为简短，可请义工进一步说明'}。`,
+      `\n【核实建议】\n• ${points.join('\n• ')}`,
+      urgency ? `\n\n${urgency}` : ''
+    ].join('');
+
+    let i = 0; resBox.textContent = '';
+    function tick(){ if(i<text.length){ resBox.textContent += text[i++]; setTimeout(tick,13); } else { if(btn){ btn.disabled=false; btn.innerHTML='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> 重新核实'; } } }
+    tick();
+  }, 700);
+}
+
+function handleFeedback(id){
+  const reply = document.getElementById('replyText');
+  if(!reply || !reply.value.trim()){
+    showToast('请填写处理意见');
+    return;
+  }
+  const d = feedbackData.find(x=>x.id===id);
+  if(d){
+    d.handler = '王老师';
+    d.result = reply.value.trim();
+    d.timeline.push({
+      time: new Date().toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-'),
+      op: '王老师',
+      action: '处理意见已保存：'+d.result,
+      status: 'done'
+    });
+  }
+  closeModal();
+  renderTable();
+  showToast('处理意见已保存');
+}
+
+function closeModal(){
+  document.getElementById('detailModal').classList.remove('show');
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function exportData(){
+  showToast('导出成功，文件已下载');
+}
+
+renderSidebar('appeals');
+renderTable();
+</script>
+
+<!-- AI 学工助手 -->
+<link rel="stylesheet" href="../assets/ai/ai-widget-pc.css">
+<script src="../assets/ai/ai-knowledge.js"></script>
+<script src="../assets/ai/ai-core.js"></script>
+<script src="../assets/ai/ai-widget-pc.js"></script>
+<script>
+  AIWidget.init({
+    pageId: 'appeals',
+    pageName: '意见反馈',
+    pageContext: '管理员正在处理学生提交的意见反馈，可记录处理进度与回复。',
+    end: 'PC管理'
+  });
+</script>
+</body>
+</html>

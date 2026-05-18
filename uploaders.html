@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>上传者管理 · 学风建设系统</title>
+<style>
+:root{
+  --primary:#3087CC;
+  --primary-light:#E3F1F9;
+  --primary-dark:#006DAD;
+  --primary-50:#F4FAFE;
+  --text-1:#3C444F;
+  --text-2:#696F7D;
+  --text-3:#9096A2;
+  --text-4:#ABB0BA;
+  --border:#E5E8EE;
+  --border-light:#EFF1F5;
+  --bg:#F4F6FA;
+  --bg-card:#FFFFFF;
+  --success:#1BB975;
+  --success-bg:#E8FCF4;
+  --success-border:#A7F3D0;
+  --warning:#F29100;
+  --warning-bg:#FFF5E5;
+  --warning-border:#FFE0B3;
+  --danger:#DF2027;
+  --danger-bg:#FCE8EA;
+  --danger-border:#F6BCBE;
+  --shadow-sm:0 1px 3px rgba(15,32,55,.05);
+  --shadow-md:0 4px 14px rgba(15,32,55,.06);
+  --shadow-lg:0 12px 32px rgba(15,32,55,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;font-size:14px;}
+body{min-height:100vh;display:flex;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+svg{display:block;flex-shrink:0;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D9DDE3;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#C0C5CD;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ====== Sidebar ====== */
+.sidebar{
+  width:232px;flex-shrink:0;background:#fff;
+  border-right:1px solid var(--border-light);
+  height:100vh;position:sticky;top:0;display:flex;flex-direction:column;
+}
+.brand{
+  padding:20px 20px 16px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border-light);
+}
+.brand-logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(48,135,204,.28);
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text strong{font-size:14px;font-weight:600;}
+.brand-text span{font-size:10px;color:var(--text-3);letter-spacing:.4px;margin-top:3px;}
+
+.nav-group{padding:16px 12px 8px;flex:1;overflow-y:auto;}
+.nav-group-title{
+  padding:8px 12px 6px;font-size:11px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;color:var(--text-2);
+  font-size:13px;cursor:pointer;transition:all .15s;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:var(--primary-50);color:var(--text-1);}
+.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:500;}
+.nav-item.active svg{color:var(--primary);}
+.nav-item .badge{
+  margin-left:auto;background:var(--danger);color:#fff;font-size:10px;
+  padding:1px 6px;border-radius:8px;font-weight:500;
+}
+.nav-item.active .badge{background:var(--primary);}
+
+.user-card{
+  margin:12px;padding:12px;border-radius:10px;
+  background:linear-gradient(135deg,#F4FAFE 0%,#E3F1F9 100%);
+  display:flex;align-items:center;gap:10px;
+}
+.user-card .ava{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:600;font-size:13px;
+}
+.user-card .info{flex:1;min-width:0;}
+.user-card .info h5{font-size:13px;font-weight:500;}
+.user-card .info p{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+/* ====== Main ====== */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{
+  height:60px;background:#fff;border-bottom:1px solid var(--border-light);
+  padding:0 28px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:10;
+}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--text-2);font-size:13px;}
+.crumb svg{color:var(--text-4);}
+.crumb a{color:var(--text-2);transition:color .15s;}
+.crumb a:hover{color:var(--primary);}
+.search{
+  margin-left:24px;width:320px;height:36px;border-radius:8px;
+  background:#F4F6FA;display:flex;align-items:center;padding:0 12px;gap:8px;
+  border:1px solid transparent;transition:all .15s;
+}
+.search:focus-within{background:#fff;border-color:var(--primary);}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:13px;color:var(--text-1);}
+.search input::placeholder{color:var(--text-4);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;position:relative;
+}
+.icon-btn:hover{background:#F4F6FA;color:var(--text-1);}
+.icon-btn .red-dot{
+  position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;
+  background:var(--danger);border:2px solid #fff;
+}
+.topbar-user{
+  display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;
+  border-radius:999px;cursor:pointer;
+}
+.topbar-user:hover{background:#F4F6FA;}
+.topbar-user .ava{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
+}
+.topbar-user span{font-size:13px;color:var(--text-1);}
+
+/* ====== Page Content ====== */
+.page{flex:1;padding:24px 28px;overflow-y:auto;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.page-head h1{font-size:22px;font-weight:600;}
+.page-head p{color:var(--text-3);font-size:13px;margin-top:6px;}
+.page-actions{display:flex;gap:8px;}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:500;
+  transition:all .15s;
+}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(48,135,204,.28);}
+.btn-secondary{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+.btn-secondary:hover{background:var(--primary-light);}
+.btn-ghost{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{height:30px;padding:0 10px;font-size:12px;}
+
+/* ====== Stat Cards ====== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.stats-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.stat-card{
+  background:#fff;border-radius:14px;padding:20px 22px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.stat-card .blob{
+  position:absolute;width:140px;height:140px;border-radius:50%;
+  right:-40px;top:-40px;opacity:.35;
+}
+.stat-card .blob-1{background:radial-gradient(circle,#BFDDF6,transparent 65%);}
+.stat-card .blob-2{background:radial-gradient(circle,#FFE0B3,transparent 65%);}
+.stat-card .blob-3{background:radial-gradient(circle,#A7F3D0,transparent 65%);}
+.stat-card .blob-4{background:radial-gradient(circle,#F6BCBE,transparent 65%);}
+.stat-card .ic{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.stat-card .label{font-size:13px;color:var(--text-2);}
+.stat-card .num{
+  font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.5px;
+  display:flex;align-items:baseline;gap:6px;
+}
+.stat-card .num small{font-size:13px;color:var(--text-3);font-weight:400;}
+.stat-card .delta{
+  font-size:12px;margin-top:8px;display:flex;align-items:center;gap:4px;
+}
+.delta.up{color:var(--success);}
+.delta.down{color:var(--danger);}
+.delta.neutral{color:var(--text-3);}
+
+/* ====== Layout grids ====== */
+.row-2{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:20px;}
+.row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+
+.panel{
+  background:#fff;border-radius:14px;padding:22px 24px;
+  box-shadow:var(--shadow-sm);
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;
+}
+.panel-head h3{font-size:16px;font-weight:600;}
+.panel-head p{font-size:12px;color:var(--text-3);margin-top:2px;}
+.panel-tabs{display:flex;gap:4px;background:#F4F6FA;border-radius:8px;padding:3px;}
+.panel-tabs button{
+  height:28px;padding:0 12px;border-radius:6px;font-size:12px;color:var(--text-2);transition:all .15s;
+}
+.panel-tabs button.active{background:#fff;color:var(--primary);font-weight:500;box-shadow:var(--shadow-sm);}
+
+/* ====== Chart ====== */
+.chart-wrap{height:280px;position:relative;}
+
+/* ====== Approval list ====== */
+.approval-list{display:flex;flex-direction:column;gap:10px;}
+.approval-item{
+  padding:14px;border:1px solid var(--border-light);border-radius:10px;
+  display:flex;align-items:center;gap:12px;transition:all .15s;
+}
+.approval-item:hover{border-color:var(--primary);background:var(--primary-50);}
+.approval-item .ava{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;
+  flex-shrink:0;
+}
+.approval-item .text{flex:1;min-width:0;}
+.approval-item .text h5{font-size:14px;font-weight:500;}
+.approval-item .text p{font-size:12px;color:var(--text-3);margin-top:3px;}
+.approval-item .actions{display:flex;gap:6px;}
+
+/* ====== Tag ====== */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500;
+  background:var(--primary-light);color:var(--primary);border:1px solid #BFDDF6;
+}
+.tag-success{background:var(--success-bg);color:var(--success);border-color:var(--success-border);}
+.tag-warning{background:var(--warning-bg);color:var(--warning);border-color:var(--warning-border);}
+.tag-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border);}
+.tag-grey{background:#F1F2F3;color:var(--text-3);border-color:var(--border);}
+
+/* ====== Star ====== */
+.stars{display:inline-flex;gap:2px;}
+.stars svg{width:14px;height:14px;color:#FFC53D;}
+.stars.empty svg{color:#E5E8EE;}
+
+/* ====== Filter Bar ====== */
+.filterbar{
+  background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:16px;
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+  box-shadow:var(--shadow-sm);
+}
+.filterbar .field{display:flex;align-items:center;gap:6px;}
+.filterbar label{font-size:13px;color:var(--text-2);}
+.input,.select{
+  height:34px;padding:0 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;color:var(--text-1);background:#fff;outline:none;min-width:140px;
+  transition:all .15s;font-family:inherit;
+}
+.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(48,135,204,.12);}
+.filterbar .spacer{flex:1;}
+
+/* ====== Table ====== */
+.table-wrap{
+  background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{
+  background:#F8FAFC;color:var(--text-2);font-weight:500;
+  text-align:left;padding:14px 16px;font-size:12px;
+  border-bottom:1px solid var(--border-light);
+}
+tbody td{padding:14px 16px;border-bottom:1px solid var(--border-light);color:var(--text-1);}
+tbody tr:hover{background:#FAFBFD;}
+tbody tr:last-child td{border-bottom:none;}
+.checkbox{width:14px;height:14px;border:1.5px solid var(--border);border-radius:3px;cursor:pointer;display:inline-block;vertical-align:middle;position:relative;}
+.checkbox.checked{background:var(--primary);border-color:var(--primary);}
+.checkbox.checked::after{
+  content:"";position:absolute;left:3px;top:0;width:5px;height:9px;
+  border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);
+}
+.row-action{display:inline-flex;gap:4px;align-items:center;}
+.row-action button{
+  width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;
+}
+.row-action button:hover{background:var(--primary-light);color:var(--primary);}
+.row-action button.danger:hover{background:var(--danger-bg);color:var(--danger);}
+
+.table-foot{
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border-light);
+}
+.table-foot .count{color:var(--text-3);font-size:12px;}
+.pager{display:flex;align-items:center;gap:4px;}
+.pager button{
+  min-width:30px;height:30px;padding:0 8px;border-radius:6px;font-size:12px;color:var(--text-2);
+}
+.pager button:hover:not(:disabled){background:#F4F6FA;color:var(--text-1);}
+.pager button.active{background:var(--primary);color:#fff;}
+.pager button:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ====== Tab nav inside page ====== */
+.seg{
+  display:inline-flex;background:#F4F6FA;border-radius:10px;padding:4px;margin-bottom:18px;flex-wrap:wrap;gap:4px;
+}
+.seg button{
+  height:34px;padding:0 18px;border-radius:7px;font-size:13px;color:var(--text-2);font-weight:500;
+  transition:all .15s;
+}
+.seg button.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);}
+
+/* ====== Schedule cards ====== */
+.sch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.sch-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;
+}
+.sch-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.sch-card .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;}
+.sch-card h5{font-size:14px;font-weight:600;}
+.sch-card .meta{font-size:12px;color:var(--text-3);margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sch-card .meta span{display:inline-flex;align-items:center;gap:4px;}
+
+/* ====== Group cards ====== */
+.group-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.group-card{
+  background:#fff;border-radius:14px;padding:20px;
+  box-shadow:var(--shadow-sm);position:relative;overflow:hidden;
+  transition:all .2s;cursor:pointer;
+}
+.group-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.group-card::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:4px;
+}
+.group-card.math::before{background:linear-gradient(90deg,#3087CC,#9CBFDA);}
+.group-card.physics::before{background:linear-gradient(90deg,#7C5BC1,#B59CE5);}
+.group-card.chem::before{background:linear-gradient(90deg,#1BB975,#A7F3D0);}
+.group-card.eng::before{background:linear-gradient(90deg,#F29100,#FFD68F);}
+.group-card.mech::before{background:linear-gradient(90deg,#DF2027,#F6BCBE);}
+.group-card.cs::before{background:linear-gradient(90deg,#0EA5E9,#7DD3FC);}
+.group-card .group-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.group-card .gi{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+}
+.group-card .gname{font-size:15px;font-weight:600;}
+.group-card .gleader{font-size:12px;color:var(--text-3);margin-top:2px;}
+.group-card .gstats{
+  display:flex;justify-content:space-between;padding:12px 0;
+  border-top:1px dashed var(--border-light);border-bottom:1px dashed var(--border-light);margin-bottom:12px;
+}
+.group-card .gstats div{text-align:center;flex:1;}
+.group-card .gstats div strong{font-size:18px;display:block;}
+.group-card .gstats div span{font-size:11px;color:var(--text-3);}
+.group-card .gmembers{display:flex;align-items:center;}
+.group-card .gmembers .ava{
+  width:26px;height:26px;border-radius:50%;border:2px solid #fff;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;
+  margin-left:-6px;
+}
+.group-card .gmembers .ava:first-child{margin-left:0;}
+.group-card .gmembers .more{margin-left:8px;font-size:12px;color:var(--text-3);}
+
+/* ====== Star milestone ====== */
+.star-track{
+  background:#fff;border-radius:14px;padding:24px;margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+}
+.star-bar{position:relative;height:8px;background:#F1F2F3;border-radius:4px;margin:32px 0 24px;}
+.star-bar .fill{
+  position:absolute;left:0;top:0;height:100%;border-radius:4px;
+  background:linear-gradient(90deg,#3087CC,#1BB975);
+}
+.star-bar .marker{
+  position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:#fff;
+  border:3px solid #E5E8EE;transform:translateX(-50%);
+}
+.star-bar .marker.done{border-color:var(--primary);}
+.star-bar .marker.current{border-color:var(--success);box-shadow:0 0 0 6px rgba(27,185,117,.18);}
+.star-bar .marker .lbl{
+  position:absolute;top:24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-2);
+  white-space:nowrap;
+}
+.star-bar .marker .lbl strong{display:block;font-size:13px;color:var(--text-1);font-weight:600;}
+
+/* ====== Library cards ====== */
+.lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.lib-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;cursor:pointer;
+}
+.lib-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.lib-card .ftype{
+  width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;font-size:11px;font-weight:600;color:#fff;
+}
+.ftype.pdf{background:linear-gradient(135deg,#DF2027,#FF6B6B);}
+.ftype.ppt{background:linear-gradient(135deg,#F29100,#FFAA33);}
+.ftype.doc{background:linear-gradient(135deg,#3087CC,#5BA8DE);}
+.ftype.xls{background:linear-gradient(135deg,#1BB975,#34D399);}
+.lib-card h5{font-size:13px;font-weight:500;margin-bottom:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.lib-card .meta{font-size:11px;color:var(--text-3);display:flex;justify-content:space-between;}
+.lib-card .stats{
+  margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-light);
+  display:flex;gap:12px;font-size:11px;color:var(--text-3);
+}
+.lib-card .stats span{display:inline-flex;align-items:center;gap:3px;}
+
+/* ====== Modal ====== */
+.modal-mask{
+  position:fixed;inset:0;background:rgba(15,32,55,.42);z-index:100;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-mask.show{opacity:1;pointer-events:auto;}
+.modal{
+  background:#fff;border-radius:14px;width:680px;max-width:92vw;max-height:88vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.94);transition:transform .2s;
+}
+.modal-mask.show .modal{transform:scale(1);}
+.modal-head{
+  padding:18px 24px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h3{font-size:16px;font-weight:600;}
+.modal-body{padding:22px 24px;overflow-y:auto;flex:1;}
+.modal-foot{
+  padding:14px 24px;border-top:1px solid var(--border-light);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;}
+.form-item{display:flex;flex-direction:column;}
+.form-item label{font-size:12px;color:var(--text-2);margin-bottom:6px;}
+.form-item label .req{color:var(--danger);}
+.form-item .input,.form-item textarea,.form-item .select{width:100%;}
+.form-item textarea{
+  padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;
+  font-family:inherit;outline:none;transition:all .15s;resize:vertical;
+}
+.form-item textarea:focus{border-color:var(--primary);}
+
+/* ====== Toast ====== */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#fff;border:1px solid var(--success-border);background:var(--success-bg);color:var(--success);
+  padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:8px;z-index:200;
+  opacity:0;pointer-events:none;transition:all .25s;
+  box-shadow:var(--shadow-lg);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Donut ring */
+.ring-row{display:flex;gap:18px;margin-top:16px;flex-wrap:wrap;}
+.ring-item{
+  flex:1;min-width:180px;background:#FAFBFD;border-radius:10px;padding:14px;
+  display:flex;align-items:center;gap:12px;
+}
+.ring-item .label{font-size:12px;color:var(--text-2);}
+.ring-item .val{font-size:18px;font-weight:600;margin-top:2px;}
+.ring-item .val small{font-size:11px;color:var(--text-3);font-weight:400;margin-left:4px;}
+
+/* Calendar */
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-day{
+  aspect-ratio:1.1;background:#FAFBFD;border-radius:8px;padding:8px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  transition:all .15s;cursor:pointer;border:1px solid transparent;
+  position:relative;
+}
+.cal-day:hover{background:var(--primary-light);}
+.cal-day .d{font-size:13px;font-weight:500;}
+.cal-day .t{font-size:10px;color:var(--text-3);text-align:right;}
+.cal-day.has-event::after{
+  content:"";position:absolute;bottom:6px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--primary);
+}
+.cal-day.today{background:var(--primary);color:#fff;}
+.cal-day.today .t{color:rgba(255,255,255,.8);}
+.cal-day.today.has-event::after{background:#fff;}
+.cal-day.muted{opacity:.35;}
+
+/* Approval timeline */
+.timeline{padding:8px 0;}
+.tl-item{display:flex;gap:14px;position:relative;padding-bottom:18px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{
+  content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--border-light);
+}
+.tl-item:last-child::before{display:none;}
+.tl-item .dot{
+  width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;
+}
+.tl-item.done .dot{background:var(--success);border-color:var(--success);color:#fff;}
+.tl-item.current .dot{background:#fff;border-color:var(--primary);}
+.tl-item.current .dot::after{
+  content:"";width:8px;height:8px;border-radius:50%;background:var(--primary);
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(1.4);}}
+.tl-item .tl-content{flex:1;}
+.tl-item .tl-content h6{font-size:13px;font-weight:500;}
+.tl-item .tl-content p{font-size:12px;color:var(--text-3);margin-top:3px;}
+
+/* Charts inside */
+.horiz-bar{margin-top:8px;}
+.hb-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.hb-row .name{width:84px;font-size:12px;color:var(--text-2);}
+.hb-row .track{flex:1;height:8px;background:#F1F2F3;border-radius:4px;overflow:hidden;position:relative;}
+.hb-row .track .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#3087CC,#5BA8DE);transition:width .8s ease;}
+.hb-row .val{width:50px;text-align:right;font-size:12px;font-weight:600;color:var(--text-1);}
+
+/* Star levels grid */
+.star-levels{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:48px;}
+.sl{border-radius:10px;padding:14px;text-align:center;}
+.sl-1{background:#F4FAFE;border:1px solid #BFDDF6;}
+.sl-2{background:#FFF8E6;border:1px solid #FFE0B3;}
+.sl-3{background:#FFF5E5;border:1px solid #FFE0B3;}
+.sl-4{background:#E8FCF4;border:1px solid #A7F3D0;}
+.sl-5{background:linear-gradient(135deg,#FFE0B3,#FFD68F);border:1px solid #F29100;color:#fff;}
+.sl strong{font-size:20px;font-weight:700;display:block;margin-top:6px;}
+.sl span{font-size:11px;color:var(--text-3);}
+.sl-5 strong, .sl-5 span{color:#fff;}
+.sl-5 span{opacity:.85;}
+
+@media(max-width:1280px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .row-2{grid-template-columns:1fr;}
+  .lib-grid{grid-template-columns:repeat(3,1fr);}
+  .group-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:980px){
+  .lib-grid{grid-template-columns:repeat(2,1fr);}
+  .group-grid{grid-template-columns:1fr;}
+  .star-levels{grid-template-columns:repeat(5,1fr);}
+}
+
+/* ====== Text Action Buttons (inline) ====== */
+.act-btn{
+  display:inline-flex;align-items:center;justify-content:center;height:26px;padding:0 10px;
+  border-radius:5px;font-size:12px;font-weight:500;white-space:nowrap;
+  transition:all .15s;color:var(--text-2);
+  border:1px solid var(--border);background:#fff;cursor:pointer;
+  font-family:inherit;
+}
+.act-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-50);}
+
+</style>
+</head>
+<body>
+<aside class="sidebar"></aside>
+<main class="main">
+  <header class="topbar"></header>
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>上传者权限管理</h1>
+        <p>授予/取消学生的上传权限，管理黑名单 / 禁用查看下载权限</p>
+      </div>
+    </div>
+
+    <div class="seg" id="mainTabs">
+      <button class="active" data-tab="uploaders">上传者列表</button>
+      <button data-tab="users">使用者管理</button>
+      <button data-tab="blacklist">黑名单 <span style="opacity:.6;margin-left:4px;background:var(--danger);color:#fff;padding:1px 6px;border-radius:8px;">3</span></button>
+    </div>
+
+    <!-- ========== Tab 1: 上传者列表 ========== -->
+    <div class="tab-content" data-tab="uploaders">
+      <div class="filterbar">
+        <div class="field"><label>身份类型</label><select class="select"><option>全部</option><option>知新馆辅学义工</option><option>授权学生</option></select></div>
+        <div class="field"><label>权限状态</label><select class="select"><option>全部</option><option>正常</option><option>已撤销</option></select></div>
+        <div class="field"><label>搜索</label><input class="input" placeholder="姓名/学号" /></div>
+        <div class="spacer"></div>
+        <button class="btn btn-ghost btn-sm">重置</button>
+        <button class="btn btn-primary btn-sm">查询</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th style="width:40px;"><span class="checkbox"></span></th>
+            <th>姓名</th><th>学号</th><th>身份类型</th><th>累计上传</th><th>已通过</th><th>累计下载量</th><th>状态</th><th style="width:200px;">操作</th>
+          </tr></thead>
+          <tbody id="upTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== Tab 2: 使用者管理 ========== -->
+    <div class="tab-content" data-tab="users" style="display:none;">
+      <div class="filterbar">
+        <div class="field"><label>下载权限</label><select class="select"><option>全部</option><option>正常</option><option>禁用下载</option></select></div>
+        <div class="field"><label>搜索</label><input class="input" placeholder="姓名/学号" /></div>
+        <div class="spacer"></div>
+        <button class="btn btn-ghost btn-sm">重置</button>
+        <button class="btn btn-primary btn-sm">查询</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th style="width:40px;"><span class="checkbox"></span></th>
+            <th>姓名</th><th>学号</th><th>学院</th><th>累计下载</th><th>本月下载</th><th>本周下载</th><th>下载权限</th><th style="width:240px;">操作</th>
+          </tr></thead>
+          <tbody id="userTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== Tab 3: 黑名单 ========== -->
+    <div class="tab-content" data-tab="blacklist" style="display:none;">
+      <div class="filterbar">
+        <div class="field"><label>搜索</label><input class="input" placeholder="姓名/学号" /></div>
+        <div class="spacer"></div>
+        <button class="btn btn-ghost btn-sm">重置</button>
+        <button class="btn btn-primary btn-sm">查询</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th style="width:40px;"><span class="checkbox"></span></th>
+            <th>姓名</th><th>学号</th><th>学院</th><th>拉黑时间</th><th>操作人</th><th>拉黑原因</th><th style="width:120px;">操作</th>
+          </tr></thead>
+          <tbody id="blackTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- 授予上传权限弹窗 -->
+<div class="modal-mask" id="grantModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>授予上传权限</h3>
+      <button class="icon-btn" onclick="closeModal('grantModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-item" style="margin-bottom:14px;"><label>学生姓名 / 学号 <span class="req">*</span></label><input class="input" placeholder="搜索学生" /></div>
+      <div class="form-row">
+        <div class="form-item"><label>身份类型 <span class="req">*</span></label><select class="select"><option>知新馆辅学义工</option><option>授权学生</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-item"><label>有效期开始时间 <span class="req">*</span></label><input class="input" type="date" value="2026-05-13" /></div>
+        <div class="form-item"><label>有效期结束时间 <span class="req">*</span></label><input class="input" type="date" value="2027-01-15" /></div>
+      </div>
+      <div class="form-item"><label style="display:flex;align-items:center;justify-content:space-between;">授权说明<button type="button" class="xfjs-ai-inline-btn" id="btnAiGrantDesc" onclick="aiGenGrantDesc()" style="margin-left:auto;flex-shrink:0;"><svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> AI 帮我写</button></label><textarea id="grantDesc" rows="3" placeholder="请填写授权理由..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('grantModal')">取消</button>
+      <button class="btn btn-primary" onclick="closeModal('grantModal');showToast('已授予上传权限')">确认授权</button>
+    </div>
+  </div>
+</div>
+
+<!-- 上传详情弹窗 -->
+<div class="modal-mask" id="uploadDetailModal">
+  <div class="modal" style="width:820px;max-height:90vh;">
+    <div class="modal-head">
+      <h3 id="detailTitle">上传详情</h3>
+      <button class="icon-btn" onclick="closeModal('uploadDetailModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('uploadDetailModal')">关闭</button></div>
+  </div>
+</div>
+
+<!-- 资料详情弹窗 -->
+<div class="modal-mask" id="materialModal">
+  <div class="modal" style="width:780px;max-height:92vh;">
+    <div class="modal-head">
+      <h3 id="materialTitle">资料详情</h3>
+      <button class="icon-btn" onclick="closeModal('materialModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="materialBody"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('materialModal')">关闭</button></div>
+  </div>
+</div>
+
+<!-- 撤销权限弹窗 -->
+<div class="modal-mask" id="revokeModal">
+  <div class="modal" style="width:480px;">
+    <div class="modal-head">
+      <h3>撤销上传权限</h3>
+      <button class="icon-btn" onclick="closeModal('revokeModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="padding:12px;background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:13px;color:var(--danger);">撤销后该用户将无法上传资料，请确认操作</span>
+      </div>
+      <div style="margin-bottom:14px;font-size:13px;color:var(--text-2);">撤销用户：<strong id="revokeUserName" style="color:var(--text-1);"></strong></div>
+      <div class="form-item"><label style="display:flex;align-items:center;justify-content:space-between;">撤销原因 <span class="req">*</span><button type="button" class="xfjs-ai-inline-btn" id="btnAiRevokeReason" onclick="aiGenRevokeReason()" style="margin-left:auto;flex-shrink:0;"><svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> AI 帮我写</button></label><textarea id="revokeReason" rows="4" placeholder="请输入撤销原因和理由..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('revokeModal')">取消</button>
+      <button class="btn btn-primary" style="background:var(--danger);" onclick="doRevoke()">确认撤销</button>
+    </div>
+  </div>
+</div>
+
+<!-- 恢复权限弹窗 -->
+<div class="modal-mask" id="restoreModal">
+  <div class="modal" style="width:480px;">
+    <div class="modal-head">
+      <h3>恢复上传权限</h3>
+      <button class="icon-btn" onclick="closeModal('restoreModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px;font-size:13px;color:var(--text-2);">恢复用户：<strong id="restoreUserName" style="color:var(--text-1);"></strong></div>
+      <div style="padding:14px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:8px;margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--warning);font-weight:500;margin-bottom:6px;">上次撤销原因：</div>
+        <div id="restoreLastReason" style="font-size:13px;color:var(--text-1);line-height:1.6;"></div>
+      </div>
+      <p style="font-size:13px;color:var(--text-2);">确认恢复该用户的上传权限？恢复后该用户可继续上传资料。</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('restoreModal')">取消</button>
+      <button class="btn btn-primary" onclick="closeModal('restoreModal');showToast('已恢复上传权限')">确认恢复</button>
+    </div>
+  </div>
+</div>
+
+<!-- 禁用下载弹窗 -->
+<div class="modal-mask" id="disableDownloadModal">
+  <div class="modal" style="width:480px;">
+    <div class="modal-head">
+      <h3>禁用下载权限</h3>
+      <button class="icon-btn" onclick="closeModal('disableDownloadModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="padding:12px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:13px;color:var(--warning);">禁用后该用户将无法从宝藏资料库下载资料</span>
+      </div>
+      <div style="margin-bottom:14px;font-size:13px;color:var(--text-2);">禁用用户：<strong id="disableUserName" style="color:var(--text-1);"></strong></div>
+      <div class="form-item"><label style="display:flex;align-items:center;justify-content:space-between;">禁用原因 <span class="req">*</span><button type="button" class="xfjs-ai-inline-btn" id="btnAiDisableReason" onclick="aiGenDisableReason()" style="margin-left:auto;flex-shrink:0;"><svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> AI 帮我写</button></label><textarea id="disableReason" rows="4" placeholder="请输入禁用下载的原因和理由..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('disableDownloadModal')">取消</button>
+      <button class="btn btn-primary" style="background:var(--warning);" onclick="closeModal('disableDownloadModal');showToast('已禁用该用户下载权限')">确认禁用</button>
+    </div>
+  </div>
+</div>
+
+<!-- 恢复下载弹窗 -->
+<div class="modal-mask" id="restoreDownloadModal">
+  <div class="modal" style="width:480px;">
+    <div class="modal-head">
+      <h3>恢复下载权限</h3>
+      <button class="icon-btn" onclick="closeModal('restoreDownloadModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px;font-size:13px;color:var(--text-2);">恢复用户：<strong id="restoreDlUserName" style="color:var(--text-1);"></strong></div>
+      <div style="padding:14px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:8px;margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--warning);font-weight:500;margin-bottom:6px;">上次禁用原因：</div>
+        <div id="restoreDlLastReason" style="font-size:13px;color:var(--text-1);line-height:1.6;"></div>
+      </div>
+      <p style="font-size:13px;color:var(--text-2);">确认恢复该用户的下载权限？</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('restoreDownloadModal')">取消</button>
+      <button class="btn btn-primary" onclick="closeModal('restoreDownloadModal');showToast('已恢复下载权限')">确认恢复</button>
+    </div>
+  </div>
+</div>
+
+<!-- 拉入黑名单弹窗 -->
+<div class="modal-mask" id="blacklistModal">
+  <div class="modal" style="width:480px;">
+    <div class="modal-head">
+      <h3>拉入黑名单</h3>
+      <button class="icon-btn" onclick="closeModal('blacklistModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="padding:12px;background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:13px;color:var(--danger);">拉入黑名单后该用户将被禁止上传和下载所有资料</span>
+      </div>
+      <div style="margin-bottom:14px;font-size:13px;color:var(--text-2);">拉黑用户：<strong id="blacklistUserName" style="color:var(--text-1);"></strong></div>
+      <div class="form-item"><label style="display:flex;align-items:center;justify-content:space-between;">拉黑原因 <span class="req">*</span><button type="button" class="xfjs-ai-inline-btn" id="btnAiBlacklistReason" onclick="aiGenBlacklistReason()" style="margin-left:auto;flex-shrink:0;"><svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> AI 帮我写</button></label><textarea id="blacklistReason" rows="4" placeholder="请输入拉黑原因和理由..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('blacklistModal')">取消</button>
+      <button class="btn btn-primary" style="background:var(--danger);" onclick="closeModal('blacklistModal');showToast('已拉入黑名单')">确认拉黑</button>
+    </div>
+  </div>
+</div>
+
+<!-- 黑名单恢复弹窗 -->
+<div class="modal-mask" id="blackRestoreModal">
+  <div class="modal" style="width:480px;">
+    <div class="modal-head">
+      <h3>移出黑名单</h3>
+      <button class="icon-btn" onclick="closeModal('blackRestoreModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px;font-size:13px;color:var(--text-2);">恢复用户：<strong id="blackRestoreUserName" style="color:var(--text-1);"></strong></div>
+      <div style="padding:14px;background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:8px;margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--danger);font-weight:500;margin-bottom:6px;">上次拉黑原因：</div>
+        <div id="blackRestoreReason" style="font-size:13px;color:var(--text-1);line-height:1.6;"></div>
+      </div>
+      <p style="font-size:13px;color:var(--text-2);">确认将该用户移出黑名单？恢复后该用户可正常使用宝藏资料库。</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('blackRestoreModal')">取消</button>
+      <button class="btn btn-primary" onclick="closeModal('blackRestoreModal');showToast('已移出黑名单')">确认恢复</button>
+    </div>
+  </div>
+</div>
+
+<!-- 下载详情弹窗 -->
+<div class="modal-mask" id="downloadDetailModal">
+  <div class="modal" style="width:780px;max-height:90vh;">
+    <div class="modal-head">
+      <h3 id="dlDetailTitle">下载详情</h3>
+      <button class="icon-btn" onclick="closeModal('downloadDetailModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="dlDetailBody"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('downloadDetailModal')">关闭</button></div>
+  </div>
+</div>
+
+<script>
+// ====== PC 管理端公共脚本（侧边栏渲染、Toast、Modal、Checkbox、Pager 交互） ======
+
+const PC_NAV = [
+  {group:'首页',items:[
+    {id:'dashboard',name:'数据概览',href:'dashboard.html',icon:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'}
+  ]},
+  {group:'辅学义工',items:[
+    {id:'volunteers',name:'申请管理',href:'volunteers.html',badge:12,icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>'},
+    {id:'hours',name:'时长记录',href:'hours.html',icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'},
+    {id:'stars',name:'星级评定',href:'stars.html',badge:5,icon:'<polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/>'},
+    {id:'groups',name:'分组管理',href:'groups.html',icon:'<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="9" r="3"/><path d="M22 21v-1a3 3 0 0 0-2-2.83"/>'},
+    {id:'appeals',name:'意见反馈',href:'appeals.html',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/>'},
+    {id:'volunteer-manage',name:'义工管理',href:'volunteer-manage.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'}
+  ]},
+  {group:'知新选课',items:[
+    {id:'courses',name:'课程管理',href:'courses.html',badge:8,icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'},
+    {id:'course-categories',name:'课程分类',href:'course-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'venue-bookings',name:'场地预约',href:'venue-bookings.html',badge:6,icon:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'},
+    {id:'posters',name:'开屏海报',href:'posters.html',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'}
+  ]},
+  {group:'即问即答',items:[
+    {id:'qa-content',name:'内容管理',href:'qa-content.html',badge:3,icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+    {id:'qa-categories',name:'学科分类',href:'qa-categories.html',icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'},
+    {id:'qa-users',name:'用户管理',href:'qa-users.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+  ]},
+  {group:'宝藏资料库',items:[
+    {id:'library',name:'资料库管理',href:'library.html',badge:11,icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {id:'library-categories',name:'资料分类',href:'library-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'uploaders',name:'上传者管理',href:'uploaders.html',icon:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>'},
+    {id:'library-feedback',name:'反馈与需求池',href:'library-feedback.html',icon:'<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><line x1="7" y1="22" x2="7" y2="11"/>'}
+  ]},
+  {group:'系统配置',items:[
+    {id:'analytics',name:'数据分析',href:'analytics.html',icon:'<path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/>'},
+    {id:'settings',name:'系统配置',href:'settings.html',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+    {id:'ai-settings',name:'AI 助手配置',href:'ai-settings.html',icon:'<path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/><circle cx="19" cy="5" r="1.5"/>'}
+  ]}
+];
+
+function renderSidebar(activeId){
+  const sidebar = document.querySelector('.sidebar');
+  if(!sidebar) return;
+  const navHTML = PC_NAV.map((g,i)=>`
+    <div class="nav-group-title" ${i>0?'style="margin-top:14px;"':''}>${g.group}</div>
+    ${g.items.map(it=>`
+      <a class="nav-item ${it.id===activeId?'active':''}" href="${it.href}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg>
+        ${it.name}
+        ${it.badge?`<span class="badge">${it.badge}</span>`:''}
+      </a>
+    `).join('')}
+  `).join('');
+  sidebar.innerHTML = `
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="brand-text">
+        <strong>学风建设系统</strong>
+        <span>管理后台 v2.0</span>
+      </div>
+    </div>
+    <nav class="nav-group">${navHTML}</nav>
+    <div class="user-card">
+      <div class="ava">王</div>
+      <div class="info"><h5>王老师</h5><p>学工部管理员</p></div>
+      <button class="icon-btn" style="width:24px;height:24px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function renderTopbar(crumb){
+  const tb = document.querySelector('.topbar');
+  if(!tb) return;
+  tb.innerHTML = `
+    <button class="icon-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="crumb">
+      <a href="../index.html">学风建设</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span style="color:var(--text-1);font-weight:500;">${crumb}</span>
+    </div>
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input placeholder="搜索学生、课程、资料..." />
+      <span style="font-size:11px;color:var(--text-4);background:#fff;padding:2px 6px;border-radius:4px;border:1px solid var(--border);">⌘K</span>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="刷新">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
+      <button class="icon-btn" title="消息">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="red-dot"></span>
+      </button>
+      <button class="icon-btn" title="帮助">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+      <div class="topbar-user">
+        <div class="ava">王</div>
+        <span>王老师</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  `;
+}
+
+// ============= Toast =============
+function showToast(msg){
+  let toast = document.getElementById('toast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id='toast';toast.className='toast';
+    toast.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
+    document.body.appendChild(toast);
+  }
+  toast.querySelector('span').textContent=msg;
+  toast.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>toast.classList.remove('show'),2400);
+}
+
+// ============= Modal =============
+function openModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.add('show');
+}
+function closeModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.remove('show');
+}
+
+// ============= Checkbox =============
+document.addEventListener('click',e=>{
+  if(e.target.classList && e.target.classList.contains('checkbox')){
+    e.target.classList.toggle('checked');
+  }
+});
+
+// ============= Segments / Panel tabs =============
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.seg, .panel-tabs').forEach(g=>{
+    g.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        g.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        // Show corresponding tab content if exists
+        const tab=b.getAttribute('data-tab');
+        if(tab){
+          const wrap=g.closest('.panel,.page,.tab-wrap')||document;
+          wrap.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+          const target=wrap.querySelector('.tab-content[data-tab="'+tab+'"]');
+          if(target)target.style.display='';
+        }
+      });
+    });
+  });
+  document.querySelectorAll('.modal-mask').forEach(m=>{
+    m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');});
+  });
+});
+
+</script>
+<script>
+  renderSidebar('uploaders');
+  renderTopbar('宝藏资料库 / 上传者管理');
+
+  // ===== Tab switching =====
+  document.getElementById('mainTabs').addEventListener('click',function(e){
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    this.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.getAttribute('data-tab');
+    document.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+    const target = document.querySelector('.tab-content[data-tab="'+tab+'"]');
+    if(target) target.style.display='';
+  });
+
+  // ===== Act button style helper =====
+  const actBtn = (cls,text,onclick)=>`<button class="btn btn-sm" style="height:26px;padding:0 10px;font-size:12px;border:1px solid var(--border);border-radius:5px;background:#fff;color:var(--text-2);cursor:pointer;white-space:nowrap;${cls}" onclick="${onclick}">${text}</button>`;
+  const actInfo = (text,onclick)=>actBtn('color:var(--primary);border-color:var(--primary);background:var(--primary-50);',text,onclick);
+  const actDanger = (text,onclick)=>actBtn('color:var(--danger);border-color:var(--danger-border);background:var(--danger-bg);',text,onclick);
+  const actSuccess = (text,onclick)=>actBtn('color:var(--success);border-color:var(--success-border);background:var(--success-bg);',text,onclick);
+  const actWarn = (text,onclick)=>actBtn('color:var(--warning);border-color:var(--warning-border);background:var(--warning-bg);',text,onclick);
+
+  // ===== Tab 1: 上传者数据 =====
+  const uData=[
+    {n:'陈思远',sid:'2022110023',role:'知新馆辅学义工',volType:'知新馆辅学义工',volGroup:'知新馆数学组',up:24,pass:23,dl:3268,gStart:'2024-09-12',gEnd:'2025-07-15',st:'正常',revokeReason:'',
+     materials:[
+       {name:'高等数学A期末复习笔记',type:'PDF',size:'3.2MB',date:'2026-04-20',dl:856,status:'已通过',subject:'数学',desc:'覆盖微积分、级数、微分方程等核心知识点',pages:42,
+        content:'<h2>第一章 函数与极限</h2><p><strong>1.1 映射与函数</strong></p><p>设 D 是一个非空的数集。设对应规则 f，使对每个数 x ∈ D，按对应规则 f，在数集内有确定的数 y 与之对应，则称 f 为定义在 D 上的函数，记为 y = f(x)，x ∈ D。</p><p><strong>1.2 数列的极限</strong></p><p>定义：设 {xₙ} 为一数列，如果存在常数 a，对于任意给定的正数 ε（不论它多么小），总存在正整数 N，使得当 n > N 时，|xₙ - a| < ε 恒成立，则称常数 a 是数列 {xₙ} 的极限。</p><hr/><h2>第二章 导数与微分</h2><p><strong>2.1 导数的概念</strong></p><p>设函数 y = f(x) 在点 x₀ 的某个邻域内有定义，当自变量 x 在 x₀ 处取得增量 Δx 时，相应地函数取得增量 Δy = f(x₀ + Δx) - f(x₀)。</p><p>如果 Δy/Δx 当 Δx → 0 时的极限存在，则称函数 y = f(x) 在点 x₀ 处可导。</p><p><strong>常用导数公式：</strong></p><ul><li>(xⁿ)\' = nxⁿ⁻¹</li><li>(sin x)\' = cos x</li><li>(cos x)\' = -sin x</li><li>(eˣ)\' = eˣ</li><li>(ln x)\' = 1/x</li></ul><hr/><h2>第三章 微分方程</h2><p><strong>3.1 一阶微分方程</strong></p><p>可分离变量的微分方程：g(y)dy = f(x)dx</p><p>两边积分得 ∫g(y)dy = ∫f(x)dx + C</p>'},
+       {name:'线性代数公式速查手册',type:'PDF',size:'1.8MB',date:'2026-04-15',dl:1204,status:'已通过',subject:'数学',desc:'行列式、矩阵、向量空间、特征值等',pages:28,
+        content:'<h2>行列式</h2><p><strong>二阶行列式：</strong></p><p>|a₁₁ a₁₂; a₂₁ a₂₂| = a₁₁a₂₂ - a₁₂a₂₁</p><p><strong>行列式的性质：</strong></p><ul><li>行列式与它的转置行列式相等</li><li>互换行列式的两行（列），行列式变号</li><li>行列式的某一行（列）的所有元素都乘以同一常数 k，等于用数 k 乘此行列式</li></ul><hr/><h2>矩阵</h2><p><strong>矩阵乘法：</strong></p><p>设 A = (aᵢⱼ)ₘₓₛ, B = (bᵢⱼ)ₛₓₙ，则 C = AB 是 m×n 矩阵，其中 cᵢⱼ = Σ(k=1 to s) aᵢₖbₖⱼ</p><p><strong>逆矩阵公式：</strong> A⁻¹ = (1/|A|) A*</p>'},
+       {name:'概率论思维导图',type:'PDF',size:'2.1MB',date:'2026-03-28',dl:732,status:'已通过',subject:'数学',desc:'完整概率论知识框架',pages:18,
+        content:'<h2>概率论基础</h2><p><strong>古典概型</strong></p><p>P(A) = A 包含的基本事件数 / 基本事件总数</p><p><strong>条件概率</strong></p><p>P(B|A) = P(AB) / P(A)，其中 P(A) > 0</p><p><strong>全概率公式</strong></p><p>P(A) = Σ P(Bᵢ)P(A|Bᵢ)</p><p><strong>贝叶斯公式</strong></p><p>P(Bⱼ|A) = P(Bⱼ)P(A|Bⱼ) / Σ P(Bᵢ)P(A|Bᵢ)</p><hr/><h2>随机变量及其分布</h2><p><strong>常见离散分布：</strong>二项分布 B(n,p)、泊松分布 P(λ)</p><p><strong>常见连续分布：</strong>均匀分布 U(a,b)、正态分布 N(μ,σ²)、指数分布 E(λ)</p>'},
+     ]},
+    {n:'王诗韵',sid:'2023110045',role:'知新馆辅学义工',volType:'知新馆辅学义工',volGroup:'知新馆英语组',up:18,pass:18,dl:5128,gStart:'2024-09-12',gEnd:'2025-07-15',st:'正常',revokeReason:'',
+     materials:[
+       {name:'大学英语六级词汇整理',type:'DOC',size:'1.5MB',date:'2026-04-18',dl:2340,status:'已通过',subject:'英语',desc:'高频词汇与例句总结',pages:36,
+        content:'<h2>高频核心词汇 · 第一部分</h2><p><strong>1. abandon</strong> /əˈbændən/ v. 放弃，抛弃</p><p>例句：He abandoned his family and went abroad.</p><p><strong>2. abstract</strong> /ˈæbstrækt/ adj. 抽象的 n. 摘要</p><p>例句：The concept is too abstract for young children.</p><p><strong>3. accelerate</strong> /əkˈseləreɪt/ v. 加速</p><p>例句：The car accelerated smoothly.</p><hr/><h2>高频核心词汇 · 第二部分</h2><p><strong>4. accommodate</strong> /əˈkɒmədeɪt/ v. 容纳；适应</p><p><strong>5. accumulate</strong> /əˈkjuːmjəleɪt/ v. 积累</p><p><strong>6. acknowledge</strong> /əkˈnɒlɪdʒ/ v. 承认；感谢</p><p><strong>7. adequate</strong> /ˈædɪkwət/ adj. 充足的</p>'},
+       {name:'六级听力技巧笔记',type:'PDF',size:'2.8MB',date:'2026-04-10',dl:1688,status:'已通过',subject:'英语',desc:'听力各题型答题技巧与真题解析',pages:24,
+        content:'<h2>六级听力备考策略</h2><p><strong>一、长对话 (Long Conversations)</strong></p><p>1. 预读选项：利用朗读 Direction 的时间快速浏览选项，划出关键词</p><p>2. 首尾原则：对话开头和结尾常出考点</p><p>3. 转折词后出答案：but, however, actually, in fact</p><hr/><p><strong>二、篇章听力 (Passages)</strong></p><p>1. 开头句必听——常出主旨题</p><p>2. 数字、时间、地点重点标注</p><p>3. 因果关系：because, since, as a result</p><hr/><p><strong>三、讲座/讲话 (Lectures)</strong></p><p>1. 注意信号词：First, Second, Finally, In conclusion</p><p>2. 举例处常出细节题</p>'},
+     ]},
+    {n:'刘子轩',sid:'2022110134',role:'知新馆辅学义工',volType:'知新馆辅学义工',volGroup:'知新馆计算机组',up:14,pass:13,dl:2856,gStart:'2024-09-12',gEnd:'2025-07-15',st:'正常',revokeReason:'',
+     materials:[
+       {name:'Python基础教程笔记',type:'PDF',size:'4.2MB',date:'2026-04-22',dl:1456,status:'已通过',subject:'计算机',desc:'Python语法、数据结构、文件操作、爬虫入门',pages:56,
+        content:'<h2>第1章 Python 基础语法</h2><p><strong>1.1 变量与数据类型</strong></p><pre style="background:#1e293b;color:#e2e8f0;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto;margin:8px 0;"># 变量赋值\nname = "Python"\nversion = 3.12\nis_awesome = True\n\n# 数据类型\nmy_list = [1, 2, 3, 4, 5]\nmy_dict = {"key": "value"}\nmy_tuple = (1, 2, 3)</pre><p><strong>1.2 条件判断</strong></p><pre style="background:#1e293b;color:#e2e8f0;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto;margin:8px 0;">if score >= 90:\n    grade = "A"\nelif score >= 80:\n    grade = "B"\nelse:\n    grade = "C"</pre><hr/><h2>第2章 函数与模块</h2><p><strong>2.1 函数定义</strong></p><pre style="background:#1e293b;color:#e2e8f0;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto;margin:8px 0;">def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n-1) + fibonacci(n-2)</pre>'},
+       {name:'数据结构期末复习PPT',type:'PPT',size:'8.6MB',date:'2026-04-05',dl:980,status:'已通过',subject:'计算机',desc:'栈、队列、树、图、排序算法',pages:68,
+        content:'<h2>Slide 1 — 数据结构概述</h2><p>数据结构是计算机存储、组织数据的方式，旨在高效地访问和修改数据。</p><p><strong>分类：</strong>线性结构（数组、链表、栈、队列）、非线性结构（树、图）</p><hr/><h2>Slide 5 — 栈 (Stack)</h2><p><strong>特点：</strong>后进先出 (LIFO)</p><p><strong>基本操作：</strong>push（入栈）、pop（出栈）、top（取栈顶）</p><p><strong>应用：</strong>括号匹配、表达式求值、递归转迭代</p><hr/><h2>Slide 12 — 二叉树遍历</h2><p><strong>前序遍历：</strong>根 → 左 → 右</p><p><strong>中序遍历：</strong>左 → 根 → 右</p><p><strong>后序遍历：</strong>左 → 右 → 根</p><p><strong>层次遍历：</strong>使用队列逐层访问</p>'},
+     ]},
+    {n:'林楠',sid:'2024110078',role:'授权学生',volType:'无',volGroup:'无',up:6,pass:5,dl:432,gStart:'2025-03-01',gEnd:'2025-07-15',st:'正常',revokeReason:'',
+     materials:[
+       {name:'有机化学反应总结',type:'PDF',size:'2.4MB',date:'2026-04-12',dl:312,status:'已通过',subject:'化学',desc:'常见有机反应机理归纳',pages:32,
+        content:'<h2>一、亲核取代反应 (SN)</h2><p><strong>SN1 机理：</strong>单分子亲核取代</p><p>反应分两步：① 底物电离生成碳正离子；② 亲核试剂进攻碳正离子</p><p>特点：叔碳 > 仲碳 > 伯碳；有重排可能</p><hr/><p><strong>SN2 机理：</strong>双分子亲核取代</p><p>一步协同反应，亲核试剂从离去基团背面进攻，Walden 翻转</p><p>特点：伯碳 > 仲碳 > 叔碳；空间位阻影响大</p><hr/><h2>二、消除反应 (E)</h2><p><strong>E1：</strong>单分子消除，与 SN1 竞争</p><p><strong>E2：</strong>双分子消除，反式共面消除</p>'},
+     ]},
+    {n:'张力',sid:'2022110115',role:'授权学生',volType:'无',volGroup:'无',up:8,pass:8,dl:1124,gStart:'2024-09-15',gEnd:'2025-07-15',st:'正常',revokeReason:'',
+     materials:[
+       {name:'力学公式推导全集',type:'PDF',size:'3.6MB',date:'2026-03-20',dl:624,status:'已通过',subject:'力学',desc:'牛顿力学、分析力学公式推导',pages:44,
+        content:'<h2>牛顿运动定律</h2><p><strong>第一定律（惯性定律）：</strong>一切物体总保持匀速直线运动状态或静止状态，除非作用在它上面的力迫使它改变这种状态。</p><p><strong>第二定律：</strong>F = ma</p><p>力是物体动量对时间的变化率：F = dp/dt = d(mv)/dt</p><p><strong>第三定律：</strong>作用力与反作用力大小相等、方向相反、作用在同一直线上。</p><hr/><h2>动量守恒</h2><p>当系统所受合外力为零时：Σmᵢvᵢ = 常矢量</p><p><strong>动量定理：</strong>I = FΔt = Δp = mv₂ - mv₁</p><hr/><h2>能量守恒</h2><p>动能定理：W = ΔEₖ = ½mv₂² - ½mv₁²</p><p>机械能守恒条件：只有保守力做功</p>'},
+     ]},
+    {n:'刘思雨',sid:'2023110234',role:'授权学生',up:3,pass:1,dl:42,gStart:'2025-03-15',gEnd:'2025-07-15',st:'已撤销',revokeReason:'上传内容存在抄袭嫌疑，经核实确认多份资料与网络付费课程内容高度雷同，违反原创性要求',
+     materials:[
+       {name:'考研政治知识点',type:'DOC',size:'1.2MB',date:'2025-04-01',dl:42,status:'已通过',subject:'其他',desc:'考研政治复习要点',pages:16,
+        content:'<h2>马克思主义基本原理</h2><p><strong>唯物辩证法三大规律：</strong></p><ul><li>对立统一规律（矛盾规律）——事物发展的根本动力</li><li>量变质变规律——事物发展的状态和形式</li><li>否定之否定规律——事物发展的方向和道路</li></ul><hr/><h2>毛泽东思想概论</h2><p><strong>新民主主义革命理论：</strong></p><p>革命对象：帝国主义、封建主义、官僚资本主义</p><p>革命动力：工人阶级、农民阶级、城市小资产阶级、民族资产阶级</p>'},
+     ]},
+  ];
+
+  let _revokeIdx = -1;
+
+  function renderUpTable(){
+    document.getElementById('upTable').innerHTML=uData.map((d,i)=>{
+      let actions = actInfo('详情',"openUploadDetail("+i+")");
+      if(d.st==='正常'){
+        actions += actDanger('撤销权限',"openRevokeModal("+i+")");
+      } else {
+        actions += actSuccess('恢复权限',"openRestoreModal("+i+")");
+      }
+      return `<tr>
+        <td><span class="checkbox"></span></td>
+        <td><div style="display:flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#9CBFDA,#3087CC);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">${d.n[0]}</div><strong>${d.n}</strong></div></td>
+        <td style="color:var(--text-2);">${d.sid}</td>
+        <td><span class="tag ${d.role==='知新馆辅学义工'?'tag-success':''}">${d.role}</span></td>
+        <td>${d.up}</td>
+        <td><strong>${d.pass}</strong> <span style="font-size:11px;color:var(--text-3);">/ ${d.up}</span></td>
+        <td>${d.dl.toLocaleString()}</td>
+        <td><span class="tag ${d.st==='正常'?'tag-success':'tag-grey'}">${d.st}</span></td>
+        <td><div style="display:flex;gap:6px;flex-wrap:wrap;">${actions}</div></td>
+      </tr>`;
+    }).join('');
+  }
+  renderUpTable();
+
+  // ===== Upload Detail =====
+  function openUploadDetail(i){
+    const d = uData[i];
+    document.getElementById('detailTitle').textContent = d.n + ' — 上传详情';
+    const ftypeClass = {PDF:'pdf',DOC:'doc',PPT:'ppt',XLS:'xls'};
+    document.getElementById('detailBody').innerHTML = `
+      <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:140px;background:var(--primary-50);border:1px solid #BFDDF6;border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:var(--primary);">${d.up}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">累计上传</div>
+        </div>
+        <div style="flex:1;min-width:140px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:var(--success);">${d.pass}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">审核通过</div>
+        </div>
+        <div style="flex:1;min-width:140px;background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:var(--text-1);">${d.dl.toLocaleString()}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">累计下载量</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-item"><label>姓名</label><div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.n}</div></div>
+        <div class="form-item"><label>学号</label><div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.sid}</div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-item"><label>义工类别</label><div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.volType||'无'}</div></div>
+        <div class="form-item"><label>辅导组别</label><div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.volGroup||'无'}</div></div>
+      </div>
+      <h4 style="font-size:14px;font-weight:600;margin:20px 0 12px;">上传资料列表</h4>
+      <div style="border:1px solid var(--border-light);border-radius:10px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr style="background:#F8FAFC;">
+            <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">资料名称</th>
+            <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">格式</th>
+            <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">上传时间</th>
+            <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">下载量</th>
+            <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">状态</th>
+            <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">操作</th>
+          </tr></thead>
+          <tbody>
+            ${d.materials.map((m,mi)=>`<tr style="border-top:1px solid var(--border-light);">
+              <td style="padding:10px 14px;"><div style="display:flex;align-items:center;gap:8px;"><div class="ftype ${ftypeClass[m.type]||'doc'}" style="width:28px;height:28px;border-radius:6px;font-size:9px;">${m.type}</div><strong style="cursor:pointer;color:var(--primary);" onclick="openMaterial(${i},${mi})">${m.name}</strong></div></td>
+              <td style="padding:10px 14px;color:var(--text-2);">${m.type}</td>
+              <td style="padding:10px 14px;color:var(--text-3);font-size:12px;">${m.date}</td>
+              <td style="padding:10px 14px;">${m.dl.toLocaleString()}</td>
+              <td style="padding:10px 14px;"><span class="tag tag-success">${m.status}</span></td>
+              <td style="padding:10px 14px;">${actInfo('查看',"openMaterial("+i+","+mi+")")}</td>
+            </tr>`).join('')}
+            ${d.materials.length===0?'<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--text-3);">暂无上传资料</td></tr>':''}
+          </tbody>
+        </table>
+      </div>
+    `;
+    openModal('uploadDetailModal');
+  }
+
+  // ===== Material Detail (Content Preview) =====
+  function openMaterial(ui,mi){
+    const d = uData[ui];
+    const m = d.materials[mi];
+    const ftypeClass = {PDF:'pdf',DOC:'doc',PPT:'ppt',XLS:'xls'};
+    const ftypeColor = {PDF:'#DF2027',DOC:'#3087CC',PPT:'#F29100',XLS:'#1BB975'};
+    document.getElementById('materialTitle').textContent = '文件预览';
+    document.getElementById('materialBody').innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="ftype ${ftypeClass[m.type]||'doc'}" style="width:40px;height:40px;border-radius:8px;font-size:11px;">${m.type}</div>
+          <div>
+            <h4 style="font-size:14px;font-weight:600;line-height:1.4;">${m.name}</h4>
+            <p style="font-size:11px;color:var(--text-3);margin-top:3px;">${m.type} · ${m.size} · ${m.pages||'—'}页 · 上传于 ${m.date} · 上传者：${d.n}</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="tag tag-success">${m.status}</span>
+          <span class="tag" style="background:var(--bg);color:var(--text-2);border-color:var(--border);">${m.dl.toLocaleString()} 次下载</span>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <div style="background:#F8FAFC;padding:8px 16px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:10px;height:10px;border-radius:50%;background:#FF5F57;"></div>
+            <div style="width:10px;height:10px;border-radius:50%;background:#FFBD2E;"></div>
+            <div style="width:10px;height:10px;border-radius:50%;background:#28C840;"></div>
+            <span style="font-size:11px;color:var(--text-3);margin-left:8px;">${m.name}.${m.type.toLowerCase()}</span>
+          </div>
+          <span style="font-size:11px;color:var(--text-4);">预览模式</span>
+        </div>
+        <div style="padding:24px 28px;max-height:420px;overflow-y:auto;font-size:13px;color:var(--text-1);line-height:1.9;">
+          <style>
+            #previewArea h2{font-size:16px;font-weight:600;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border-light);color:var(--text-1);}
+            #previewArea h2:first-child{margin-top:0;}
+            #previewArea p{margin:6px 0;color:var(--text-2);}
+            #previewArea strong{color:var(--text-1);}
+            #previewArea ul{margin:6px 0 6px 18px;color:var(--text-2);}
+            #previewArea li{margin:4px 0;}
+            #previewArea hr{border:none;border-top:1px dashed var(--border);margin:16px 0;}
+          </style>
+          <div id="previewArea">${m.content||'<p style="text-align:center;color:var(--text-3);padding:40px 0;">暂无预览内容</p>'}</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px 14px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:12px;color:var(--text-3);">所属科目：<strong style="color:var(--text-2);">${m.subject}</strong> &nbsp;·&nbsp; ${m.desc}</span>
+      </div>
+    `;
+    openModal('materialModal');
+  }
+
+  // ===== Revoke =====
+  function openRevokeModal(i){
+    _revokeIdx = i;
+    document.getElementById('revokeUserName').textContent = uData[i].n + '（' + uData[i].sid + '）';
+    document.getElementById('revokeReason').value = '';
+    openModal('revokeModal');
+  }
+  function doRevoke(){
+    const reason = document.getElementById('revokeReason').value.trim();
+    if(!reason){ showToast('请填写撤销原因'); return; }
+    uData[_revokeIdx].st = '已撤销';
+    uData[_revokeIdx].revokeReason = reason;
+    renderUpTable();
+    closeModal('revokeModal');
+    showToast('已撤销上传权限');
+  }
+
+  // ===== Restore =====
+  function openRestoreModal(i){
+    document.getElementById('restoreUserName').textContent = uData[i].n + '（' + uData[i].sid + '）';
+    document.getElementById('restoreLastReason').textContent = uData[i].revokeReason || '无记录';
+    _revokeIdx = i;
+    openModal('restoreModal');
+  }
+
+  // ===== Tab 2: 使用者管理数据 =====
+  const userData=[
+    {n:'王诗韵',sid:'2023110045',dept:'外国语学院',totalDl:128,monthDl:32,weekDl:8,dlPerm:'正常',disableReason:''},
+    {n:'李明远',sid:'2023020234',dept:'数学与统计学院',totalDl:86,monthDl:18,weekDl:5,dlPerm:'正常',disableReason:''},
+    {n:'张慧',sid:'2022030112',dept:'物理与天文学院',totalDl:214,monthDl:45,weekDl:12,dlPerm:'正常',disableReason:''},
+    {n:'刘思源',sid:'2023050021',dept:'计算机学院',totalDl:56,monthDl:14,weekDl:3,dlPerm:'正常',disableReason:''},
+    {n:'朱晓萌',sid:'2024141012',dept:'外国语学院',totalDl:42,monthDl:8,weekDl:2,dlPerm:'正常',disableReason:''},
+    {n:'林佳佳',sid:'2023141088',dept:'外国语学院',totalDl:168,monthDl:0,weekDl:0,dlPerm:'禁用下载',disableReason:'短时间内大量下载资料，疑似批量爬取行为，经系统检测触发风控'},
+    {n:'赵子昂',sid:'2022110098',dept:'机械学院',totalDl:95,monthDl:22,weekDl:6,dlPerm:'正常',disableReason:''},
+  ];
+
+  function renderUserTable(){
+    document.getElementById('userTable').innerHTML=userData.map((d,i)=>{
+      const permTag = d.dlPerm==='正常'?'tag-success':'tag-danger';
+      let actions = actInfo('详情',"openDlDetail("+i+")");
+      if(d.dlPerm==='正常'){
+        actions += actWarn('禁用下载',"openDisableDownload("+i+")");
+        actions += actDanger('拉入黑名单',"openBlacklist("+i+",'user')");
+      } else {
+        actions += actSuccess('恢复下载',"openRestoreDownload("+i+")");
+      }
+      return `<tr>
+        <td><span class="checkbox"></span></td>
+        <td><div style="display:flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#9CBFDA,#3087CC);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">${d.n[0]}</div><strong>${d.n}</strong></div></td>
+        <td style="color:var(--text-2);">${d.sid}</td>
+        <td style="color:var(--text-2);font-size:12px;">${d.dept}</td>
+        <td><strong>${d.totalDl}</strong></td>
+        <td>${d.monthDl}</td>
+        <td>${d.weekDl}</td>
+        <td><span class="tag ${permTag}">${d.dlPerm}</span></td>
+        <td><div style="display:flex;gap:6px;flex-wrap:wrap;">${actions}</div></td>
+      </tr>`;
+    }).join('');
+  }
+  renderUserTable();
+
+  // ===== Download Detail =====
+  function openDlDetail(i){
+    const d = userData[i];
+    document.getElementById('dlDetailTitle').textContent = d.n + ' — 下载详情';
+    const dlRecords = [
+      {name:'高等数学A期末复习笔记',type:'PDF',date:'2026-05-12 14:22',subject:'数学'},
+      {name:'线性代数公式速查手册',type:'PDF',date:'2026-05-10 09:15',subject:'数学'},
+      {name:'大学英语六级词汇整理',type:'DOC',date:'2026-05-08 16:30',subject:'英语'},
+      {name:'Python基础教程笔记',type:'PDF',date:'2026-05-05 11:42',subject:'计算机'},
+      {name:'力学公式推导全集',type:'PDF',date:'2026-04-28 20:10',subject:'力学'},
+    ];
+    document.getElementById('dlDetailBody').innerHTML = `
+      <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:130px;background:var(--primary-50);border:1px solid #BFDDF6;border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:var(--primary);">${d.totalDl}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">累计下载</div>
+        </div>
+        <div style="flex:1;min-width:130px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:var(--success);">${d.monthDl}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">本月下载</div>
+        </div>
+        <div style="flex:1;min-width:130px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:var(--warning);">${d.weekDl}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">本周下载</div>
+        </div>
+        <div style="flex:1;min-width:130px;background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:${d.dlPerm==='正常'?'var(--success)':'var(--danger)'};">${d.dlPerm}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">下载权限</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-item"><label>姓名</label><div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.n}</div></div>
+        <div class="form-item"><label>学号</label><div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.sid}</div></div>
+      </div>
+      <div class="form-item" style="margin-bottom:18px;"><label>学院</label><div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.dept}</div></div>
+      <h4 style="font-size:14px;font-weight:600;margin-bottom:12px;">最近下载记录</h4>
+      <div style="border:1px solid var(--border-light);border-radius:10px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr style="background:#F8FAFC;">
+            <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">资料名称</th>
+            <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">格式</th>
+            <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">科目</th>
+            <th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">下载时间</th>
+          </tr></thead>
+          <tbody>
+            ${dlRecords.map(r=>`<tr style="border-top:1px solid var(--border-light);">
+              <td style="padding:10px 14px;"><strong>${r.name}</strong></td>
+              <td style="padding:10px 14px;color:var(--text-2);">${r.type}</td>
+              <td style="padding:10px 14px;"><span class="tag">${r.subject}</span></td>
+              <td style="padding:10px 14px;color:var(--text-3);font-size:12px;">${r.date}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+    openModal('downloadDetailModal');
+  }
+
+  // ===== Disable Download =====
+  var _disableIdx = -1;
+  function openDisableDownload(i){
+    _disableIdx = i;
+    document.getElementById('disableUserName').textContent = userData[i].n + '（' + userData[i].sid + '）';
+    document.getElementById('disableReason').value = '';
+    openModal('disableDownloadModal');
+  }
+
+  // ===== Restore Download =====
+  function openRestoreDownload(i){
+    document.getElementById('restoreDlUserName').textContent = userData[i].n + '（' + userData[i].sid + '）';
+    document.getElementById('restoreDlLastReason').textContent = userData[i].disableReason || '无记录';
+    openModal('restoreDownloadModal');
+  }
+
+  // ===== Blacklist from user tab =====
+  var _blacklistData = null;
+  function openBlacklist(i, from){
+    const d = from==='user' ? userData[i] : uData[i];
+    _blacklistData = d;
+    document.getElementById('blacklistUserName').textContent = d.n + '（' + d.sid + '）';
+    document.getElementById('blacklistReason').value = '';
+    openModal('blacklistModal');
+  }
+
+  // ===== Tab 3: 黑名单数据 =====
+  const blackData=[
+    {n:'周杰',sid:'2023060045',dept:'电子信息学院',blackTime:'2026-04-15 10:30',by:'王老师',reason:'多次上传含广告推广内容的虚假资料，经多次警告无效后列入黑名单'},
+    {n:'赵敏',sid:'2022070112',dept:'材料学院',blackTime:'2026-03-28 14:20',by:'王老师',reason:'将付费网课内容原封不动上传，涉嫌侵权，收到版权投诉后核实处理'},
+    {n:'孙磊',sid:'2024030089',dept:'物理与天文学院',blackTime:'2026-04-02 09:15',by:'系统自动',reason:'短时间内批量下载超过200份资料，触发系统防爬虫机制，自动拉黑'},
+  ];
+
+  function renderBlackTable(){
+    document.getElementById('blackTable').innerHTML=blackData.map((d,i)=>`
+      <tr>
+        <td><span class="checkbox"></span></td>
+        <td><div style="display:flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#F6BCBE,#DF2027);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">${d.n[0]}</div><strong>${d.n}</strong></div></td>
+        <td style="color:var(--text-2);">${d.sid}</td>
+        <td style="color:var(--text-2);font-size:12px;">${d.dept}</td>
+        <td style="color:var(--text-3);font-size:12px;">${d.blackTime}</td>
+        <td style="color:var(--text-2);">${d.by}</td>
+        <td style="max-width:220px;color:var(--text-2);font-size:12px;white-space:normal;line-height:1.5;">${d.reason}</td>
+        <td>${actSuccess('恢复',"openBlackRestore("+i+")")}</td>
+      </tr>
+    `).join('');
+  }
+  renderBlackTable();
+
+  // ===== Black Restore =====
+  function openBlackRestore(i){
+    const d = blackData[i];
+    document.getElementById('blackRestoreUserName').textContent = d.n + '（' + d.sid + '）';
+    document.getElementById('blackRestoreReason').textContent = d.reason;
+    openModal('blackRestoreModal');
+  }
+</script>
+
+<!-- AI 学工助手 -->
+<link rel="stylesheet" href="../assets/ai/ai-widget-pc.css">
+<script src="../assets/ai/ai-knowledge.js"></script>
+<script src="../assets/ai/ai-core.js"></script>
+<script src="../assets/ai/ai-widget-pc.js"></script>
+<script>
+  function _aiWriteUp(el, btn, prompt){
+    if(!el) return;
+    var existing = el.value.trim();
+    el.disabled = true; el.value = '';
+    var origLabel = btn ? btn.innerHTML : '';
+    if(btn){ btn.disabled = true; btn.innerHTML = '<svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> AI 帮写中…'; }
+    var full = '';
+    AICore.chat({
+      messages:[{role:'user',content:prompt}],
+      pageContext:{pageId:'uploaders',pageName:'上传者管理',pageContext:'管理员正在管理资料上传者权限'},
+      onChunk:function(c){ full += c; el.value = full; },
+      onDone:function(t){ if(t) el.value = t; el.disabled = false; if(btn){ btn.disabled = false; btn.innerHTML = origLabel; } },
+      onError:function(){ el.disabled = false; el.value = existing; if(btn){ btn.disabled = false; btn.innerHTML = origLabel; } showToast('AI 生成失败'); }
+    });
+  }
+
+  function aiGenRevokeReason(){
+    if(_revokeIdx < 0) return;
+    var d = uData[_revokeIdx];
+    var prompt = '作为学风建设系统管理员，我需要撤销一位上传者的上传权限。请生成一段正式的撤销原因说明（80字以内），措辞规范得体。\n用户：'+d.n+'（'+d.sid+'）\n身份类型：'+d.role+'\n累计上传：'+d.up+' 份，已通过：'+d.pass+' 份\n只输出撤销原因文字。';
+    _aiWriteUp(document.getElementById('revokeReason'), document.getElementById('btnAiRevokeReason'), prompt);
+  }
+
+  function aiGenDisableReason(){
+    if(_disableIdx < 0) return;
+    var d = userData[_disableIdx];
+    var prompt = '作为学风建设系统管理员，我需要禁用一位用户的资料下载权限。请生成一段正式的禁用原因说明（80字以内），措辞规范得体。\n用户：'+d.n+'（'+d.sid+'）\n学院：'+d.dept+'\n累计下载：'+d.totalDl+'，本月下载：'+d.monthDl+'，本周下载：'+d.weekDl+'\n只输出禁用原因文字。';
+    _aiWriteUp(document.getElementById('disableReason'), document.getElementById('btnAiDisableReason'), prompt);
+  }
+
+  function aiGenBlacklistReason(){
+    var d = _blacklistData;
+    if(!d) return;
+    var prompt = '作为学风建设系统管理员，我需要将一位用户拉入黑名单（禁止上传和下载所有资料）。请生成一段正式的拉黑原因说明（80字以内），措辞严肃规范。\n用户：'+d.n+'（'+d.sid+'）\n学院：'+(d.dept||'-')+'\n只输出拉黑原因文字。';
+    _aiWriteUp(document.getElementById('blacklistReason'), document.getElementById('btnAiBlacklistReason'), prompt);
+  }
+
+  function aiGenGrantDesc(){
+    var modal = document.getElementById('grantModal');
+    var inputs = modal ? modal.querySelectorAll('input.input') : [];
+    var studentInfo = inputs[0] ? inputs[0].value.trim() : '';
+    var selects = modal ? modal.querySelectorAll('select.select') : [];
+    var roleType = selects[0] ? selects[0].value : '';
+    if(!studentInfo){ showToast('请先填写学生姓名/学号'); return; }
+    var prompt = '作为学风建设系统管理员，我需要授予一位学生资料上传权限。请生成一段简要的授权说明（60字以内），说明授权目的和期望。\n学生信息：'+studentInfo+'\n身份类型：'+roleType+'\n只输出授权说明文字。';
+    _aiWriteUp(document.getElementById('grantDesc'), document.getElementById('btnAiGrantDesc'), prompt);
+  }
+
+  AIWidget.init({
+    pageId: 'uploaders',
+    pageName: '上传者管理',
+    pageContext: '管理员正在查看资料上传者，可评估质量、调整权限。',
+    end: 'PC管理'
+  });
+</script>
+</body>
+</html>

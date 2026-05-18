@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>删除分组</title>
+<style>
+:root{
+  --primary:#3087CC;--primary-dark:#006DAD;
+  --text-1:#3C444F;--text-2:#696F7D;--text-3:#9096A2;
+  --border:#E5E8EE;--border-light:#EFF1F5;
+  --danger:#DF2027;--danger-bg:#FCE8EA;--danger-border:#F6BCBE;
+  --danger-dark:#B91C1C;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{
+  font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;
+  color:var(--text-1);font-size:14px;-webkit-font-smoothing:antialiased;
+  background:#fff;height:100%;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+svg{display:block;flex-shrink:0;}
+
+.dlg{display:flex;flex-direction:column;height:100vh;}
+
+.dlg-head{
+  padding:14px 20px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.dlg-head h3{font-size:15px;font-weight:600;color:var(--danger);display:flex;align-items:center;gap:8px;}
+.dlg-head .icon-wrap{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--danger-bg);color:var(--danger);
+  display:flex;align-items:center;justify-content:center;
+}
+.close-btn{
+  width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-3);transition:all .15s;
+}
+.close-btn:hover{background:#F4F6FA;color:var(--text-1);}
+
+.dlg-body{flex:1;padding:28px 24px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+
+.del-icon{
+  width:64px;height:64px;border-radius:50%;background:var(--danger-bg);
+  display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+  color:var(--danger);animation:shake .4s ease-out .1s;
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-4px);}
+  40%{transform:translateX(4px);}
+  60%{transform:translateX(-3px);}
+  80%{transform:translateX(3px);}
+}
+
+.del-body h4{font-size:17px;font-weight:600;margin-bottom:10px;}
+.del-body h4 .group-name{color:var(--danger);}
+.del-body p{font-size:13px;color:var(--text-2);line-height:1.7;max-width:340px;margin:0 auto;}
+.del-body p strong{color:var(--danger);}
+
+/* Impact list */
+.impact{
+  margin-top:18px;background:#FFF8F8;border:1px solid var(--danger-border);
+  border-radius:10px;padding:12px 16px;width:100%;max-width:340px;text-align:left;
+}
+.impact p{font-size:12px;color:var(--text-2);margin-bottom:8px;font-weight:500;}
+.impact ul{list-style:none;padding:0;}
+.impact ul li{
+  font-size:12px;color:var(--text-2);padding:4px 0;
+  display:flex;align-items:center;gap:6px;
+}
+.impact ul li::before{
+  content:"";width:5px;height:5px;border-radius:50%;background:var(--danger);flex-shrink:0;
+}
+
+/* Confirm input */
+.confirm-row{margin-top:16px;width:100%;max-width:340px;text-align:left;}
+.confirm-row label{font-size:12px;color:var(--text-2);margin-bottom:6px;display:block;}
+.confirm-row label span{font-weight:600;color:var(--danger);}
+.confirm-input{
+  width:100%;height:36px;padding:0 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;color:var(--text-1);background:#fff;outline:none;transition:all .15s;
+  font-family:inherit;
+}
+.confirm-input:focus{border-color:var(--danger);box-shadow:0 0 0 3px rgba(223,32,39,.1);}
+.confirm-input::placeholder{color:var(--text-3);}
+
+.dlg-foot{
+  padding:14px 20px;border-top:1px solid var(--border-light);
+  display:flex;justify-content:center;gap:10px;flex-shrink:0;
+}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  height:34px;padding:0 20px;border-radius:8px;font-size:13px;font-weight:500;
+  transition:all .15s;min-width:108px;justify-content:center;
+}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-danger:hover{background:var(--danger-dark);box-shadow:0 4px 12px rgba(223,32,39,.28);}
+.btn-danger:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;}
+.btn-ghost{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+</style>
+</head>
+<body>
+<div class="dlg">
+  <div class="dlg-head">
+    <h3>
+      <div class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </div>
+      删除分组
+    </h3>
+    <button class="close-btn" onclick="dismiss()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div class="dlg-body">
+    <div class="del-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    </div>
+    <div class="del-body">
+      <h4>确认删除 <span class="group-name" id="groupNameDisplay"></span>？</h4>
+      <p>此操作<strong>无法撤销</strong>，删除后以下数据将被永久清除。</p>
+    </div>
+
+    <div class="impact">
+      <p>删除影响范围</p>
+      <ul>
+        <li>该分组的基本信息及配置</li>
+        <li>所有成员与该组的关联关系</li>
+        <li>组内历史课程、任务记录</li>
+        <li>相关数据统计将同步更新</li>
+      </ul>
+    </div>
+
+    <div class="confirm-row">
+      <label>请输入组名 <span id="confirmLabel"></span> 以确认删除</label>
+      <input class="confirm-input" id="confirmInput" placeholder="输入组名确认..." oninput="checkConfirm()" />
+    </div>
+  </div>
+
+  <div class="dlg-foot">
+    <button class="btn btn-ghost" onclick="dismiss()">取消</button>
+    <button class="btn btn-danger" id="delBtn" disabled onclick="doDelete()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      确认删除
+    </button>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const groupName = params.get('name') || '未知分组';
+
+  document.getElementById('groupNameDisplay').textContent = '「' + groupName + '」';
+  document.getElementById('confirmLabel').textContent = '「' + groupName + '」';
+
+  function checkConfirm() {
+    const val = document.getElementById('confirmInput').value.trim();
+    document.getElementById('delBtn').disabled = (val !== groupName);
+  }
+
+  function doDelete() {
+    if(window.parent && window.parent.closeIframeModal) {
+      window.parent.closeIframeModal('「' + groupName + '」已删除');
+    }
+  }
+
+  function dismiss() {
+    if(window.parent && window.parent.closeIframeModal) window.parent.closeIframeModal();
+  }
+</script>
+
+<!-- AI 学工助手 -->
+<link rel="stylesheet" href="../assets/ai/ai-widget-pc.css">
+<script src="../assets/ai/ai-knowledge.js"></script>
+<script src="../assets/ai/ai-core.js"></script>
+<script src="../assets/ai/ai-widget-pc.js"></script>
+<script>
+  AIWidget.init({
+    pageId: 'groups',
+    pageName: '删除分组',
+    pageContext: '管理员正在执行删除辅导组别的二次确认。',
+    end: 'PC管理'
+  });
+</script>
+</body>
+</html>

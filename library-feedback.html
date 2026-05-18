@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>资料征集与需求池 · 学风建设系统</title>
+<style>
+:root{
+  --primary:#3087CC;
+  --primary-light:#E3F1F9;
+  --primary-dark:#006DAD;
+  --primary-50:#F4FAFE;
+  --text-1:#3C444F;
+  --text-2:#696F7D;
+  --text-3:#9096A2;
+  --text-4:#ABB0BA;
+  --border:#E5E8EE;
+  --border-light:#EFF1F5;
+  --bg:#F4F6FA;
+  --bg-card:#FFFFFF;
+  --success:#1BB975;
+  --success-bg:#E8FCF4;
+  --success-border:#A7F3D0;
+  --warning:#F29100;
+  --warning-bg:#FFF5E5;
+  --warning-border:#FFE0B3;
+  --danger:#DF2027;
+  --danger-bg:#FCE8EA;
+  --danger-border:#F6BCBE;
+  --shadow-sm:0 1px 3px rgba(15,32,55,.05);
+  --shadow-md:0 4px 14px rgba(15,32,55,.06);
+  --shadow-lg:0 12px 32px rgba(15,32,55,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;font-size:14px;}
+body{min-height:100vh;display:flex;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+svg{display:block;flex-shrink:0;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D9DDE3;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#C0C5CD;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ====== Sidebar ====== */
+.sidebar{
+  width:232px;flex-shrink:0;background:#fff;
+  border-right:1px solid var(--border-light);
+  height:100vh;position:sticky;top:0;display:flex;flex-direction:column;
+}
+.brand{
+  padding:20px 20px 16px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border-light);
+}
+.brand-logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(48,135,204,.28);
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text strong{font-size:14px;font-weight:600;}
+.brand-text span{font-size:10px;color:var(--text-3);letter-spacing:.4px;margin-top:3px;}
+
+.nav-group{padding:16px 12px 8px;flex:1;overflow-y:auto;}
+.nav-group-title{
+  padding:8px 12px 6px;font-size:11px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;color:var(--text-2);
+  font-size:13px;cursor:pointer;transition:all .15s;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:var(--primary-50);color:var(--text-1);}
+.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:500;}
+.nav-item.active svg{color:var(--primary);}
+.nav-item .badge{
+  margin-left:auto;background:var(--danger);color:#fff;font-size:10px;
+  padding:1px 6px;border-radius:8px;font-weight:500;
+}
+.nav-item.active .badge{background:var(--primary);}
+
+.user-card{
+  margin:12px;padding:12px;border-radius:10px;
+  background:linear-gradient(135deg,#F4FAFE 0%,#E3F1F9 100%);
+  display:flex;align-items:center;gap:10px;
+}
+.user-card .ava{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:600;font-size:13px;
+}
+.user-card .info{flex:1;min-width:0;}
+.user-card .info h5{font-size:13px;font-weight:500;}
+.user-card .info p{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+/* ====== Main ====== */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{
+  height:60px;background:#fff;border-bottom:1px solid var(--border-light);
+  padding:0 28px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:10;
+}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--text-2);font-size:13px;}
+.crumb svg{color:var(--text-4);}
+.crumb a{color:var(--text-2);transition:color .15s;}
+.crumb a:hover{color:var(--primary);}
+.search{
+  margin-left:24px;width:320px;height:36px;border-radius:8px;
+  background:#F4F6FA;display:flex;align-items:center;padding:0 12px;gap:8px;
+  border:1px solid transparent;transition:all .15s;
+}
+.search:focus-within{background:#fff;border-color:var(--primary);}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:13px;color:var(--text-1);}
+.search input::placeholder{color:var(--text-4);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;position:relative;
+}
+.icon-btn:hover{background:#F4F6FA;color:var(--text-1);}
+.icon-btn .red-dot{
+  position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;
+  background:var(--danger);border:2px solid #fff;
+}
+.topbar-user{
+  display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;
+  border-radius:999px;cursor:pointer;
+}
+.topbar-user:hover{background:#F4F6FA;}
+.topbar-user .ava{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
+}
+.topbar-user span{font-size:13px;color:var(--text-1);}
+
+/* ====== Page Content ====== */
+.page{flex:1;padding:24px 28px;overflow-y:auto;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.page-head h1{font-size:22px;font-weight:600;}
+.page-head p{color:var(--text-3);font-size:13px;margin-top:6px;}
+.page-actions{display:flex;gap:8px;}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:500;
+  transition:all .15s;
+}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(48,135,204,.28);}
+.btn-secondary{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+.btn-secondary:hover{background:var(--primary-light);}
+.btn-ghost{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{height:30px;padding:0 10px;font-size:12px;}
+
+/* ====== Stat Cards ====== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.stats-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.stat-card{
+  background:#fff;border-radius:14px;padding:20px 22px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.stat-card .blob{
+  position:absolute;width:140px;height:140px;border-radius:50%;
+  right:-40px;top:-40px;opacity:.35;
+}
+.stat-card .blob-1{background:radial-gradient(circle,#BFDDF6,transparent 65%);}
+.stat-card .blob-2{background:radial-gradient(circle,#FFE0B3,transparent 65%);}
+.stat-card .blob-3{background:radial-gradient(circle,#A7F3D0,transparent 65%);}
+.stat-card .blob-4{background:radial-gradient(circle,#F6BCBE,transparent 65%);}
+.stat-card .ic{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.stat-card .label{font-size:13px;color:var(--text-2);}
+.stat-card .num{
+  font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.5px;
+  display:flex;align-items:baseline;gap:6px;
+}
+.stat-card .num small{font-size:13px;color:var(--text-3);font-weight:400;}
+.stat-card .delta{
+  font-size:12px;margin-top:8px;display:flex;align-items:center;gap:4px;
+}
+.delta.up{color:var(--success);}
+.delta.down{color:var(--danger);}
+.delta.neutral{color:var(--text-3);}
+
+/* ====== Layout grids ====== */
+.row-2{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:20px;}
+.row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+
+.panel{
+  background:#fff;border-radius:14px;padding:22px 24px;
+  box-shadow:var(--shadow-sm);
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;
+}
+.panel-head h3{font-size:16px;font-weight:600;}
+.panel-head p{font-size:12px;color:var(--text-3);margin-top:2px;}
+.panel-tabs{display:flex;gap:4px;background:#F4F6FA;border-radius:8px;padding:3px;}
+.panel-tabs button{
+  height:28px;padding:0 12px;border-radius:6px;font-size:12px;color:var(--text-2);transition:all .15s;
+}
+.panel-tabs button.active{background:#fff;color:var(--primary);font-weight:500;box-shadow:var(--shadow-sm);}
+
+/* ====== Chart ====== */
+.chart-wrap{height:280px;position:relative;}
+
+/* ====== Approval list ====== */
+.approval-list{display:flex;flex-direction:column;gap:10px;}
+.approval-item{
+  padding:14px;border:1px solid var(--border-light);border-radius:10px;
+  display:flex;align-items:center;gap:12px;transition:all .15s;
+}
+.approval-item:hover{border-color:var(--primary);background:var(--primary-50);}
+.approval-item .ava{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;
+  flex-shrink:0;
+}
+.approval-item .text{flex:1;min-width:0;}
+.approval-item .text h5{font-size:14px;font-weight:500;}
+.approval-item .text p{font-size:12px;color:var(--text-3);margin-top:3px;}
+.approval-item .actions{display:flex;gap:6px;}
+
+/* ====== Tag ====== */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500;
+  background:var(--primary-light);color:var(--primary);border:1px solid #BFDDF6;
+}
+.tag-success{background:var(--success-bg);color:var(--success);border-color:var(--success-border);}
+.tag-warning{background:var(--warning-bg);color:var(--warning);border-color:var(--warning-border);}
+.tag-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border);}
+.tag-grey{background:#F1F2F3;color:var(--text-3);border-color:var(--border);}
+
+/* ====== Star ====== */
+.stars{display:inline-flex;gap:2px;}
+.stars svg{width:14px;height:14px;color:#FFC53D;}
+.stars.empty svg{color:#E5E8EE;}
+
+/* ====== Filter Bar ====== */
+.filterbar{
+  background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:16px;
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+  box-shadow:var(--shadow-sm);
+}
+.filterbar .field{display:flex;align-items:center;gap:6px;}
+.filterbar label{font-size:13px;color:var(--text-2);}
+.input,.select{
+  height:34px;padding:0 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;color:var(--text-1);background:#fff;outline:none;min-width:140px;
+  transition:all .15s;font-family:inherit;
+}
+.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(48,135,204,.12);}
+.filterbar .spacer{flex:1;}
+
+/* ====== Table ====== */
+.table-wrap{
+  background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{
+  background:#F8FAFC;color:var(--text-2);font-weight:500;
+  text-align:left;padding:14px 16px;font-size:12px;
+  border-bottom:1px solid var(--border-light);
+}
+tbody td{padding:14px 16px;border-bottom:1px solid var(--border-light);color:var(--text-1);}
+tbody tr:hover{background:#FAFBFD;}
+tbody tr:last-child td{border-bottom:none;}
+.checkbox{width:14px;height:14px;border:1.5px solid var(--border);border-radius:3px;cursor:pointer;display:inline-block;vertical-align:middle;position:relative;}
+.checkbox.checked{background:var(--primary);border-color:var(--primary);}
+.checkbox.checked::after{
+  content:"";position:absolute;left:3px;top:0;width:5px;height:9px;
+  border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);
+}
+.row-action{display:inline-flex;gap:4px;align-items:center;}
+.row-action button{
+  width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;
+}
+.row-action button:hover{background:var(--primary-light);color:var(--primary);}
+.row-action button.danger:hover{background:var(--danger-bg);color:var(--danger);}
+
+.table-foot{
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border-light);
+}
+.table-foot .count{color:var(--text-3);font-size:12px;}
+.pager{display:flex;align-items:center;gap:4px;}
+.pager button{
+  min-width:30px;height:30px;padding:0 8px;border-radius:6px;font-size:12px;color:var(--text-2);
+}
+.pager button:hover:not(:disabled){background:#F4F6FA;color:var(--text-1);}
+.pager button.active{background:var(--primary);color:#fff;}
+.pager button:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ====== Tab nav inside page ====== */
+.seg{
+  display:inline-flex;background:#F4F6FA;border-radius:10px;padding:4px;margin-bottom:18px;flex-wrap:wrap;gap:4px;
+}
+.seg button{
+  height:34px;padding:0 18px;border-radius:7px;font-size:13px;color:var(--text-2);font-weight:500;
+  transition:all .15s;
+}
+.seg button.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);}
+
+/* ====== Schedule cards ====== */
+.sch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.sch-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;
+}
+.sch-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.sch-card .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;}
+.sch-card h5{font-size:14px;font-weight:600;}
+.sch-card .meta{font-size:12px;color:var(--text-3);margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sch-card .meta span{display:inline-flex;align-items:center;gap:4px;}
+
+/* ====== Group cards ====== */
+.group-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.group-card{
+  background:#fff;border-radius:14px;padding:20px;
+  box-shadow:var(--shadow-sm);position:relative;overflow:hidden;
+  transition:all .2s;cursor:pointer;
+}
+.group-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.group-card::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:4px;
+}
+.group-card.math::before{background:linear-gradient(90deg,#3087CC,#9CBFDA);}
+.group-card.physics::before{background:linear-gradient(90deg,#7C5BC1,#B59CE5);}
+.group-card.chem::before{background:linear-gradient(90deg,#1BB975,#A7F3D0);}
+.group-card.eng::before{background:linear-gradient(90deg,#F29100,#FFD68F);}
+.group-card.mech::before{background:linear-gradient(90deg,#DF2027,#F6BCBE);}
+.group-card.cs::before{background:linear-gradient(90deg,#0EA5E9,#7DD3FC);}
+.group-card .group-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.group-card .gi{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+}
+.group-card .gname{font-size:15px;font-weight:600;}
+.group-card .gleader{font-size:12px;color:var(--text-3);margin-top:2px;}
+.group-card .gstats{
+  display:flex;justify-content:space-between;padding:12px 0;
+  border-top:1px dashed var(--border-light);border-bottom:1px dashed var(--border-light);margin-bottom:12px;
+}
+.group-card .gstats div{text-align:center;flex:1;}
+.group-card .gstats div strong{font-size:18px;display:block;}
+.group-card .gstats div span{font-size:11px;color:var(--text-3);}
+.group-card .gmembers{display:flex;align-items:center;}
+.group-card .gmembers .ava{
+  width:26px;height:26px;border-radius:50%;border:2px solid #fff;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;
+  margin-left:-6px;
+}
+.group-card .gmembers .ava:first-child{margin-left:0;}
+.group-card .gmembers .more{margin-left:8px;font-size:12px;color:var(--text-3);}
+
+/* ====== Star milestone ====== */
+.star-track{
+  background:#fff;border-radius:14px;padding:24px;margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+}
+.star-bar{position:relative;height:8px;background:#F1F2F3;border-radius:4px;margin:32px 0 24px;}
+.star-bar .fill{
+  position:absolute;left:0;top:0;height:100%;border-radius:4px;
+  background:linear-gradient(90deg,#3087CC,#1BB975);
+}
+.star-bar .marker{
+  position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:#fff;
+  border:3px solid #E5E8EE;transform:translateX(-50%);
+}
+.star-bar .marker.done{border-color:var(--primary);}
+.star-bar .marker.current{border-color:var(--success);box-shadow:0 0 0 6px rgba(27,185,117,.18);}
+.star-bar .marker .lbl{
+  position:absolute;top:24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-2);
+  white-space:nowrap;
+}
+.star-bar .marker .lbl strong{display:block;font-size:13px;color:var(--text-1);font-weight:600;}
+
+/* ====== Library cards ====== */
+.lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.lib-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;cursor:pointer;
+}
+.lib-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.lib-card .ftype{
+  width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;font-size:11px;font-weight:600;color:#fff;
+}
+.ftype.pdf{background:linear-gradient(135deg,#DF2027,#FF6B6B);}
+.ftype.ppt{background:linear-gradient(135deg,#F29100,#FFAA33);}
+.ftype.doc{background:linear-gradient(135deg,#3087CC,#5BA8DE);}
+.ftype.xls{background:linear-gradient(135deg,#1BB975,#34D399);}
+.lib-card h5{font-size:13px;font-weight:500;margin-bottom:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.lib-card .meta{font-size:11px;color:var(--text-3);display:flex;justify-content:space-between;}
+.lib-card .stats{
+  margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-light);
+  display:flex;gap:12px;font-size:11px;color:var(--text-3);
+}
+.lib-card .stats span{display:inline-flex;align-items:center;gap:3px;}
+
+/* ====== Modal ====== */
+.modal-mask{
+  position:fixed;inset:0;background:rgba(15,32,55,.42);z-index:100;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-mask.show{opacity:1;pointer-events:auto;}
+.modal{
+  background:#fff;border-radius:14px;width:680px;max-width:92vw;max-height:88vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.94);transition:transform .2s;
+}
+.modal-mask.show .modal{transform:scale(1);}
+.modal-head{
+  padding:18px 24px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h3{font-size:16px;font-weight:600;}
+.modal-body{padding:22px 24px;overflow-y:auto;flex:1;}
+.modal-foot{
+  padding:14px 24px;border-top:1px solid var(--border-light);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;}
+.form-item{display:flex;flex-direction:column;}
+.form-item label{font-size:12px;color:var(--text-2);margin-bottom:6px;}
+.form-item label .req{color:var(--danger);}
+.form-item .input,.form-item textarea,.form-item .select{width:100%;}
+.form-item textarea{
+  padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;
+  font-family:inherit;outline:none;transition:all .15s;resize:vertical;
+}
+.form-item textarea:focus{border-color:var(--primary);}
+
+/* ====== Toast ====== */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#fff;border:1px solid var(--success-border);background:var(--success-bg);color:var(--success);
+  padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:8px;z-index:200;
+  opacity:0;pointer-events:none;transition:all .25s;
+  box-shadow:var(--shadow-lg);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Donut ring */
+.ring-row{display:flex;gap:18px;margin-top:16px;flex-wrap:wrap;}
+.ring-item{
+  flex:1;min-width:180px;background:#FAFBFD;border-radius:10px;padding:14px;
+  display:flex;align-items:center;gap:12px;
+}
+.ring-item .label{font-size:12px;color:var(--text-2);}
+.ring-item .val{font-size:18px;font-weight:600;margin-top:2px;}
+.ring-item .val small{font-size:11px;color:var(--text-3);font-weight:400;margin-left:4px;}
+
+/* Calendar */
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-day{
+  aspect-ratio:1.1;background:#FAFBFD;border-radius:8px;padding:8px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  transition:all .15s;cursor:pointer;border:1px solid transparent;
+  position:relative;
+}
+.cal-day:hover{background:var(--primary-light);}
+.cal-day .d{font-size:13px;font-weight:500;}
+.cal-day .t{font-size:10px;color:var(--text-3);text-align:right;}
+.cal-day.has-event::after{
+  content:"";position:absolute;bottom:6px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--primary);
+}
+.cal-day.today{background:var(--primary);color:#fff;}
+.cal-day.today .t{color:rgba(255,255,255,.8);}
+.cal-day.today.has-event::after{background:#fff;}
+.cal-day.muted{opacity:.35;}
+
+/* Approval timeline */
+.timeline{padding:8px 0;}
+.tl-item{display:flex;gap:14px;position:relative;padding-bottom:18px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{
+  content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--border-light);
+}
+.tl-item:last-child::before{display:none;}
+.tl-item .dot{
+  width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;
+}
+.tl-item.done .dot{background:var(--success);border-color:var(--success);color:#fff;}
+.tl-item.current .dot{background:#fff;border-color:var(--primary);}
+.tl-item.current .dot::after{
+  content:"";width:8px;height:8px;border-radius:50%;background:var(--primary);
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(1.4);}}
+.tl-item .tl-content{flex:1;}
+.tl-item .tl-content h6{font-size:13px;font-weight:500;}
+.tl-item .tl-content p{font-size:12px;color:var(--text-3);margin-top:3px;}
+
+/* Charts inside */
+.horiz-bar{margin-top:8px;}
+.hb-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.hb-row .name{width:84px;font-size:12px;color:var(--text-2);}
+.hb-row .track{flex:1;height:8px;background:#F1F2F3;border-radius:4px;overflow:hidden;position:relative;}
+.hb-row .track .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#3087CC,#5BA8DE);transition:width .8s ease;}
+.hb-row .val{width:50px;text-align:right;font-size:12px;font-weight:600;color:var(--text-1);}
+
+/* Star levels grid */
+.star-levels{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:48px;}
+.sl{border-radius:10px;padding:14px;text-align:center;}
+.sl-1{background:#F4FAFE;border:1px solid #BFDDF6;}
+.sl-2{background:#FFF8E6;border:1px solid #FFE0B3;}
+.sl-3{background:#FFF5E5;border:1px solid #FFE0B3;}
+.sl-4{background:#E8FCF4;border:1px solid #A7F3D0;}
+.sl-5{background:linear-gradient(135deg,#FFE0B3,#FFD68F);border:1px solid #F29100;color:#fff;}
+.sl strong{font-size:20px;font-weight:700;display:block;margin-top:6px;}
+.sl span{font-size:11px;color:var(--text-3);}
+.sl-5 strong, .sl-5 span{color:#fff;}
+.sl-5 span{opacity:.85;}
+
+@media(max-width:1280px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .row-2{grid-template-columns:1fr;}
+  .lib-grid{grid-template-columns:repeat(3,1fr);}
+  .group-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:980px){
+  .lib-grid{grid-template-columns:repeat(2,1fr);}
+  .group-grid{grid-template-columns:1fr;}
+  .star-levels{grid-template-columns:repeat(5,1fr);}
+}
+
+</style>
+</head>
+<body>
+<aside class="sidebar"></aside>
+<main class="main">
+  <header class="topbar"></header>
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>资料征集与需求池</h1>
+        <p>管理员发布资料征集通知 · 学生提交资料需求 · 审核上传资料</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" onclick="openModal('publishModal')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          发布征集通知
+        </button>
+      </div>
+    </div>
+
+    <div class="seg">
+      <button class="active" data-tab="collect">资料征集</button>
+      <button data-tab="demand">需求池</button>
+    </div>
+
+    <!-- ========== Tab: 资料征集 ========== -->
+    <div class="tab-content" data-tab="collect">
+      <div class="filterbar" style="flex-wrap:nowrap;">
+        <div class="field">
+          <label>征集主题</label>
+          <input class="input" id="fColTopic" placeholder="搜索主题" style="min-width:0;width:160px;" />
+        </div>
+        <div class="field">
+          <label>需求来源</label>
+          <select class="select" id="fColSrc" style="min-width:0;width:120px;">
+            <option value="">全部</option><option>管理员发布</option><option>学生需求</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>状态</label>
+          <select class="select" id="fColSt" style="min-width:0;width:100px;">
+            <option value="">全部</option><option>未发布</option><option>进行中</option><option>已结束</option>
+          </select>
+        </div>
+        <div class="spacer"></div>
+        <div style="display:flex;gap:8px;flex-shrink:0;">
+          <button class="btn btn-ghost btn-sm" onclick="resetColFilter()">重置</button>
+          <button class="btn btn-primary btn-sm" onclick="renderColTable()">查询</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>征集主题</th>
+              <th>需求来源</th>
+              <th>发布人</th>
+              <th>发布时间</th>
+              <th>截止时间</th>
+              <th>收集进度</th>
+              <th>状态</th>
+              <th style="width:140px;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="colTable"></tbody>
+        </table>
+        <div class="table-foot">
+          <div class="count" id="colCountLabel">共 0 条记录</div>
+          <div class="pager"><button disabled>‹</button><button class="active">1</button><button>›</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== Tab: 需求池 ========== -->
+    <div class="tab-content" data-tab="demand" style="display:none;">
+      <div class="filterbar" style="flex-wrap:nowrap;">
+        <div class="field">
+          <label>关键字</label>
+          <input class="input" id="fDemKw" placeholder="需求主题" style="min-width:0;width:180px;" />
+        </div>
+        <div class="field">
+          <label>状态</label>
+          <select class="select" id="fDemSt" style="min-width:0;width:120px;">
+            <option value="">全部</option><option>待处理</option><option>已发布征集</option><option>已忽略</option>
+          </select>
+        </div>
+        <div class="spacer"></div>
+        <div style="display:flex;gap:8px;flex-shrink:0;">
+          <button class="btn btn-ghost btn-sm" onclick="resetDemFilter()">重置</button>
+          <button class="btn btn-primary btn-sm" onclick="renderDemTable()">查询</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>需求主题</th>
+              <th>所属分类</th>
+              <th>发布人</th>
+              <th>提交时间</th>
+              <th>进度</th>
+              <th>状态</th>
+              <th style="width:160px;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="demTable"></tbody>
+        </table>
+        <div class="table-foot">
+          <div class="count" id="demCountLabel">共 0 条记录</div>
+          <div class="pager"><button disabled>‹</button><button class="active">1</button><button>›</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============ Modal: 发布/编辑征集通知 ============ -->
+<div class="modal-mask" id="publishModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="pubModalTitle">发布资料征集通知</h3>
+      <button class="icon-btn" onclick="closeModal('publishModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-item"><label>征集主题 <span class="req">*</span></label><input class="input" id="pubTopic" placeholder="例：考研数学一近 3 年真题精解" /></div>
+      <div class="form-row">
+        <div class="form-item"><label>资料分类 <span class="req">*</span></label><select class="select" id="pubCat"><option>课程科目类</option><option>学涯规划类</option></select></div>
+        <div class="form-item"><label>子分类</label><select class="select" id="pubSubcat"><option>往年真题</option><option>笔记讲义</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-item"><label>计划征集数量</label><input class="input" type="number" id="pubTarget" value="10" /></div>
+        <div class="form-item"><label>截止时间 <span class="req">*</span></label><input class="input" type="date" id="pubDeadline" /></div>
+      </div>
+      <div class="form-item"><label style="display:flex;align-items:center;justify-content:space-between;">征集说明 <span class="req">*</span><button type="button" class="xfjs-ai-inline-btn" id="btnAiColDesc" onclick="aiGenColDesc()" style="margin-left:auto;flex-shrink:0;"><svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> AI 帮我写</button></label><textarea rows="4" id="pubDesc" placeholder="请详细说明所需资料的内容、质量要求、奖励等..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('publishModal')">取消</button>
+      <button class="btn btn-primary" id="pubSubmitBtn" onclick="doPublish()">发布</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Modal: 征集详情 ============ -->
+<div class="modal-mask" id="colDetailModal">
+  <div class="modal" style="width:800px;">
+    <div class="modal-head">
+      <h3 id="colDtlTitle">征集详情</h3>
+      <button class="icon-btn" onclick="closeModal('colDetailModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="colDtlBody" style="padding:0;"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('colDetailModal')">关闭</button></div>
+  </div>
+</div>
+
+<!-- ============ Modal: 资料预览 ============ -->
+<div class="modal-mask" id="previewModal" style="z-index:200;">
+  <div class="modal" style="width:700px;">
+    <div class="modal-head">
+      <h3 id="prevTitle">资料预览</h3>
+      <button class="icon-btn" onclick="closeModal('previewModal')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="prevBody"></div>
+    <div class="modal-foot" id="prevFoot"><button class="btn btn-ghost" onclick="closeModal('previewModal')">关闭</button></div>
+  </div>
+</div>
+
+<script>
+// ====== PC 管理端公共脚本（侧边栏渲染、Toast、Modal、Checkbox、Pager 交互） ======
+
+const PC_NAV = [
+  {group:'首页',items:[
+    {id:'dashboard',name:'数据概览',href:'dashboard.html',icon:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'}
+  ]},
+  {group:'辅学义工',items:[
+    {id:'volunteers',name:'申请管理',href:'volunteers.html',badge:12,icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>'},
+    {id:'hours',name:'时长记录',href:'hours.html',icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'},
+    {id:'stars',name:'星级评定',href:'stars.html',badge:5,icon:'<polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/>'},
+    {id:'groups',name:'分组管理',href:'groups.html',icon:'<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="9" r="3"/><path d="M22 21v-1a3 3 0 0 0-2-2.83"/>'},
+    {id:'appeals',name:'意见反馈',href:'appeals.html',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/>'},
+    {id:'volunteer-manage',name:'义工管理',href:'volunteer-manage.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'}
+  ]},
+  {group:'知新选课',items:[
+    {id:'courses',name:'课程管理',href:'courses.html',badge:8,icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'},
+    {id:'course-categories',name:'课程分类',href:'course-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'venue-bookings',name:'场地预约',href:'venue-bookings.html',badge:6,icon:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'},
+    {id:'posters',name:'开屏海报',href:'posters.html',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'}
+  ]},
+  {group:'即问即答',items:[
+    {id:'qa-content',name:'内容管理',href:'qa-content.html',badge:3,icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+    {id:'qa-categories',name:'学科分类',href:'qa-categories.html',icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'},
+    {id:'qa-users',name:'用户管理',href:'qa-users.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+  ]},
+  {group:'宝藏资料库',items:[
+    {id:'library',name:'资料库管理',href:'library.html',badge:11,icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {id:'library-categories',name:'资料分类',href:'library-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'uploaders',name:'上传者管理',href:'uploaders.html',icon:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>'},
+    {id:'library-feedback',name:'反馈与需求池',href:'library-feedback.html',icon:'<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><line x1="7" y1="22" x2="7" y2="11"/>'}
+  ]},
+  {group:'系统配置',items:[
+    {id:'analytics',name:'数据分析',href:'analytics.html',icon:'<path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/>'},
+    {id:'settings',name:'系统配置',href:'settings.html',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+    {id:'ai-settings',name:'AI 助手配置',href:'ai-settings.html',icon:'<path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/><circle cx="19" cy="5" r="1.5"/>'}
+  ]}
+];
+
+function renderSidebar(activeId){
+  const sidebar = document.querySelector('.sidebar');
+  if(!sidebar) return;
+  const navHTML = PC_NAV.map((g,i)=>`
+    <div class="nav-group-title" ${i>0?'style="margin-top:14px;"':''}>${g.group}</div>
+    ${g.items.map(it=>`
+      <a class="nav-item ${it.id===activeId?'active':''}" href="${it.href}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg>
+        ${it.name}
+        ${it.badge?`<span class="badge">${it.badge}</span>`:''}
+      </a>
+    `).join('')}
+  `).join('');
+  sidebar.innerHTML = `
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="brand-text">
+        <strong>学风建设系统</strong>
+        <span>管理后台 v2.0</span>
+      </div>
+    </div>
+    <nav class="nav-group">${navHTML}</nav>
+    <div class="user-card">
+      <div class="ava">王</div>
+      <div class="info"><h5>王老师</h5><p>学工部管理员</p></div>
+      <button class="icon-btn" style="width:24px;height:24px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function renderTopbar(crumb){
+  const tb = document.querySelector('.topbar');
+  if(!tb) return;
+  tb.innerHTML = `
+    <button class="icon-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="crumb">
+      <a href="../index.html">学风建设</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span style="color:var(--text-1);font-weight:500;">${crumb}</span>
+    </div>
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input placeholder="搜索学生、课程、资料..." />
+      <span style="font-size:11px;color:var(--text-4);background:#fff;padding:2px 6px;border-radius:4px;border:1px solid var(--border);">⌘K</span>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="刷新">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
+      <button class="icon-btn" title="消息">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="red-dot"></span>
+      </button>
+      <button class="icon-btn" title="帮助">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+      <div class="topbar-user">
+        <div class="ava">王</div>
+        <span>王老师</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  `;
+}
+
+// ============= Toast =============
+function showToast(msg){
+  let toast = document.getElementById('toast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id='toast';toast.className='toast';
+    toast.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
+    document.body.appendChild(toast);
+  }
+  toast.querySelector('span').textContent=msg;
+  toast.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>toast.classList.remove('show'),2400);
+}
+
+// ============= Modal =============
+function openModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.add('show');
+}
+function closeModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.remove('show');
+}
+
+// ============= Checkbox =============
+document.addEventListener('click',e=>{
+  if(e.target.classList && e.target.classList.contains('checkbox')){
+    e.target.classList.toggle('checked');
+  }
+});
+
+// ============= Segments / Panel tabs =============
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.seg, .panel-tabs').forEach(g=>{
+    g.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        g.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        // Show corresponding tab content if exists
+        const tab=b.getAttribute('data-tab');
+        if(tab){
+          const wrap=g.closest('.panel,.page,.tab-wrap')||document;
+          wrap.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+          const target=wrap.querySelector('.tab-content[data-tab="'+tab+'"]');
+          if(target)target.style.display='';
+        }
+      });
+    });
+  });
+  document.querySelectorAll('.modal-mask').forEach(m=>{
+    m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');});
+  });
+});
+
+</script>
+<script>
+  renderSidebar('library-feedback');
+  renderTopbar('宝藏资料库 / 资料征集与需求池');
+
+  const COL_STATUS_TAG={'未发布':'tag-grey','进行中':'tag-success','已结束':'tag-grey'};
+  const DEM_STATUS_TAG={'待处理':'tag-warning','已发布征集':'tag-success','已忽略':'tag-grey'};
+
+  const colData=[
+    {id:1,topic:'2026 春季学期 · 双十佳教案征集',src:'管理员发布',publisher:'王老师',pubTime:'2026-04-15',deadline:'2026-05-30',collected:12,target:20,st:'进行中',desc:'征集各学科优秀教案，评选双十佳教学案例。要求格式规范、内容完整。',
+      files:[
+        {name:'高数教案-李明杰.pdf',type:'pdf',uploader:'李明杰',time:'2026-04-20',size:'2.4MB',status:'已通过'},
+        {name:'线代教案-王诗韵.docx',type:'doc',uploader:'王诗韵',time:'2026-04-22',size:'1.8MB',status:'已通过'},
+        {name:'物理教案-陈思远.pdf',type:'pdf',uploader:'陈思远',time:'2026-04-25',size:'3.1MB',status:'待审核'},
+        {name:'英语教案-张语涵.pdf',type:'pdf',uploader:'张语涵',time:'2026-04-28',size:'1.5MB',status:'待审核'},
+      ]},
+    {id:2,topic:'考研数学一近 3 年真题精解',src:'学生需求',publisher:'李老师',pubTime:'2026-04-20',deadline:'2026-05-20',collected:3,target:10,st:'进行中',desc:'征集考研数学一2023-2025年真题详细解析，要求步骤清晰、解法多样。来源：需求池 256 名学生支持。',
+      files:[
+        {name:'2024数学一真题解析.pdf',type:'pdf',uploader:'赵天磊',time:'2026-04-25',size:'4.2MB',status:'已通过'},
+        {name:'2023数学一真题合集.pdf',type:'pdf',uploader:'孙雨萱',time:'2026-04-28',size:'5.6MB',status:'已通过'},
+        {name:'2025数学一预测卷.pdf',type:'pdf',uploader:'周泽宇',time:'2026-05-02',size:'3.8MB',status:'待审核'},
+      ]},
+    {id:3,topic:'大学物理实验 · 仪器操作图文版',src:'学生需求',publisher:'王老师',pubTime:'2026-03-12',deadline:'2026-04-12',collected:8,target:5,st:'已结束',desc:'征集物理实验常见仪器操作图文指南。来源：需求池 128 名学生支持。',
+      files:[
+        {name:'电磁学实验指南.pdf',type:'pdf',uploader:'黄怡然',time:'2026-03-20',size:'2.1MB',status:'已通过'},
+        {name:'光学实验操作手册.docx',type:'doc',uploader:'刘子轩',time:'2026-03-25',size:'1.9MB',status:'已通过'},
+      ]},
+    {id:4,topic:'Python 机器学习入门资料包',src:'学生需求',publisher:'王老师',pubTime:'—',deadline:'—',collected:0,target:8,st:'未发布',desc:'征集 Python 机器学习入门教程、代码示例和笔记。来源：需求池 156 名学生支持。',files:[]},
+    {id:5,topic:'英语六级口语高分模板集',src:'管理员发布',publisher:'张老师',pubTime:'—',deadline:'—',collected:0,target:15,st:'未发布',desc:'征集六级口语各话题高分模板和答题技巧。',files:[]},
+  ];
+
+  const demData=[
+    {id:1,topic:'考研数学一近 3 年真题精解版',cat:'课程科目类 · 往年真题',publisher:'陈同学',time:'2026-03-15',progress:'3 / 10',st:'已发布征集',colId:2},
+    {id:2,topic:'英语六级口语高分模板',cat:'课程科目类 · 笔记讲义',publisher:'王同学',time:'2026-03-20',progress:'—',st:'待处理',colId:null},
+    {id:3,topic:'Python 进阶 · 机器学习入门资料',cat:'课程科目类 · 笔记讲义',publisher:'刘同学',time:'2026-03-22',progress:'0 / 8',st:'已发布征集',colId:4},
+    {id:4,topic:'物理实验常见仪器操作指南',cat:'课程科目类 · 实验指导',publisher:'林同学',time:'2026-02-28',progress:'8 / 5',st:'已发布征集',colId:3},
+    {id:5,topic:'保研经验 · CS 方向夏令营攻略',cat:'学涯规划类 · 经验分享',publisher:'张同学',time:'2026-04-01',progress:'—',st:'待处理',colId:null},
+    {id:6,topic:'线性代数期末真题汇编（近5年）',cat:'课程科目类 · 往年真题',publisher:'赵同学',time:'2026-04-05',progress:'—',st:'待处理',colId:null},
+    {id:7,topic:'考研政治背诵手册',cat:'课程科目类 · 笔记讲义',publisher:'孙同学',time:'2026-04-10',progress:'—',st:'已忽略',colId:null},
+  ];
+
+  // ========== 资料征集 ==========
+  function resetColFilter(){
+    ['fColTopic'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    ['fColSrc','fColSt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    renderColTable();
+  }
+  function renderColTable(){
+    const topic=(document.getElementById('fColTopic')||{}).value||'';
+    const src=(document.getElementById('fColSrc')||{}).value||'';
+    const st=(document.getElementById('fColSt')||{}).value||'';
+    const list=colData.filter(d=>{
+      if(topic&&!d.topic.includes(topic))return false;
+      if(src&&d.src!==src)return false;
+      if(st&&d.st!==st)return false;
+      return true;
+    });
+    const tbody=document.getElementById('colTable');
+    if(!tbody)return;
+    tbody.innerHTML=list.map(d=>{
+      const srcTag=d.src==='管理员发布'?'tag':'tag tag-grey';
+      const progressTag=d.collected>=d.target?'tag-success':'tag-warning';
+      let acts='';
+      if(d.st==='未发布'){
+        acts+='<a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;" onclick="editCol('+d.id+')">编辑</a>';
+        acts+=' <a style="color:var(--danger);cursor:pointer;font-size:13px;font-weight:500;margin-left:10px;" onclick="deleteCol('+d.id+')">删除</a>';
+      } else {
+        acts+='<a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;" onclick="openColDetail('+d.id+')">详情</a>';
+      }
+      return `<tr>
+        <td><strong>${d.topic}</strong></td>
+        <td><span class="${srcTag}">${d.src}</span></td>
+        <td>${d.publisher}</td>
+        <td style="color:var(--text-2);">${d.pubTime}</td>
+        <td style="color:var(--text-2);">${d.deadline}</td>
+        <td><span class="tag ${progressTag}">${d.collected} / ${d.target}</span></td>
+        <td><span class="tag ${COL_STATUS_TAG[d.st]||''}">${d.st}</span></td>
+        <td><div style="display:flex;align-items:center;">${acts}</div></td>
+      </tr>`;
+    }).join('');
+    const lbl=document.getElementById('colCountLabel');
+    if(lbl)lbl.textContent='共 '+list.length+' 条记录';
+  }
+  renderColTable();
+
+  function openColDetail(id){
+    const d=colData.find(x=>x.id===id);if(!d)return;
+    document.getElementById('colDtlTitle').textContent='征集详情 · '+d.topic;
+    const FTYPE_BG={'pdf':'linear-gradient(135deg,#DF2027,#FF6B6B)','doc':'linear-gradient(135deg,#3087CC,#5BA8DE)','xls':'linear-gradient(135deg,#1BB975,#34D399)','ppt':'linear-gradient(135deg,#F29100,#FFAA33)'};
+    const FILE_ST_TAG={'已通过':'tag-success','待审核':'tag-warning','已拒绝':'tag-danger'};
+    const filesHTML=d.files.length?d.files.map((f,i)=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--border-light);border-radius:10px;margin-bottom:8px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:${FTYPE_BG[f.type]||FTYPE_BG.pdf};color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;">${f.type.toUpperCase()}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:500;"><a style="color:var(--primary);cursor:pointer;" onclick="openPreview(${id},${i})">${f.name}</a></div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:2px;">${f.uploader} · ${f.time} · ${f.size}</div>
+        </div>
+        <span class="tag ${FILE_ST_TAG[f.status]||''}">${f.status}</span>
+        ${f.status==='待审核'?`<a style="color:var(--success);cursor:pointer;font-size:12px;font-weight:500;" onclick="approveFile(${id},${i})">通过</a><a style="color:var(--danger);cursor:pointer;font-size:12px;font-weight:500;margin-left:6px;" onclick="rejectFile(${id},${i})">拒绝</a>`:''}
+      </div>
+    `).join(''):'<div style="text-align:center;padding:24px;color:var(--text-4);font-size:13px;">暂无上传资料</div>';
+
+    const progressPct=d.target>0?Math.min(100,Math.round(d.collected/d.target*100)):0;
+    document.getElementById('colDtlBody').innerHTML=`
+      <div style="padding:24px 28px;">
+        <div style="display:flex;gap:32px;margin-bottom:20px;flex-wrap:wrap;">
+          <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">需求来源</div><span class="tag ${d.src==='管理员发布'?'':'tag-grey'}">${d.src}</span></div>
+          <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">发布人</div><div style="font-size:14px;font-weight:500;">${d.publisher}</div></div>
+          <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">状态</div><span class="tag ${COL_STATUS_TAG[d.st]||''}">${d.st}</span></div>
+          <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">发布时间</div><div style="font-size:14px;">${d.pubTime}</div></div>
+          <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">截止时间</div><div style="font-size:14px;">${d.deadline}</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">征集说明</div>
+        <div style="font-size:13px;color:var(--text-1);line-height:1.8;background:var(--bg);padding:12px 16px;border-radius:8px;margin-bottom:20px;">${d.desc}</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div style="font-size:13px;font-weight:600;">收集进度</div>
+          <div style="flex:1;height:8px;background:#F1F2F3;border-radius:4px;overflow:hidden;"><div style="height:100%;width:${progressPct}%;border-radius:4px;background:linear-gradient(90deg,var(--primary),#5BA8DE);transition:width .5s ease;"></div></div>
+          <div style="font-size:13px;font-weight:600;color:var(--primary);">${d.collected} / ${d.target}</div>
+        </div>
+      </div>
+      <div style="padding:0 28px 24px;">
+        <div style="font-size:14px;font-weight:600;margin-bottom:12px;">已上传资料 (${d.files.length})</div>
+        ${filesHTML}
+      </div>
+    `;
+    openModal('colDetailModal');
+  }
+
+  function editCol(id){
+    const d=colData.find(x=>x.id===id);if(!d)return;
+    document.getElementById('pubModalTitle').textContent='编辑征集通知';
+    document.getElementById('pubTopic').value=d.topic;
+    document.getElementById('pubDesc').value=d.desc;
+    document.getElementById('pubTarget').value=d.target;
+    document.getElementById('pubSubmitBtn').textContent='保存';
+    document.getElementById('pubSubmitBtn').setAttribute('onclick','doPublish('+id+')');
+    openModal('publishModal');
+  }
+
+  function deleteCol(id){
+    if(!confirm('确定删除该征集通知？'))return;
+    const idx=colData.findIndex(x=>x.id===id);
+    if(idx>=0)colData.splice(idx,1);
+    renderColTable();
+    showToast('已删除');
+  }
+
+  function doPublish(editId){
+    closeModal('publishModal');
+    if(editId){
+      showToast('征集通知已保存');
+    } else {
+      showToast('征集通知已发布');
+    }
+    document.getElementById('pubModalTitle').textContent='发布资料征集通知';
+    document.getElementById('pubSubmitBtn').textContent='发布';
+    document.getElementById('pubSubmitBtn').setAttribute('onclick','doPublish()');
+    renderColTable();
+  }
+
+  function approveFile(colId,fileIdx){
+    const d=colData.find(x=>x.id===colId);
+    if(d&&d.files[fileIdx]){
+      d.files[fileIdx].status='已通过';
+      openColDetail(colId);
+      showToast('资料已通过审核，将正常显示');
+    }
+  }
+  function rejectFile(colId,fileIdx){
+    const d=colData.find(x=>x.id===colId);
+    if(d&&d.files[fileIdx]){
+      d.files[fileIdx].status='已拒绝';
+      openColDetail(colId);
+      showToast('资料已拒绝');
+    }
+  }
+
+  function openPreview(colId,fileIdx){
+    const d=colData.find(x=>x.id===colId);
+    if(!d||!d.files[fileIdx])return;
+    const f=d.files[fileIdx];
+    document.getElementById('prevTitle').textContent='资料预览 · '+f.name;
+    document.getElementById('prevBody').innerHTML=`
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border-light);">
+        <div style="width:44px;height:44px;border-radius:10px;background:${f.type==='pdf'?'linear-gradient(135deg,#DF2027,#FF6B6B)':'linear-gradient(135deg,#3087CC,#5BA8DE)'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">${f.type.toUpperCase()}</div>
+        <div style="flex:1;">
+          <div style="font-size:15px;font-weight:600;">${f.name}</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:3px;">上传者：${f.uploader} · ${f.time} · ${f.size}</div>
+        </div>
+        <span class="tag ${f.status==='已通过'?'tag-success':f.status==='待审核'?'tag-warning':'tag-danger'}">${f.status}</span>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:40px 20px;text-align:center;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-4)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <div style="font-size:14px;color:var(--text-2);margin-top:12px;">文档预览区域</div>
+        <div style="font-size:12px;color:var(--text-4);margin-top:6px;">实际环境中将嵌入在线文档预览器</div>
+      </div>
+    `;
+    const foot=document.getElementById('prevFoot');
+    if(f.status==='待审核'){
+      foot.innerHTML=`
+        <button class="btn btn-ghost" onclick="closeModal('previewModal')">关闭</button>
+        <button class="btn btn-secondary" style="color:var(--danger);border-color:var(--danger);" onclick="rejectFile(${colId},${fileIdx});closeModal('previewModal')">拒绝</button>
+        <button class="btn btn-primary" onclick="approveFile(${colId},${fileIdx});closeModal('previewModal')">通过</button>`;
+    } else {
+      foot.innerHTML='<button class="btn btn-ghost" onclick="closeModal(\'previewModal\')">关闭</button>';
+    }
+    openModal('previewModal');
+  }
+
+  // ========== 需求池 ==========
+  function resetDemFilter(){
+    ['fDemKw'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    ['fDemSt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    renderDemTable();
+  }
+  function renderDemTable(){
+    const kw=(document.getElementById('fDemKw')||{}).value||'';
+    const st=(document.getElementById('fDemSt')||{}).value||'';
+    const list=demData.filter(d=>{
+      if(kw&&!d.topic.includes(kw))return false;
+      if(st&&d.st!==st)return false;
+      return true;
+    });
+    const tbody=document.getElementById('demTable');
+    if(!tbody)return;
+    tbody.innerHTML=list.map(d=>{
+      let acts='<a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;" onclick="openDemDetail('+d.id+')">详情</a>';
+      if(d.st==='待处理'){
+        acts+=' <a style="color:var(--success);cursor:pointer;font-size:13px;font-weight:500;margin-left:10px;" onclick="publishFromDem('+d.id+')">发布征集</a>';
+        acts+=' <a style="color:var(--text-3);cursor:pointer;font-size:13px;font-weight:500;margin-left:10px;" onclick="ignoreDem('+d.id+')">忽略</a>';
+      }
+      if(d.st==='已发布征集'&&d.colId){
+        acts+=' <a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;margin-left:10px;" onclick="openColDetail('+d.colId+')">查看进度</a>';
+      }
+      const progressHtml=d.progress==='—'?'<span style="color:var(--text-4);">—</span>':'<span class="tag '+(d.progress.split('/').map(Number)[0]>=d.progress.split('/').map(Number)[1]?'tag-success':'tag-warning')+'">'+d.progress+'</span>';
+      return `<tr>
+        <td><strong>${d.topic}</strong></td>
+        <td style="color:var(--text-2);font-size:12px;">${d.cat}</td>
+        <td>${d.publisher}</td>
+        <td style="color:var(--text-2);font-size:12px;">${d.time}</td>
+        <td>${progressHtml}</td>
+        <td><span class="tag ${DEM_STATUS_TAG[d.st]||''}">${d.st}</span></td>
+        <td><div style="display:flex;align-items:center;">${acts}</div></td>
+      </tr>`;
+    }).join('');
+    const lbl=document.getElementById('demCountLabel');
+    if(lbl)lbl.textContent='共 '+list.length+' 条记录';
+  }
+  renderDemTable();
+
+  function openDemDetail(id){
+    const d=demData.find(x=>x.id===id);if(!d)return;
+    const colInfo=d.colId?colData.find(x=>x.id===d.colId):null;
+    const progressHTML=colInfo?`
+      <div style="border-top:1px solid var(--border-light);padding-top:16px;margin-top:16px;">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;">关联征集通知</div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:10px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <div style="flex:1;"><strong>${colInfo.topic}</strong><div style="font-size:12px;color:var(--text-3);margin-top:2px;">进度：${colInfo.collected} / ${colInfo.target} · ${colInfo.st}</div></div>
+          <a style="color:var(--primary);cursor:pointer;font-size:13px;font-weight:500;" onclick="closeModal('colDetailModal');openColDetail(${colInfo.id})">查看详情</a>
+        </div>
+      </div>`:'';
+
+    document.getElementById('colDtlTitle').textContent='需求详情 · '+d.topic;
+    document.getElementById('colDtlBody').innerHTML=`
+      <div style="padding:24px 28px;">
+        <div style="display:flex;gap:32px;margin-bottom:20px;flex-wrap:wrap;">
+          <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">所属分类</div><div style="font-size:14px;">${d.cat}</div></div>
+          <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">发布人</div><div style="font-size:14px;font-weight:500;">${d.publisher}</div></div>
+          <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">提交时间</div><div style="font-size:14px;">${d.time}</div></div>
+          <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">进度</div><div style="font-size:14px;font-weight:500;">${d.progress}</div></div>
+          <div><div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">状态</div><span class="tag ${DEM_STATUS_TAG[d.st]||''}">${d.st}</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">需求描述</div>
+        <div style="font-size:13px;color:var(--text-1);line-height:1.8;background:var(--bg);padding:12px 16px;border-radius:8px;">学生希望获取「${d.topic}」相关资料。</div>
+        ${progressHTML}
+      </div>
+    `;
+    openModal('colDetailModal');
+  }
+
+  function publishFromDem(id){
+    const d=demData.find(x=>x.id===id);if(!d)return;
+    if(!confirm('确认将「'+d.topic+'」发布为资料征集通知？'))return;
+    const newId=Date.now();
+    colData.unshift({id:newId,topic:d.topic,src:'学生需求',publisher:'王老师',pubTime:new Date().toISOString().slice(0,10),deadline:'2026-06-30',collected:0,target:10,st:'进行中',desc:'来源：需求池，由 '+d.publisher+' 发起。',files:[]});
+    d.progress='0 / 10';
+    d.st='已发布征集';
+    d.colId=newId;
+    renderDemTable();
+    renderColTable();
+    showToast('已发布征集通知「'+d.topic+'」');
+  }
+
+  function ignoreDem(id){
+    const d=demData.find(x=>x.id===id);if(!d)return;
+    d.st='已忽略';
+    renderDemTable();
+    showToast('已忽略该需求');
+  }
+</script>
+
+<!-- AI 学工助手 -->
+<link rel="stylesheet" href="../assets/ai/ai-widget-pc.css">
+<script src="../assets/ai/ai-knowledge.js"></script>
+<script src="../assets/ai/ai-core.js"></script>
+<script src="../assets/ai/ai-widget-pc.js"></script>
+<script>
+  function aiGenColDesc(){
+    var el = document.getElementById('pubDesc');
+    if(!el) return;
+    var btn = document.getElementById('btnAiColDesc');
+    var existing = el.value.trim();
+    var topic = (document.getElementById('pubTopic')||{}).value || '';
+    var cat = (document.getElementById('pubCat')||{}).value || '';
+    var deadline = (document.getElementById('pubDeadline')||{}).value || '';
+    el.disabled = true; el.value = '';
+    var origLabel = btn ? btn.innerHTML : '';
+    if(btn){ btn.disabled = true; btn.innerHTML = '<svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg> AI 帮写中…'; }
+    var full = '';
+    var prompt = existing && existing.length > 10
+      ? '请帮我润色以下资料征集说明，使其更规范、有号召力（100字左右）：「'+existing+'」。只给润色后的文字。'
+      : '请为宝藏资料库写一段资料征集说明（100字左右）'+(topic?'，征集主题：'+topic:'')+(cat?'，分类：'+cat:'')+(deadline?'，截止日期：'+deadline:'')+'。包括所需资料内容、质量要求和激励措施。只给说明文字。';
+    AICore.chat({
+      messages:[{role:'user',content:prompt}],
+      pageContext:{pageId:'library-feedback',pageName:'资料征集',pageContext:'管理员正在发布资料征集通知'},
+      onChunk:function(c){ full += c; el.value = full; },
+      onDone:function(t){ if(t) el.value = t; el.disabled = false; if(btn){ btn.disabled = false; btn.innerHTML = origLabel; } },
+      onError:function(){ el.disabled = false; el.value = existing; if(btn){ btn.disabled = false; btn.innerHTML = origLabel; } showToast('AI 生成失败'); }
+    });
+  }
+
+  AIWidget.init({
+    pageId: 'library-feedback',
+    pageName: '反馈与需求池',
+    pageContext: '管理员正在处理资料反馈与需求池。',
+    end: 'PC管理'
+  });
+</script>
+</body>
+</html>

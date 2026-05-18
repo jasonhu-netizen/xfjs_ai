@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>辅学义工申请管理 · 学风建设系统</title>
+<style>
+:root{
+  --primary:#3087CC;
+  --primary-light:#E3F1F9;
+  --primary-dark:#006DAD;
+  --primary-50:#F4FAFE;
+  --text-1:#3C444F;
+  --text-2:#696F7D;
+  --text-3:#9096A2;
+  --text-4:#ABB0BA;
+  --border:#E5E8EE;
+  --border-light:#EFF1F5;
+  --bg:#F4F6FA;
+  --bg-card:#FFFFFF;
+  --success:#1BB975;
+  --success-bg:#E8FCF4;
+  --success-border:#A7F3D0;
+  --warning:#F29100;
+  --warning-bg:#FFF5E5;
+  --warning-border:#FFE0B3;
+  --danger:#DF2027;
+  --danger-bg:#FCE8EA;
+  --danger-border:#F6BCBE;
+  --shadow-sm:0 1px 3px rgba(15,32,55,.05);
+  --shadow-md:0 4px 14px rgba(15,32,55,.06);
+  --shadow-lg:0 12px 32px rgba(15,32,55,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;font-size:14px;}
+body{min-height:100vh;display:flex;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+svg{display:block;flex-shrink:0;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D9DDE3;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#C0C5CD;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ====== Sidebar ====== */
+.sidebar{
+  width:232px;flex-shrink:0;background:#fff;
+  border-right:1px solid var(--border-light);
+  height:100vh;position:sticky;top:0;display:flex;flex-direction:column;
+}
+.brand{
+  padding:20px 20px 16px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border-light);
+}
+.brand-logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(48,135,204,.28);
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text strong{font-size:14px;font-weight:600;}
+.brand-text span{font-size:10px;color:var(--text-3);letter-spacing:.4px;margin-top:3px;}
+
+.nav-group{padding:16px 12px 8px;flex:1;overflow-y:auto;}
+.nav-group-title{
+  padding:8px 12px 6px;font-size:11px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;color:var(--text-2);
+  font-size:13px;cursor:pointer;transition:all .15s;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:var(--primary-50);color:var(--text-1);}
+.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:500;}
+.nav-item.active svg{color:var(--primary);}
+.nav-item .badge{
+  margin-left:auto;background:var(--danger);color:#fff;font-size:10px;
+  padding:1px 6px;border-radius:8px;font-weight:500;
+}
+.nav-item.active .badge{background:var(--primary);}
+
+.user-card{
+  margin:12px;padding:12px;border-radius:10px;
+  background:linear-gradient(135deg,#F4FAFE 0%,#E3F1F9 100%);
+  display:flex;align-items:center;gap:10px;
+}
+.user-card .ava{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:600;font-size:13px;
+}
+.user-card .info{flex:1;min-width:0;}
+.user-card .info h5{font-size:13px;font-weight:500;}
+.user-card .info p{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+/* ====== Main ====== */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{
+  height:60px;background:#fff;border-bottom:1px solid var(--border-light);
+  padding:0 28px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:10;
+}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--text-2);font-size:13px;}
+.crumb svg{color:var(--text-4);}
+.crumb a{color:var(--text-2);transition:color .15s;}
+.crumb a:hover{color:var(--primary);}
+.search{
+  margin-left:24px;width:320px;height:36px;border-radius:8px;
+  background:#F4F6FA;display:flex;align-items:center;padding:0 12px;gap:8px;
+  border:1px solid transparent;transition:all .15s;
+}
+.search:focus-within{background:#fff;border-color:var(--primary);}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:13px;color:var(--text-1);}
+.search input::placeholder{color:var(--text-4);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;position:relative;
+}
+.icon-btn:hover{background:#F4F6FA;color:var(--text-1);}
+.icon-btn .red-dot{
+  position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;
+  background:var(--danger);border:2px solid #fff;
+}
+.topbar-user{
+  display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;
+  border-radius:999px;cursor:pointer;
+}
+.topbar-user:hover{background:#F4F6FA;}
+.topbar-user .ava{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
+}
+.topbar-user span{font-size:13px;color:var(--text-1);}
+
+/* ====== Page Content ====== */
+.page{flex:1;padding:24px 28px;overflow-y:auto;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.page-head h1{font-size:22px;font-weight:600;}
+.page-head p{color:var(--text-3);font-size:13px;margin-top:6px;}
+.page-actions{display:flex;gap:8px;}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:500;
+  transition:all .15s;
+}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(48,135,204,.28);}
+.btn-secondary{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+.btn-secondary:hover{background:var(--primary-light);}
+.btn-ghost{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{height:30px;padding:0 10px;font-size:12px;}
+
+/* ====== Stat Cards ====== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.stats-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.stat-card{
+  background:#fff;border-radius:14px;padding:20px 22px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.stat-card .blob{
+  position:absolute;width:140px;height:140px;border-radius:50%;
+  right:-40px;top:-40px;opacity:.35;
+}
+.stat-card .blob-1{background:radial-gradient(circle,#BFDDF6,transparent 65%);}
+.stat-card .blob-2{background:radial-gradient(circle,#FFE0B3,transparent 65%);}
+.stat-card .blob-3{background:radial-gradient(circle,#A7F3D0,transparent 65%);}
+.stat-card .blob-4{background:radial-gradient(circle,#F6BCBE,transparent 65%);}
+.stat-card .ic{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.stat-card .label{font-size:13px;color:var(--text-2);}
+.stat-card .num{
+  font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.5px;
+  display:flex;align-items:baseline;gap:6px;
+}
+.stat-card .num small{font-size:13px;color:var(--text-3);font-weight:400;}
+.stat-card .delta{
+  font-size:12px;margin-top:8px;display:flex;align-items:center;gap:4px;
+}
+.delta.up{color:var(--success);}
+.delta.down{color:var(--danger);}
+.delta.neutral{color:var(--text-3);}
+
+/* ====== Layout grids ====== */
+.row-2{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:20px;}
+.row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+
+.panel{
+  background:#fff;border-radius:14px;padding:22px 24px;
+  box-shadow:var(--shadow-sm);
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;
+}
+.panel-head h3{font-size:16px;font-weight:600;}
+.panel-head p{font-size:12px;color:var(--text-3);margin-top:2px;}
+.panel-tabs{display:flex;gap:4px;background:#F4F6FA;border-radius:8px;padding:3px;}
+.panel-tabs button{
+  height:28px;padding:0 12px;border-radius:6px;font-size:12px;color:var(--text-2);transition:all .15s;
+}
+.panel-tabs button.active{background:#fff;color:var(--primary);font-weight:500;box-shadow:var(--shadow-sm);}
+
+/* ====== Chart ====== */
+.chart-wrap{height:280px;position:relative;}
+
+/* ====== Approval list ====== */
+.approval-list{display:flex;flex-direction:column;gap:10px;}
+.approval-item{
+  padding:14px;border:1px solid var(--border-light);border-radius:10px;
+  display:flex;align-items:center;gap:12px;transition:all .15s;
+}
+.approval-item:hover{border-color:var(--primary);background:var(--primary-50);}
+.approval-item .ava{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;
+  flex-shrink:0;
+}
+.approval-item .text{flex:1;min-width:0;}
+.approval-item .text h5{font-size:14px;font-weight:500;}
+.approval-item .text p{font-size:12px;color:var(--text-3);margin-top:3px;}
+.approval-item .actions{display:flex;gap:6px;}
+
+/* ====== Tag ====== */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500;
+  background:var(--primary-light);color:var(--primary);border:1px solid #BFDDF6;
+}
+.tag-success{background:var(--success-bg);color:var(--success);border-color:var(--success-border);}
+.tag-warning{background:var(--warning-bg);color:var(--warning);border-color:var(--warning-border);}
+.tag-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border);}
+.tag-grey{background:#F1F2F3;color:var(--text-3);border-color:var(--border);}
+
+/* ====== Star ====== */
+.stars{display:inline-flex;gap:2px;}
+.stars svg{width:14px;height:14px;color:#FFC53D;}
+.stars.empty svg{color:#E5E8EE;}
+
+/* ====== Filter Bar ====== */
+.filterbar{
+  background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:16px;
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+  box-shadow:var(--shadow-sm);
+}
+.filterbar .field{display:flex;align-items:center;gap:6px;}
+.filterbar label{font-size:13px;color:var(--text-2);}
+.input,.select{
+  height:34px;padding:0 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;color:var(--text-1);background:#fff;outline:none;min-width:140px;
+  transition:all .15s;font-family:inherit;
+}
+.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(48,135,204,.12);}
+.filterbar .spacer{flex:1;}
+
+/* ====== Table ====== */
+.table-wrap{
+  background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{
+  background:#F8FAFC;color:var(--text-2);font-weight:500;
+  text-align:left;padding:14px 16px;font-size:12px;
+  border-bottom:1px solid var(--border-light);
+}
+tbody td{padding:14px 16px;border-bottom:1px solid var(--border-light);color:var(--text-1);}
+tbody tr:hover{background:#FAFBFD;}
+tbody tr:last-child td{border-bottom:none;}
+.checkbox{width:14px;height:14px;border:1.5px solid var(--border);border-radius:3px;cursor:pointer;display:inline-block;vertical-align:middle;position:relative;}
+.checkbox.checked{background:var(--primary);border-color:var(--primary);}
+.checkbox.checked::after{
+  content:"";position:absolute;left:3px;top:0;width:5px;height:9px;
+  border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);
+}
+.row-action{display:inline-flex;gap:4px;align-items:center;}
+.row-action button{
+  width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;
+}
+.row-action button:hover{background:var(--primary-light);color:var(--primary);}
+.row-action button.danger:hover{background:var(--danger-bg);color:var(--danger);}
+
+/* Volunteer table: audit / duty pills & text actions */
+.tag-pill-success{display:inline-flex;align-items:center;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:500;background:var(--success);color:#fff;border:none;}
+.tag-pill-warning{display:inline-flex;align-items:center;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:500;background:var(--warning);color:#fff;border:none;}
+.tag-pill-danger{display:inline-flex;align-items:center;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:500;background:var(--danger);color:#fff;border:none;}
+.tag-pill-grey{display:inline-flex;align-items:center;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:500;background:#9CA3AF;color:#fff;border:none;}
+.vol-actions{display:inline-flex;align-items:center;gap:12px;flex-wrap:nowrap;}
+.vol-actions a{font-size:13px;cursor:pointer;font-family:inherit;border:none;background:none;padding:0;}
+.vol-act-detail{color:var(--primary);font-weight:500;}
+.vol-act-detail:hover{text-decoration:underline;color:var(--primary-dark);}
+.vol-act-muted{color:#C4884D;font-weight:500;}
+.vol-act-muted:hover{text-decoration:underline;color:#a06f38;}
+.vol-audit-wrap{display:inline-flex;align-items:center;gap:5px;}
+.vol-audit-dot{width:7px;height:7px;border-radius:50%;background:var(--warning);flex-shrink:0;}
+.vol-user-ico{width:26px;height:26px;border-radius:6px;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;}
+
+/* Volunteer list table — single-line rows, horizontal scroll on narrow viewports */
+.vol-table-shell{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table.vol-table{
+  width:100%;
+  min-width:812px;
+  table-layout:fixed;
+}
+.vol-table thead th,.vol-table tbody td{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  vertical-align:middle;
+  padding:12px 10px;
+}
+.vol-table thead th:first-child,.vol-table tbody td:first-child{width:40px;text-overflow:clip;}
+.vol-table .vol-cell-name .vol-name-inner{display:flex;align-items:center;gap:6px;min-width:0;}
+.vol-table .vol-cell-name strong{overflow:hidden;text-overflow:ellipsis;}
+.vol-table .vol-tag-cat{white-space:nowrap;}
+.vol-table td.vol-cell-actions{overflow:visible;text-overflow:clip;}
+.vol-table .vol-cell-stars .stars{display:inline-flex;flex-wrap:nowrap;gap:1px;}
+.vol-table .vol-cell-stars .stars span{flex-shrink:0;}
+.vol-table .vol-cell-actions{text-overflow:clip;}
+.vol-table .vol-cell-actions .vol-actions{flex-wrap:nowrap;}
+
+.table-foot{
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border-light);
+}
+.table-foot .count{color:var(--text-3);font-size:12px;}
+.pager{display:flex;align-items:center;gap:4px;}
+.pager button{
+  min-width:30px;height:30px;padding:0 8px;border-radius:6px;font-size:12px;color:var(--text-2);
+}
+.pager button:hover:not(:disabled){background:#F4F6FA;color:var(--text-1);}
+.pager button.active{background:var(--primary);color:#fff;}
+.pager button:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ====== Tab nav inside page ====== */
+.seg{
+  display:inline-flex;background:#F4F6FA;border-radius:10px;padding:4px;margin-bottom:18px;flex-wrap:wrap;gap:4px;
+}
+.seg button{
+  height:34px;padding:0 18px;border-radius:7px;font-size:13px;color:var(--text-2);font-weight:500;
+  transition:all .15s;
+}
+.seg button.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);}
+
+/* ====== Schedule cards ====== */
+.sch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.sch-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;
+}
+.sch-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.sch-card .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;}
+.sch-card h5{font-size:14px;font-weight:600;}
+.sch-card .meta{font-size:12px;color:var(--text-3);margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sch-card .meta span{display:inline-flex;align-items:center;gap:4px;}
+
+/* ====== Group cards ====== */
+.group-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.group-card{
+  background:#fff;border-radius:14px;padding:20px;
+  box-shadow:var(--shadow-sm);position:relative;overflow:hidden;
+  transition:all .2s;cursor:pointer;
+}
+.group-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.group-card::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:4px;
+}
+.group-card.math::before{background:linear-gradient(90deg,#3087CC,#9CBFDA);}
+.group-card.physics::before{background:linear-gradient(90deg,#7C5BC1,#B59CE5);}
+.group-card.chem::before{background:linear-gradient(90deg,#1BB975,#A7F3D0);}
+.group-card.eng::before{background:linear-gradient(90deg,#F29100,#FFD68F);}
+.group-card.mech::before{background:linear-gradient(90deg,#DF2027,#F6BCBE);}
+.group-card.cs::before{background:linear-gradient(90deg,#0EA5E9,#7DD3FC);}
+.group-card .group-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.group-card .gi{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+}
+.group-card .gname{font-size:15px;font-weight:600;}
+.group-card .gleader{font-size:12px;color:var(--text-3);margin-top:2px;}
+.group-card .gstats{
+  display:flex;justify-content:space-between;padding:12px 0;
+  border-top:1px dashed var(--border-light);border-bottom:1px dashed var(--border-light);margin-bottom:12px;
+}
+.group-card .gstats div{text-align:center;flex:1;}
+.group-card .gstats div strong{font-size:18px;display:block;}
+.group-card .gstats div span{font-size:11px;color:var(--text-3);}
+.group-card .gmembers{display:flex;align-items:center;}
+.group-card .gmembers .ava{
+  width:26px;height:26px;border-radius:50%;border:2px solid #fff;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;
+  margin-left:-6px;
+}
+.group-card .gmembers .ava:first-child{margin-left:0;}
+.group-card .gmembers .more{margin-left:8px;font-size:12px;color:var(--text-3);}
+
+/* ====== Star milestone ====== */
+.star-track{
+  background:#fff;border-radius:14px;padding:24px;margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+}
+.star-bar{position:relative;height:8px;background:#F1F2F3;border-radius:4px;margin:32px 0 24px;}
+.star-bar .fill{
+  position:absolute;left:0;top:0;height:100%;border-radius:4px;
+  background:linear-gradient(90deg,#3087CC,#1BB975);
+}
+.star-bar .marker{
+  position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:#fff;
+  border:3px solid #E5E8EE;transform:translateX(-50%);
+}
+.star-bar .marker.done{border-color:var(--primary);}
+.star-bar .marker.current{border-color:var(--success);box-shadow:0 0 0 6px rgba(27,185,117,.18);}
+.star-bar .marker .lbl{
+  position:absolute;top:24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-2);
+  white-space:nowrap;
+}
+.star-bar .marker .lbl strong{display:block;font-size:13px;color:var(--text-1);font-weight:600;}
+
+/* ====== Library cards ====== */
+.lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.lib-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;cursor:pointer;
+}
+.lib-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.lib-card .ftype{
+  width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;font-size:11px;font-weight:600;color:#fff;
+}
+.ftype.pdf{background:linear-gradient(135deg,#DF2027,#FF6B6B);}
+.ftype.ppt{background:linear-gradient(135deg,#F29100,#FFAA33);}
+.ftype.doc{background:linear-gradient(135deg,#3087CC,#5BA8DE);}
+.ftype.xls{background:linear-gradient(135deg,#1BB975,#34D399);}
+.lib-card h5{font-size:13px;font-weight:500;margin-bottom:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.lib-card .meta{font-size:11px;color:var(--text-3);display:flex;justify-content:space-between;}
+.lib-card .stats{
+  margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-light);
+  display:flex;gap:12px;font-size:11px;color:var(--text-3);
+}
+.lib-card .stats span{display:inline-flex;align-items:center;gap:3px;}
+
+/* ====== Modal ====== */
+.modal-mask{
+  position:fixed;inset:0;background:rgba(15,32,55,.42);z-index:100;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-mask.show{opacity:1;pointer-events:auto;}
+.modal{
+  background:#fff;border-radius:14px;width:680px;max-width:92vw;max-height:88vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.94);transition:transform .2s;
+}
+.modal-mask.show .modal{transform:scale(1);}
+.modal-head{
+  padding:18px 24px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h3{font-size:16px;font-weight:600;}
+.modal-body{padding:22px 24px;overflow-y:auto;flex:1;}
+.modal-foot{
+  padding:14px 24px;border-top:1px solid var(--border-light);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;}
+.form-item{display:flex;flex-direction:column;}
+.form-item label{font-size:12px;color:var(--text-2);margin-bottom:6px;}
+.form-item label .req{color:var(--danger);}
+.form-item .input,.form-item textarea,.form-item .select{width:100%;}
+.form-item textarea{
+  padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;
+  font-family:inherit;outline:none;transition:all .15s;resize:vertical;
+}
+.form-item textarea:focus{border-color:var(--primary);}
+
+/* ====== Toast ====== */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#fff;border:1px solid var(--success-border);background:var(--success-bg);color:var(--success);
+  padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:8px;z-index:200;
+  opacity:0;pointer-events:none;transition:all .25s;
+  box-shadow:var(--shadow-lg);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Donut ring */
+.ring-row{display:flex;gap:18px;margin-top:16px;flex-wrap:wrap;}
+.ring-item{
+  flex:1;min-width:180px;background:#FAFBFD;border-radius:10px;padding:14px;
+  display:flex;align-items:center;gap:12px;
+}
+.ring-item .label{font-size:12px;color:var(--text-2);}
+.ring-item .val{font-size:18px;font-weight:600;margin-top:2px;}
+.ring-item .val small{font-size:11px;color:var(--text-3);font-weight:400;margin-left:4px;}
+
+/* Calendar */
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-day{
+  aspect-ratio:1.1;background:#FAFBFD;border-radius:8px;padding:8px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  transition:all .15s;cursor:pointer;border:1px solid transparent;
+  position:relative;
+}
+.cal-day:hover{background:var(--primary-light);}
+.cal-day .d{font-size:13px;font-weight:500;}
+.cal-day .t{font-size:10px;color:var(--text-3);text-align:right;}
+.cal-day.has-event::after{
+  content:"";position:absolute;bottom:6px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--primary);
+}
+.cal-day.today{background:var(--primary);color:#fff;}
+.cal-day.today .t{color:rgba(255,255,255,.8);}
+.cal-day.today.has-event::after{background:#fff;}
+.cal-day.muted{opacity:.35;}
+
+/* Approval timeline */
+.timeline{padding:8px 0;}
+.tl-item{display:flex;gap:14px;position:relative;padding-bottom:18px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{
+  content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--border-light);
+}
+.tl-item:last-child::before{display:none;}
+.tl-item .dot{
+  width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;
+}
+.tl-item.done .dot{background:var(--success);border-color:var(--success);color:#fff;}
+.tl-item.current .dot{background:#fff;border-color:var(--primary);}
+.tl-item.current .dot::after{
+  content:"";width:8px;height:8px;border-radius:50%;background:var(--primary);
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(1.4);}}
+.tl-item .tl-content{flex:1;}
+.tl-item .tl-content h6{font-size:13px;font-weight:500;}
+.tl-item .tl-content p{font-size:12px;color:var(--text-3);margin-top:3px;}
+
+/* Charts inside */
+.horiz-bar{margin-top:8px;}
+.hb-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.hb-row .name{width:84px;font-size:12px;color:var(--text-2);}
+.hb-row .track{flex:1;height:8px;background:#F1F2F3;border-radius:4px;overflow:hidden;position:relative;}
+.hb-row .track .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#3087CC,#5BA8DE);transition:width .8s ease;}
+.hb-row .val{width:50px;text-align:right;font-size:12px;font-weight:600;color:var(--text-1);}
+
+/* Star levels grid */
+.star-levels{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:48px;}
+.sl{border-radius:10px;padding:14px;text-align:center;}
+.sl-1{background:#F4FAFE;border:1px solid #BFDDF6;}
+.sl-2{background:#FFF8E6;border:1px solid #FFE0B3;}
+.sl-3{background:#FFF5E5;border:1px solid #FFE0B3;}
+.sl-4{background:#E8FCF4;border:1px solid #A7F3D0;}
+.sl-5{background:linear-gradient(135deg,#FFE0B3,#FFD68F);border:1px solid #F29100;color:#fff;}
+.sl strong{font-size:20px;font-weight:700;display:block;margin-top:6px;}
+.sl span{font-size:11px;color:var(--text-3);}
+.sl-5 strong, .sl-5 span{color:#fff;}
+.sl-5 span{opacity:.85;}
+
+/* ====== Volunteer Detail Modal ====== */
+.vd-banner{
+  background:linear-gradient(135deg,#3087CC,#006DAD);color:#fff;
+  padding:28px 32px 20px;position:relative;overflow:hidden;
+}
+.vd-banner::before{
+  content:"";position:absolute;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.15),transparent 65%);right:-60px;top:-80px;
+}
+.vd-banner h2{font-size:22px;font-weight:700;position:relative;}
+.vd-banner .sub{font-size:13px;opacity:.85;margin-top:4px;position:relative;}
+.vd-banner .vd-badge{
+  position:absolute;top:28px;right:32px;
+  background:rgba(255,255,255,.2);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.3);color:#fff;
+  padding:5px 16px;border-radius:8px;font-size:13px;font-weight:500;
+}
+.vd-meta-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+  margin-top:18px;position:relative;
+}
+.vd-meta-row .item{font-size:12px;opacity:.9;}
+.vd-meta-row .item .lbl{opacity:.7;margin-bottom:3px;}
+.vd-meta-row .item .val{font-weight:600;font-size:14px;}
+
+.vd-section{padding:24px 32px;}
+.vd-section+.vd-section{border-top:1px solid var(--border-light);}
+.vd-section h4{
+  font-size:16px;font-weight:600;color:var(--primary-dark);margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;
+  padding-bottom:10px;border-bottom:2px solid var(--primary-light);
+}
+.vd-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 32px;}
+.vd-grid .fi{display:flex;flex-direction:column;}
+.vd-grid .fi .fl{font-size:12px;color:var(--text-3);margin-bottom:4px;}
+.vd-grid .fi .fv{font-size:14px;color:var(--text-1);font-weight:500;}
+.vd-grid .fi.full{grid-column:1/-1;}
+
+.vd-info-row{display:flex;gap:40px;align-items:flex-start;}
+.vd-info-row .vd-info-fields{flex:1;min-width:0;display:grid;grid-template-columns:1fr 1fr;gap:14px 32px;}
+.vd-info-row .vd-info-fields .fi{display:flex;flex-direction:column;}
+.vd-info-row .vd-info-fields .fi .fl{font-size:12px;color:var(--text-3);margin-bottom:4px;}
+.vd-info-row .vd-info-fields .fi .fv{font-size:14px;color:var(--text-1);font-weight:500;}
+.vd-photo{
+  flex-shrink:0;width:120px;height:154px;border-radius:12px;
+  border:2px solid var(--border-light);
+  background:linear-gradient(135deg,#F4F6FA,#E3F1F9);
+  display:flex;align-items:center;justify-content:center;color:var(--text-4);font-size:12px;
+  overflow:hidden;
+}
+.vd-photo img{width:100%;height:100%;object-fit:cover;}
+
+.vd-course-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px;border:1px solid var(--border-light);border-radius:8px;overflow:hidden;}
+.vd-course-table thead th{background:#F8FAFC;color:var(--text-2);font-weight:500;text-align:left;padding:10px 14px;font-size:12px;border-bottom:1px solid var(--border-light);}
+.vd-course-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border-light);color:var(--text-1);}
+.vd-course-table tbody tr:last-child td{border-bottom:none;}
+.vd-course-table tbody tr:hover{background:#FAFBFD;}
+
+.vd-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.vd-tags .tag{border-radius:6px;}
+
+.vd-text-block{
+  background:var(--bg);border-radius:10px;padding:14px 16px;
+  font-size:13px;line-height:1.8;color:var(--text-1);
+}
+
+.vd-sign-row{display:flex;justify-content:flex-end;align-items:center;gap:32px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--border-light);}
+.vd-sign-row .sig{font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:18px;color:var(--text-1);font-weight:500;}
+
+.vd-audit-section{padding:24px 32px;background:#FAFBFD;border-top:1px solid var(--border-light);}
+.vd-audit-section h4{
+  font-size:16px;font-weight:600;color:var(--primary-dark);margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;
+  padding-bottom:10px;border-bottom:2px solid var(--primary-light);
+}
+
+@media(max-width:1280px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .row-2{grid-template-columns:1fr;}
+  .lib-grid{grid-template-columns:repeat(3,1fr);}
+  .group-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:980px){
+  .lib-grid{grid-template-columns:repeat(2,1fr);}
+  .group-grid{grid-template-columns:1fr;}
+  .star-levels{grid-template-columns:repeat(5,1fr);}
+}
+
+</style>
+</head>
+<body>
+<aside class="sidebar"></aside>
+<main class="main">
+  <header class="topbar"></header>
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>辅学义工申请管理</h1>
+        <p>管理院级 / 知新馆 / 56度中南三类辅学义工申请审批</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-ghost" onclick="showToast('正在导出...')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          导出
+        </button>
+      </div>
+    </div>
+
+    <div class="seg">
+      <button class="active">全部 <span style="opacity:.6;margin-left:4px;">1248</span></button>
+      <button>待审批 <span style="opacity:.6;margin-left:4px;">12</span></button>
+      <button>已通过 <span style="opacity:.6;margin-left:4px;">1198</span></button>
+      <button>已驳回 <span style="opacity:.6;margin-left:4px;">38</span></button>
+    </div>
+
+    <div class="filterbar">
+      <div class="field">
+        <label>院系</label>
+        <select class="select" id="fCollege">
+          <option value="">全部院系</option><option>计算机学院</option><option>外国语学院</option><option>数学与统计学院</option><option>物理学院</option><option>化学化工学院</option><option>机电工程学院</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>类别</label>
+        <select class="select" id="fCat">
+          <option value="">全部类别</option><option>院级辅学义工</option><option>知新馆辅学义工</option><option>56度中南辅学义工</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>审核状态</label>
+        <select class="select" id="fAudit">
+          <option value="">全部状态</option><option>待审批</option><option>已通过</option><option>已驳回</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>在职状态</label>
+        <select class="select" id="fDuty">
+          <option value="">全部</option><option>在任</option><option>离任</option><option>待任</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>申请时间段</label>
+        <select class="select" id="fApplyPeriod" style="min-width:140px;">
+          <option value="">全部</option>
+          <option value="month">本月</option>
+          <option value="last_month">上月</option>
+          <option value="30">近30天</option>
+          <option value="90">近90天</option>
+          <option value="year">本年度</option>
+        </select>
+      </div>
+      <div class="spacer"></div>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="resetVolFilter()">重置</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="renderVolunteerTable()">查询</button>
+    </div>
+
+    <div class="table-wrap vol-table-shell">
+      <table class="vol-table">
+        <colgroup>
+          <col style="width:42px;" />
+          <col style="width:108px;" />
+          <col style="width:104px;" />
+          <col style="width:240px;" />
+          <col style="width:148px;" />
+          <col style="width:200px;" />
+          <col style="width:92px;" />
+          <col style="width:80px;" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th style="width:40px;"><span class="checkbox"></span></th>
+            <th>姓名</th>
+            <th>学号</th>
+            <th>院系/专业</th>
+            <th>义工类别</th>
+            <th>申请/生效时间</th>
+            <th>审核状态</th>
+            <th>在职状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="volunteerTable"></tbody>
+      </table>
+      <div class="table-foot">
+        <div class="count">共 1,248 条记录，已选择 <strong>0</strong> 条</div>
+        <div class="pager">
+          <button disabled>‹</button>
+          <button class="active">1</button>
+          <button>2</button>
+          <button>3</button>
+          <button>4</button>
+          <button>...</button>
+          <button>125</button>
+          <button>›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Detail Modal -->
+<div class="modal-mask" id="volunteerDetailModal">
+  <div class="modal" style="width:920px;">
+    <div class="modal-head">
+      <h3 id="vdTitle">义工详情</h3>
+      <button class="icon-btn" onclick="closeModal('volunteerDetailModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="vdBody" style="padding:0;"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('volunteerDetailModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- Remove Volunteer Modal -->
+<div class="modal-mask" id="removeVolModal">
+  <div class="modal" style="width:520px;">
+    <div class="modal-head">
+      <h3>移出义工</h3>
+      <button class="icon-btn" onclick="closeModal('removeVolModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="removeVolSid" />
+      <div style="background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:8px;padding:12px 14px;margin-bottom:18px;font-size:13px;color:var(--danger);display:flex;gap:8px;align-items:flex-start;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        确认将 <strong id="removeVolName" style="margin:0 2px;"></strong> 从义工名册中移出？移出后该义工将失去辅学相关操作权限。
+      </div>
+      <div class="form-item" style="margin-bottom:14px;">
+        <label>移出原因 <span class="req">*</span></label>
+        <select class="select" id="removeReason" style="width:100%;">
+          <option value="">请选择移出原因</option>
+          <option>个人申请退出</option>
+          <option>长期未参与辅学活动</option>
+          <option>考核不合格</option>
+          <option>违反辅学义工管理规定</option>
+          <option>毕业/休学/转学</option>
+          <option>其他原因</option>
+        </select>
+      </div>
+      <div class="form-item">
+        <label>备注说明</label>
+        <textarea id="removeRemark" class="input" style="width:100%;height:auto;min-height:80px;padding:10px 12px;resize:vertical;font-family:inherit;" placeholder="填写补充说明（选填）"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('removeVolModal')">取消</button>
+      <button class="btn btn-primary" onclick="confirmRemoveVol()" style="background:var(--danger);">确认移出</button>
+    </div>
+  </div>
+</div>
+
+<!-- Restore Volunteer Modal -->
+<div class="modal-mask" id="restoreVolModal">
+  <div class="modal" style="width:520px;">
+    <div class="modal-head">
+      <h3>恢复义工身份</h3>
+      <button class="icon-btn" onclick="closeModal('restoreVolModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="restoreVolSid" />
+      <div style="background:var(--primary-50);border:1px solid #BFDDF6;border-radius:8px;padding:12px 14px;margin-bottom:18px;font-size:13px;color:var(--primary-dark);display:flex;gap:8px;align-items:flex-start;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        确认恢复 <strong id="restoreVolName" style="margin:0 2px;"></strong> 的义工身份？恢复后将重新获得辅学相关操作权限。
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;border:1px solid var(--border-light);">
+        <div style="font-size:13px;font-weight:600;color:var(--text-1);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          上次移出记录
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:10px 14px;font-size:13px;">
+          <span style="color:var(--text-3);">移出原因</span><span id="restoreReason" style="font-weight:500;"></span>
+          <span style="color:var(--text-3);">备注说明</span><span id="restoreRemark"></span>
+          <span style="color:var(--text-3);">移出日期</span><span id="restoreDate"></span>
+          <span style="color:var(--text-3);">操作人</span><span id="restoreOperator"></span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('restoreVolModal')">取消</button>
+      <button class="btn btn-primary" onclick="confirmRestoreVol()" style="background:var(--success);">确认恢复</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== PC 管理端公共脚本（侧边栏渲染、Toast、Modal、Checkbox、Pager 交互） ======
+
+const PC_NAV = [
+  {group:'首页',items:[
+    {id:'dashboard',name:'数据概览',href:'dashboard.html',icon:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'}
+  ]},
+  {group:'辅学义工',items:[
+    {id:'volunteers',name:'申请管理',href:'volunteers.html',badge:12,icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>'},
+    {id:'hours',name:'时长记录',href:'hours.html',icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'},
+    {id:'stars',name:'星级评定',href:'stars.html',badge:5,icon:'<polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/>'},
+    {id:'groups',name:'分组管理',href:'groups.html',icon:'<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="9" r="3"/><path d="M22 21v-1a3 3 0 0 0-2-2.83"/>'},
+    {id:'appeals',name:'意见反馈',href:'appeals.html',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/>'},
+    {id:'volunteer-manage',name:'义工管理',href:'volunteer-manage.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'}
+  ]},
+  {group:'知新选课',items:[
+    {id:'courses',name:'课程管理',href:'courses.html',badge:8,icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'},
+    {id:'course-categories',name:'课程分类',href:'course-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'venue-bookings',name:'场地预约',href:'venue-bookings.html',badge:6,icon:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'},
+    {id:'posters',name:'开屏海报',href:'posters.html',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'}
+  ]},
+  {group:'即问即答',items:[
+    {id:'qa-content',name:'内容管理',href:'qa-content.html',badge:3,icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+    {id:'qa-categories',name:'学科分类',href:'qa-categories.html',icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'},
+    {id:'qa-users',name:'用户管理',href:'qa-users.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+  ]},
+  {group:'宝藏资料库',items:[
+    {id:'library',name:'资料库管理',href:'library.html',badge:11,icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {id:'library-categories',name:'资料分类',href:'library-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'uploaders',name:'上传者管理',href:'uploaders.html',icon:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>'},
+    {id:'library-feedback',name:'反馈与需求池',href:'library-feedback.html',icon:'<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><line x1="7" y1="22" x2="7" y2="11"/>'}
+  ]},
+  {group:'系统配置',items:[
+    {id:'analytics',name:'数据分析',href:'analytics.html',icon:'<path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/>'},
+    {id:'settings',name:'系统配置',href:'settings.html',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+    {id:'ai-settings',name:'AI 助手配置',href:'ai-settings.html',icon:'<path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/><circle cx="19" cy="5" r="1.5"/>'}
+  ]}
+];
+
+function renderSidebar(activeId){
+  const sidebar = document.querySelector('.sidebar');
+  if(!sidebar) return;
+  const navHTML = PC_NAV.map((g,i)=>`
+    <div class="nav-group-title" ${i>0?'style="margin-top:14px;"':''}>${g.group}</div>
+    ${g.items.map(it=>`
+      <a class="nav-item ${it.id===activeId?'active':''}" href="${it.href}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg>
+        ${it.name}
+        ${it.badge?`<span class="badge">${it.badge}</span>`:''}
+      </a>
+    `).join('')}
+  `).join('');
+  sidebar.innerHTML = `
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="brand-text">
+        <strong>学风建设系统</strong>
+        <span>管理后台 v2.0</span>
+      </div>
+    </div>
+    <nav class="nav-group">${navHTML}</nav>
+    <div class="user-card">
+      <div class="ava">王</div>
+      <div class="info"><h5>王老师</h5><p>学工部管理员</p></div>
+      <button class="icon-btn" style="width:24px;height:24px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function renderTopbar(crumb){
+  const tb = document.querySelector('.topbar');
+  if(!tb) return;
+  tb.innerHTML = `
+    <button class="icon-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="crumb">
+      <a href="../index.html">学风建设</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span style="color:var(--text-1);font-weight:500;">${crumb}</span>
+    </div>
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input placeholder="搜索学生、课程、资料..." />
+      <span style="font-size:11px;color:var(--text-4);background:#fff;padding:2px 6px;border-radius:4px;border:1px solid var(--border);">⌘K</span>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="刷新">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
+      <button class="icon-btn" title="消息">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="red-dot"></span>
+      </button>
+      <button class="icon-btn" title="帮助">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+      <div class="topbar-user">
+        <div class="ava">王</div>
+        <span>王老师</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  `;
+}
+
+// ============= Toast =============
+function showToast(msg){
+  let toast = document.getElementById('toast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id='toast';toast.className='toast';
+    toast.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
+    document.body.appendChild(toast);
+  }
+  toast.querySelector('span').textContent=msg;
+  toast.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>toast.classList.remove('show'),2400);
+}
+
+// ============= Modal =============
+function openModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.add('show');
+}
+function closeModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.remove('show');
+}
+
+// ============= Checkbox =============
+document.addEventListener('click',e=>{
+  if(e.target.classList && e.target.classList.contains('checkbox')){
+    e.target.classList.toggle('checked');
+  }
+});
+
+// ============= Segments / Panel tabs =============
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.seg, .panel-tabs').forEach(g=>{
+    g.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        g.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        // Show corresponding tab content if exists
+        const tab=b.getAttribute('data-tab');
+        if(tab){
+          const wrap=g.closest('.panel,.page,.tab-wrap')||document;
+          wrap.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+          const target=wrap.querySelector('.tab-content[data-tab="'+tab+'"]');
+          if(target)target.style.display='';
+        }
+      });
+    });
+  });
+  document.querySelectorAll('.modal-mask').forEach(m=>{
+    m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');});
+  });
+});
+
+</script>
+<script>
+  renderSidebar('volunteers');
+  renderTopbar('辅学义工 / 申请管理');
+
+  const STAR_SVG='<svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>';
+
+  function renderStarsRow(s){
+    const n=Math.min(Math.max(Number(s)||0,0),5);
+    let h='<span class="stars" style="gap:1px;">';
+    for(let i=0;i<5;i++){
+      h+='<span style="color:'+(i<n?'#FFC53D':'#E5E8EE')+';display:inline-flex;line-height:1;">'+STAR_SVG+'</span>';
+    }
+    return h+'</span>';
+  }
+
+  function auditPill(st){
+    if(st==='已通过')return'<span class="tag-pill-success">已通过</span>';
+    if(st==='待审批')return'<span class="tag-pill-warning">待审批</span>';
+    return'<span class="tag-pill-danger">已驳回</span>';
+  }
+
+  function dutyPill(duty){
+    if(duty==='在任')return'<span class="tag-pill-success">在任</span>';
+    if(duty==='待任')return'<span class="tag-pill-warning">待任</span>';
+    return'<span class="tag-pill-grey">离任</span>';
+  }
+
+  function renderVolActions(d){
+    const sid=d.sid;
+    let html='<div class="vol-actions">';
+    html+=`<a role="button" class="vol-act-detail" onclick="openVolDetail('${sid}')">详情</a>`;
+    if(d.audit==='待审批'){
+      html+=`<span class="vol-audit-wrap"><a role="button" class="vol-act-muted" onclick="volGoAudit('${sid}')">去审核</a>${d.auditDot?'<span class="vol-audit-dot"></span>':''}</span>`;
+    }
+    html+='</div>';
+    return html;
+  }
+
+  const volunteersData=[
+    {n:'李明杰',sid:'2023110001',college:'计算机学院',col:'计算机学院 / 软件工程',c:'院级辅学义工',h:0,s:0,apply:'2026-05-02',eff:'2026-05-08',audit:'已通过',duty:'在任',auditDot:false},
+    {n:'王诗韵',sid:'2023110045',college:'外国语学院',col:'外国语学院 / 英语',c:'知新馆辅学义工',h:182,s:4,apply:'2026-05-01',eff:'2026-05-06',audit:'已通过',duty:'在任',auditDot:false},
+    {n:'陈思远',sid:'2022110023',college:'数学与统计学院',col:'数学与统计学院 / 数学',c:'知新馆辅学义工',h:62,s:3,apply:'2026-03-18',eff:'2026-03-22',audit:'已通过',duty:'离任',auditDot:false},
+    {n:'张语涵',sid:'2024110089',college:'外国语学院',col:'外国语学院 / 翻译',c:'56度中南辅学义工',h:24,s:1,apply:'2026-05-10',eff:'-',audit:'待审批',duty:'待任',auditDot:true},
+    {n:'周泽宇',sid:'2023110066',college:'物理学院',col:'物理学院 / 应用物理',c:'知新馆辅学义工',h:88,s:3,apply:'2026-02-02',eff:'2026-02-06',audit:'已通过',duty:'在任',auditDot:false},
+    {n:'刘子轩',sid:'2022110134',college:'计算机学院',col:'计算机学院 / 计算机科学',c:'知新馆辅学义工',h:96,s:3,apply:'2026-01-08',eff:'2026-01-14',audit:'已通过',duty:'在任',auditDot:false},
+    {n:'黄怡然',sid:'2023110212',college:'化学化工学院',col:'化学化工学院 / 化学',c:'知新馆辅学义工',h:42,s:2,apply:'2025-11-12',eff:'2025-11-18',audit:'已通过',duty:'在任',auditDot:false},
+    {n:'吴鸿涛',sid:'2022110056',college:'机电工程学院',col:'机电工程学院 / 力学',c:'知新馆辅学义工',h:36,s:2,apply:'2025-12-05',eff:'2025-12-12',audit:'已通过',duty:'离任',auditDot:false},
+    {n:'林楠',sid:'2024110078',college:'数学与统计学院',col:'数学与统计学院 / 信计',c:'院级辅学义工',h:18,s:1,apply:'2026-04-28',eff:'2026-05-03',audit:'已通过',duty:'在任',auditDot:false},
+    {n:'许悠然',sid:'2024110156',college:'外国语学院',col:'外国语学院 / 英语',c:'院级辅学义工',h:6,s:0,apply:'2026-05-11',eff:'-',audit:'待审批',duty:'待任',auditDot:true},
+  ];
+
+  const removalRecords={};
+
+  function volRemove(sid){
+    const d=volunteersData.find(x=>x.sid===sid);if(!d)return;
+    document.getElementById('removeVolName').textContent=d.n+'（'+d.sid+'）';
+    document.getElementById('removeVolSid').value=sid;
+    document.getElementById('removeReason').value='';
+    document.getElementById('removeRemark').value='';
+    openModal('removeVolModal');
+  }
+  function confirmRemoveVol(){
+    const sid=document.getElementById('removeVolSid').value;
+    const reason=document.getElementById('removeReason').value;
+    const remark=document.getElementById('removeRemark').value.trim();
+    if(!reason){showToast('请选择移出原因');return;}
+    const d=volunteersData.find(x=>x.sid===sid);
+    if(d){
+      d.duty='离任';
+      removalRecords[sid]={reason,remark:remark||'无',date:new Date().toISOString().slice(0,10),operator:'王老师'};
+    }
+    closeModal('removeVolModal');
+    showToast('已移出该义工');
+    renderVolunteerTable();
+  }
+
+  function volRestore(sid){
+    const d=volunteersData.find(x=>x.sid===sid);if(!d)return;
+    const rec=removalRecords[sid]||{reason:'长期未活跃',remark:'由系统自动标记为离任',date:'2026-03-01',operator:'系统'};
+    document.getElementById('restoreVolName').textContent=d.n+'（'+d.sid+'）';
+    document.getElementById('restoreVolSid').value=sid;
+    document.getElementById('restoreReason').textContent=rec.reason;
+    document.getElementById('restoreRemark').textContent=rec.remark;
+    document.getElementById('restoreDate').textContent=rec.date;
+    document.getElementById('restoreOperator').textContent=rec.operator;
+    openModal('restoreVolModal');
+  }
+  function confirmRestoreVol(){
+    const sid=document.getElementById('restoreVolSid').value;
+    const d=volunteersData.find(x=>x.sid===sid);
+    if(d){d.duty='在任';}
+    closeModal('restoreVolModal');
+    showToast('义工身份已恢复，相关权限已开启');
+    renderVolunteerTable();
+  }
+
+  function volGoAudit(sid){
+    showToast('请前往待办中心完成审核');
+  }
+
+  function resetVolFilter(){
+    ['fCollege','fCat','fAudit','fDuty','fApplyPeriod'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    renderVolunteerTable();
+  }
+
+  /** applyStr: YYYY-MM-DD */
+  function applyInPeriod(applyStr,key){
+    if(!key)return true;
+    const t=new Date(applyStr+'T12:00:00');
+    if(Number.isNaN(t.getTime()))return false;
+    const tMs=t.getTime();
+    const now=new Date();
+    if(key==='month'){
+      return t.getFullYear()===now.getFullYear()&&t.getMonth()===now.getMonth();
+    }
+    if(key==='last_month'){
+      const first=new Date(now.getFullYear(),now.getMonth()-1,1);
+      const last=new Date(now.getFullYear(),now.getMonth(),0,23,59,59);
+      return tMs>=first.getTime()&&tMs<=last.getTime();
+    }
+    const endMs=now.getTime()+864e5;
+    let startMs;
+    if(key==='30')startMs=now.getTime()-30*864e5;
+    else if(key==='90')startMs=now.getTime()-90*864e5;
+    else if(key==='year')startMs=new Date(now.getFullYear(),0,1).getTime();
+    else return true;
+    return tMs>=startMs&&tMs<=endMs;
+  }
+
+  function renderVolunteerTable(){
+    const fc=document.getElementById('fCollege').value.trim();
+    const fcat=document.getElementById('fCat').value.trim();
+    const fa=document.getElementById('fAudit').value.trim();
+    const fd=document.getElementById('fDuty').value.trim();
+    const fp=document.getElementById('fApplyPeriod').value;
+
+    const list=volunteersData.filter(d=>{
+      if(fc&&d.college!==fc)return false;
+      if(fcat&&d.c!==fcat)return false;
+      if(fa&&d.audit!==fa)return false;
+      if(fd&&d.duty!==fd)return false;
+      if(fp&&!applyInPeriod(d.apply,fp))return false;
+      return true;
+    });
+
+    const tbody=document.getElementById('volunteerTable');
+    const userIco='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+    tbody.innerHTML=list.map(d=>{
+      const datePair=d.apply+'/'+d.eff;
+      return`
+    <tr>
+      <td><span class="checkbox"></span></td>
+      <td class="vol-cell-name" title="${d.n}"><div class="vol-name-inner"><div class="vol-user-ico">${userIco}</div><strong>${d.n}</strong></div></td>
+      <td title="${d.sid}" style="color:var(--text-2);">${d.sid}</td>
+      <td title="${d.col}">${d.col}</td>
+      <td title="${d.c}"><span class="tag vol-tag-cat">${d.c}</span></td>
+      <td class="vol-cell-dates" title="${datePair}" style="color:var(--text-2);font-size:12px;">${datePair}</td>
+      <td>${auditPill(d.audit)}</td>
+      <td>${dutyPill(d.duty)}</td>
+      <td class="vol-cell-actions">${renderVolActions(d)}</td>
+    </tr>`;
+    }).join('');
+
+    const cnt=document.querySelector('.table-foot .count');
+    if(cnt)cnt.innerHTML='共 <strong>'+list.length+'</strong> 条记录，已选择 <strong>0</strong> 条';
+  }
+
+  const volDetailData={
+    '2023110001':{gender:'男',grade:'2023级',nation:'汉族',cls:'软工2301',birth:'2004-08-15',status:'在籍',phone:'138****1001',email:'limj@csu.edu.cn',
+      rank:'12/186',rankPct:'6.5%',degree:'本科',gpa:'3.72/4.0',engLevel:'CET-6',engScore:'528',
+      courses:[{y:'2025-2026',t:'第一学期',name:'高等数学A',score:'92'},{y:'2025-2026',t:'第一学期',name:'线性代数',score:'88'},{y:'2025-2026',t:'第一学期',name:'C语言程序设计',score:'95'},{y:'2024-2025',t:'第二学期',name:'数据结构',score:'90'}],
+      group:'计算机辅导组',subjects:['高等数学','线性代数','C语言','数据结构'],exp:'曾担任班级学委，组织多次课后辅导答疑。2025年暑期参加学校"朋辈辅导"计划，辅导大一新生高数课程。',certs:['计算机二级','蓝桥杯省二等奖'],
+      reason:'本人学业成绩优良，在计算机类课程中表现突出，希望通过辅学义工帮助低年级同学夯实基础、答疑解惑。本人具有较强的沟通能力和耐心，曾多次帮助同学解决编程与数学问题。\n入选后将认真完成每次辅导任务，积极回答线上问题。',
+      goal:'每学期辅导不少于 40 小时，覆盖高等数学和编程基础，帮助至少 20 名同学提升成绩。',
+      applyNo:'VOL-2026-00512',auditDate:'2026-05-06',effDate:'2026-05-08'},
+    '2023110045':{gender:'女',grade:'2023级',nation:'汉族',cls:'英语2301',birth:'2004-03-22',status:'在籍',phone:'139****0045',email:'wangsy@csu.edu.cn',
+      rank:'3/120',rankPct:'2.5%',degree:'本科',gpa:'3.91/4.0',engLevel:'CET-6',engScore:'612',
+      courses:[{y:'2025-2026',t:'第一学期',name:'综合英语',score:'96'},{y:'2025-2026',t:'第一学期',name:'英语写作',score:'94'},{y:'2025-2026',t:'第一学期',name:'英语听力',score:'92'},{y:'2024-2025',t:'第二学期',name:'翻译理论与实践',score:'90'}],
+      group:'英语辅导组',subjects:['大学英语','英语四级','英语六级','英语写作'],exp:'大二起担任英语角组织者，累计组织活动 20 余次。参与校级"一帮一"学业互助计划，帮助 15 名同学通过 CET-4/6。',certs:['TEM-4 优秀','外研社杯英语演讲省赛三等奖','CET-6 612分'],
+      reason:'本人英语基础扎实，多次在英语竞赛中获奖，具有丰富的英语辅导经验。希望借助辅学义工平台，为更多同学提供专业的英语学习指导，尤其在四六级备考和英语写作方面给予帮助。\n本人善于发现学生薄弱环节，能够因材施教，制定个性化辅导方案。',
+      goal:'每学期辅导时长不少于 60 小时，帮助至少 30 名同学提升英语水平，四六级通过率提升 20%。',
+      applyNo:'VOL-2026-00498',auditDate:'2026-05-04',effDate:'2026-05-06'},
+    '2022110023':{gender:'男',grade:'2022级',nation:'土家族',cls:'数学2201',birth:'2003-11-08',status:'在籍',phone:'137****0023',email:'chensy@csu.edu.cn',
+      rank:'8/152',rankPct:'5.3%',degree:'本科',gpa:'3.68/4.0',engLevel:'CET-4',engScore:'486',
+      courses:[{y:'2025-2026',t:'第一学期',name:'数学分析',score:'94'},{y:'2025-2026',t:'第一学期',name:'高等代数',score:'91'},{y:'2024-2025',t:'第二学期',name:'概率论与数理统计',score:'89'}],
+      group:'数学辅导组',subjects:['高等数学','数学分析','线性代数','概率统计'],exp:'连续两年担任数学建模社团骨干成员，参与校级数学辅导答疑 10 余次。',certs:['数学建模省赛二等奖'],
+      reason:'本人数学基础扎实，热爱数学教学，希望帮助学弟学妹攻克高数难关。',
+      goal:'每学期辅导不少于 30 小时，覆盖高等数学与线性代数基础课程。',
+      applyNo:'VOL-2026-00312',auditDate:'2026-03-20',effDate:'2026-03-22'},
+  };
+  const defaultDetail={gender:'男',grade:'2024级',nation:'汉族',cls:'-',birth:'2005-01-01',status:'在籍',phone:'138****0000',email:'user@csu.edu.cn',
+    rank:'-',rankPct:'-',degree:'本科',gpa:'-',engLevel:'-',engScore:'-',courses:[],
+    group:'-',subjects:[],exp:'-',certs:[],reason:'-',goal:'-',applyNo:'-',auditDate:'-',effDate:'-'};
+
+  function openVolDetail(sid){
+    const d=volunteersData.find(x=>x.sid===sid);if(!d)return;
+    const ext=volDetailData[sid]||defaultDetail;
+    document.getElementById('vdTitle').textContent='辅学义工申请详情';
+
+    const coursesHTML=ext.courses.length?ext.courses.map((c,i)=>`<tr><td>${i+1}</td><td>${c.y}</td><td>${c.t}</td><td>${c.name}</td><td><strong>${c.score}</strong></td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--text-4);padding:20px;">暂无成绩记录</td></tr>';
+
+    const subjectsHTML=ext.subjects.map(s=>`<span class="tag" style="border-radius:6px;">${s}</span>`).join('');
+    const certsHTML=ext.certs.map(c=>`<span class="tag tag-success" style="border-radius:6px;">${c}</span>`).join('')||'<span style="color:var(--text-4);">暂无</span>';
+
+    const auditStatus=d.audit==='已通过';
+    const checkSvg='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+
+    document.getElementById('vdBody').innerHTML=`
+      <!-- Banner -->
+      <div class="vd-banner">
+        <h2>辅学义工申请</h2>
+        <div class="sub">${d.col} · ${d.sid}</div>
+        <span class="vd-badge">${d.audit}</span>
+        <div class="vd-meta-row">
+          <div class="item"><div class="lbl">申请编号</div><div class="val">${ext.applyNo}</div></div>
+          <div class="item"><div class="lbl">申请日期</div><div class="val">${d.apply}</div></div>
+          <div class="item"><div class="lbl">审核日期</div><div class="val">${ext.auditDate}</div></div>
+          <div class="item"><div class="lbl">生效日期</div><div class="val">${d.eff}</div></div>
+        </div>
+      </div>
+
+      <!-- 基本信息 -->
+      <div class="vd-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          基本信息
+        </h4>
+        <div class="vd-info-row">
+          <div class="vd-info-fields">
+            <div class="fi"><div class="fl">姓名</div><div class="fv">${d.n}</div></div>
+            <div class="fi"><div class="fl">性别</div><div class="fv">${ext.gender}</div></div>
+            <div class="fi"><div class="fl">学院</div><div class="fv">${d.college}</div></div>
+            <div class="fi"><div class="fl">专业</div><div class="fv">${d.col.split(' / ')[1]||d.col}</div></div>
+            <div class="fi"><div class="fl">年级</div><div class="fv">${ext.grade}</div></div>
+            <div class="fi"><div class="fl">班级</div><div class="fv">${ext.cls}</div></div>
+            <div class="fi"><div class="fl">学号</div><div class="fv">${d.sid}</div></div>
+            <div class="fi"><div class="fl">民族</div><div class="fv">${ext.nation}</div></div>
+            <div class="fi"><div class="fl">出生日期</div><div class="fv">${ext.birth}</div></div>
+            <div class="fi"><div class="fl">学籍状态</div><div class="fv"><span class="tag tag-success" style="border-radius:6px;">${ext.status}</span></div></div>
+            <div class="fi"><div class="fl">联系电话</div><div class="fv">${ext.phone}</div></div>
+            <div class="fi"><div class="fl">电子邮箱</div><div class="fv">${ext.email}</div></div>
+          </div>
+          <div class="vd-photo">
+            <div style="text-align:center;">
+              <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#9CBFDA,#3087CC);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600;margin:0 auto 8px;">${d.n[0]}</div>
+              <span style="font-size:11px;color:var(--text-3);">证件照</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 学业信息 -->
+      <div class="vd-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          学业信息
+        </h4>
+        <div class="vd-grid">
+          <div class="fi"><div class="fl">专业排名</div><div class="fv">${ext.rank}</div></div>
+          <div class="fi"><div class="fl">专业排名百分比</div><div class="fv">${ext.rankPct}</div></div>
+          <div class="fi"><div class="fl">在读学位</div><div class="fv">${ext.degree}</div></div>
+          <div class="fi"><div class="fl">平均成绩 / GPA</div><div class="fv">${ext.gpa}</div></div>
+          <div class="fi"><div class="fl">英语水平</div><div class="fv">${ext.engLevel}</div></div>
+          <div class="fi"><div class="fl">具体分数</div><div class="fv">${ext.engScore}</div></div>
+        </div>
+        <div style="margin-top:18px;">
+          <div class="fl" style="font-size:12px;color:var(--text-3);margin-bottom:8px;">相关课程成绩</div>
+          <table class="vd-course-table">
+            <thead><tr><th style="width:50px;">序号</th><th>学年</th><th>学期</th><th>课程</th><th style="width:70px;">成绩</th></tr></thead>
+            <tbody>${coursesHTML}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 辅学信息 -->
+      <div class="vd-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          辅学信息
+        </h4>
+        <div class="vd-grid">
+          <div class="fi"><div class="fl">辅学义工类别</div><div class="fv"><span class="tag" style="border-radius:6px;">${d.c}</span></div></div>
+          <div class="fi"><div class="fl">辅导组别</div><div class="fv">${ext.group}</div></div>
+          <div class="fi full"><div class="fl">可辅导科目</div><div class="fv"><div class="vd-tags">${subjectsHTML}</div></div></div>
+          <div class="fi full"><div class="fl">辅学经历</div><div class="vd-text-block">${ext.exp}</div></div>
+          <div class="fi full"><div class="fl">相关证书</div><div class="fv"><div class="vd-tags">${certsHTML}</div></div></div>
+        </div>
+      </div>
+
+      <!-- 申请理由 -->
+      <div class="vd-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          申请理由
+        </h4>
+        <div class="fi" style="margin-bottom:14px;">
+          <div class="fl" style="font-size:12px;color:var(--text-3);margin-bottom:6px;">申请理由与个人优势</div>
+          <div class="vd-text-block" style="white-space:pre-line;">${ext.reason}</div>
+        </div>
+        <div class="fi">
+          <div class="fl" style="font-size:12px;color:var(--text-3);margin-bottom:6px;">预期目标</div>
+          <div class="vd-text-block">${ext.goal}</div>
+        </div>
+      </div>
+
+      <!-- 承诺与签名 -->
+      <div class="vd-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          承诺与声明
+        </h4>
+        <div style="font-size:13px;line-height:2;color:var(--text-1);">
+          <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:4px;">
+            <span style="color:var(--success);font-size:15px;line-height:1.8;">✓</span>
+            <span>我承诺所填写的信息真实有效，如有虚假，愿意承担相应责任。</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:4px;">
+            <span style="color:var(--success);font-size:15px;line-height:1.8;">✓</span>
+            <span>我承诺遵守辅学义工管理规定，认真履行辅学义工职责。</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:8px;">
+            <span style="color:var(--success);font-size:15px;line-height:1.8;">✓</span>
+            <span>我承诺按时参加辅学活动，不无故缺席或迟到早退。</span>
+          </div>
+		 <div style="display:flex;align-items:flex-start;gap:8px;">
+            <span style="color:var(--success);font-size:15px;line-height:1.8;">✓</span>
+            <span>我承诺尊重学生隐私，不泄露学生个人信息。</span>
+          </div>
+        </div>
+        <div class="vd-sign-row">
+          <div style="font-size:12px;color:var(--text-3);">申请人电子签名</div>
+          <div class="sig">${d.n}</div>
+          <div style="font-size:12px;color:var(--text-3);">日期 <span style="color:var(--text-1);font-weight:500;margin-left:4px;">${d.apply}</span></div>
+        </div>
+      </div>
+
+      <!-- 审核记录 -->
+      <div class="vd-audit-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          审核记录
+        </h4>
+        <div class="timeline" style="padding:4px 0 0;">
+          <div class="tl-item done">
+            <div class="dot">${checkSvg}</div>
+            <div class="tl-content">
+              <h6>义工提交申请</h6>
+              <p>${d.apply} · ${d.n}</p>
+            </div>
+          </div>
+          <div class="tl-item done">
+            <div class="dot">${checkSvg}</div>
+            <div class="tl-content">
+              <h6>二级学院专干一审 — 通过</h6>
+              <p>${ext.auditDate!=='-'?ext.auditDate:'审核中'} · 李老师（${d.college}学工办）</p>
+            </div>
+          </div>
+          <div class="tl-item ${d.audit==='待审批'?'current':'done'}">
+            <div class="dot">${d.audit!=='待审批'?checkSvg:''}</div>
+            <div class="tl-content">
+              <h6>知新馆指导老师二审${d.audit!=='待审批'?' — 通过':''}</h6>
+              <p>${d.audit==='待审批'?'审批中…':ext.auditDate+' · 赵老师（知新馆）'}</p>
+            </div>
+          </div>
+          <div class="tl-item ${auditStatus?'done':''}">
+            <div class="dot">${auditStatus?checkSvg:''}</div>
+            <div class="tl-content">
+              <h6>学工部管理员终审${auditStatus?' — 通过':''}</h6>
+              <p>${auditStatus?ext.effDate+' · 王老师（学工部）':'等待审批'}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    openModal('volunteerDetailModal');
+  }
+
+  renderVolunteerTable();
+</script>
+<!-- AI 学工助手 -->
+<link rel="stylesheet" href="../assets/ai/ai-widget-pc.css">
+<script src="../assets/ai/ai-knowledge.js"></script>
+<script src="../assets/ai/ai-core.js"></script>
+<script src="../assets/ai/ai-widget-pc.js"></script>
+<script>
+  AIWidget.init({
+    pageId: 'volunteers',
+    pageName: '申请管理',
+    pageContext: '管理员正在查看辅学义工申请管理页面，可进行三级审批（学院专干初审→知新馆老师二审→学工部终审）。',
+    end: 'PC管理'
+  });
+</script>
+</body>
+</html>

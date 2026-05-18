@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>义工管理 · 学风建设系统</title>
+<style>
+:root{
+  --primary:#3087CC;
+  --primary-light:#E3F1F9;
+  --primary-dark:#006DAD;
+  --primary-50:#F4FAFE;
+  --text-1:#3C444F;
+  --text-2:#696F7D;
+  --text-3:#9096A2;
+  --text-4:#ABB0BA;
+  --border:#E5E8EE;
+  --border-light:#EFF1F5;
+  --bg:#F4F6FA;
+  --bg-card:#FFFFFF;
+  --success:#1BB975;
+  --success-bg:#E8FCF4;
+  --success-border:#A7F3D0;
+  --warning:#F29100;
+  --warning-bg:#FFF5E5;
+  --warning-border:#FFE0B3;
+  --danger:#DF2027;
+  --danger-bg:#FCE8EA;
+  --danger-border:#F6BCBE;
+  --shadow-sm:0 1px 3px rgba(15,32,55,.05);
+  --shadow-md:0 4px 14px rgba(15,32,55,.06);
+  --shadow-lg:0 12px 32px rgba(15,32,55,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;font-size:14px;}
+body{min-height:100vh;display:flex;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+svg{display:block;flex-shrink:0;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D9DDE3;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#C0C5CD;}
+::-webkit-scrollbar-track{background:transparent;}
+
+.sidebar{
+  width:232px;flex-shrink:0;background:#fff;
+  border-right:1px solid var(--border-light);
+  height:100vh;position:sticky;top:0;display:flex;flex-direction:column;
+}
+.brand{
+  padding:20px 20px 16px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border-light);
+}
+.brand-logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(48,135,204,.28);
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text strong{font-size:14px;font-weight:600;}
+.brand-text span{font-size:10px;color:var(--text-3);letter-spacing:.4px;margin-top:3px;}
+
+.nav-group{padding:16px 12px 8px;flex:1;overflow-y:auto;}
+.nav-group-title{
+  padding:8px 12px 6px;font-size:11px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;color:var(--text-2);
+  font-size:13px;cursor:pointer;transition:all .15s;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:var(--primary-50);color:var(--text-1);}
+.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:500;}
+.nav-item.active svg{color:var(--primary);}
+.nav-item .badge{
+  margin-left:auto;background:var(--danger);color:#fff;font-size:10px;
+  padding:1px 6px;border-radius:8px;font-weight:500;
+}
+.nav-item.active .badge{background:var(--primary);}
+
+.user-card{
+  margin:12px;padding:12px;border-radius:10px;
+  background:linear-gradient(135deg,#F4FAFE 0%,#E3F1F9 100%);
+  display:flex;align-items:center;gap:10px;
+}
+.user-card .ava{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:600;font-size:13px;
+}
+.user-card .info{flex:1;min-width:0;}
+.user-card .info h5{font-size:13px;font-weight:500;}
+.user-card .info p{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{
+  height:60px;background:#fff;border-bottom:1px solid var(--border-light);
+  padding:0 28px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:10;
+}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--text-2);font-size:13px;}
+.crumb svg{color:var(--text-4);}
+.crumb a{color:var(--text-2);transition:color .15s;}
+.crumb a:hover{color:var(--primary);}
+.search{
+  margin-left:24px;width:320px;height:36px;border-radius:8px;
+  background:#F4F6FA;display:flex;align-items:center;padding:0 12px;gap:8px;
+  border:1px solid transparent;transition:all .15s;
+}
+.search:focus-within{background:#fff;border-color:var(--primary);}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:13px;color:var(--text-1);}
+.search input::placeholder{color:var(--text-4);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;position:relative;
+}
+.icon-btn:hover{background:#F4F6FA;color:var(--text-1);}
+.icon-btn .red-dot{
+  position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;
+  background:var(--danger);border:2px solid #fff;
+}
+.topbar-user{
+  display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;
+  border-radius:999px;cursor:pointer;
+}
+.topbar-user:hover{background:#F4F6FA;}
+.topbar-user .ava{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
+}
+.topbar-user span{font-size:13px;color:var(--text-1);}
+
+.page{flex:1;padding:24px 28px;overflow-y:auto;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.page-head h1{font-size:22px;font-weight:600;}
+.page-head p{color:var(--text-3);font-size:13px;margin-top:6px;}
+.page-actions{display:flex;gap:8px;}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:500;
+  transition:all .15s;
+}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(48,135,204,.28);}
+.btn-ghost{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{height:30px;padding:0 10px;font-size:12px;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.stat-card{
+  background:#fff;border-radius:14px;padding:20px 22px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.stat-card .blob{
+  position:absolute;width:140px;height:140px;border-radius:50%;
+  right:-40px;top:-40px;opacity:.35;
+}
+.stat-card .blob-1{background:radial-gradient(circle,#BFDDF6,transparent 65%);}
+.stat-card .blob-2{background:radial-gradient(circle,#FFE0B3,transparent 65%);}
+.stat-card .blob-3{background:radial-gradient(circle,#A7F3D0,transparent 65%);}
+.stat-card .blob-4{background:radial-gradient(circle,#F6BCBE,transparent 65%);}
+.stat-card .ic{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.stat-card .label{font-size:13px;color:var(--text-2);}
+.stat-card .num{
+  font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.5px;
+  display:flex;align-items:baseline;gap:6px;
+}
+.stat-card .num small{font-size:13px;color:var(--text-3);font-weight:400;}
+
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500;
+  background:var(--primary-light);color:var(--primary);border:1px solid #BFDDF6;
+}
+.tag-success{background:var(--success-bg);color:var(--success);border-color:var(--success-border);}
+.tag-warning{background:var(--warning-bg);color:var(--warning);border-color:var(--warning-border);}
+.tag-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border);}
+.tag-grey{background:#F1F2F3;color:var(--text-3);border-color:var(--border);}
+
+.filterbar{
+  background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:16px;
+  display:flex;flex-wrap:nowrap;gap:12px;align-items:center;
+  box-shadow:var(--shadow-sm);
+}
+.filterbar .field{display:flex;align-items:center;gap:6px;}
+.filterbar label{font-size:13px;color:var(--text-2);white-space:nowrap;}
+.input,.select{
+  height:34px;padding:0 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;color:var(--text-1);background:#fff;outline:none;min-width:0;
+  transition:all .15s;font-family:inherit;
+}
+.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(48,135,204,.12);}
+.filterbar .spacer{flex:1;}
+
+.table-wrap{
+  background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{
+  background:#F8FAFC;color:var(--text-2);font-weight:500;
+  text-align:left;padding:14px 16px;font-size:12px;
+  border-bottom:1px solid var(--border-light);white-space:nowrap;
+}
+tbody td{padding:14px 16px;border-bottom:1px solid var(--border-light);color:var(--text-1);white-space:nowrap;}
+tbody tr:hover{background:#FAFBFD;}
+tbody tr:last-child td{border-bottom:none;}
+.table-scroll{overflow-x:auto;}
+
+.table-foot{
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border-light);
+}
+.table-foot .count{color:var(--text-3);font-size:12px;}
+.pager{display:flex;align-items:center;gap:4px;}
+.pager button{
+  min-width:30px;height:30px;padding:0 8px;border-radius:6px;font-size:12px;color:var(--text-2);
+}
+.pager button:hover:not(:disabled){background:#F4F6FA;color:var(--text-1);}
+.pager button.active{background:var(--primary);color:#fff;}
+.pager button:disabled{opacity:.4;cursor:not-allowed;}
+
+.modal-mask{
+  position:fixed;inset:0;background:rgba(15,32,55,.42);z-index:100;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-mask.show{opacity:1;pointer-events:auto;}
+.modal{
+  background:#fff;border-radius:14px;width:960px;max-width:94vw;max-height:90vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.94);transition:transform .2s;
+}
+.modal-mask.show .modal{transform:scale(1);}
+.modal-head{
+  padding:18px 24px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h3{font-size:16px;font-weight:600;}
+.modal-body{padding:22px 24px;overflow-y:auto;flex:1;}
+.modal-foot{
+  padding:14px 24px;border-top:1px solid var(--border-light);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+
+.detail-banner{
+  background:linear-gradient(135deg,#3087CC,#006DAD);color:#fff;
+  padding:24px 28px 20px;border-radius:12px;margin-bottom:20px;position:relative;overflow:hidden;
+}
+.detail-banner::before{
+  content:"";position:absolute;width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.12),transparent 65%);right:-40px;top:-60px;
+}
+.detail-banner h2{font-size:20px;font-weight:700;position:relative;}
+.detail-banner .sub{font-size:13px;opacity:.85;margin-top:4px;position:relative;}
+.detail-banner .meta-row{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:16px;position:relative;
+}
+.detail-banner .meta-row .item{font-size:12px;}
+.detail-banner .meta-row .item .lbl{opacity:.7;margin-bottom:2px;}
+.detail-banner .meta-row .item .val{font-weight:600;font-size:14px;}
+
+.detail-tabs{
+  display:flex;background:#F4F6FA;border-radius:10px;padding:4px;margin-bottom:20px;gap:4px;
+}
+.detail-tabs button{
+  height:34px;padding:0 18px;border-radius:7px;font-size:13px;color:var(--text-2);font-weight:500;
+  transition:all .15s;
+}
+.detail-tabs button.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);}
+
+.detail-panel{display:none;}
+.detail-panel.active{display:block;}
+
+.detail-section{margin-bottom:20px;}
+.detail-section h4{
+  font-size:14px;font-weight:600;margin-bottom:12px;padding-bottom:8px;
+  border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:8px;
+}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 24px;}
+.detail-item{display:flex;gap:8px;font-size:13px;}
+.detail-item .dt{color:var(--text-3);min-width:70px;flex-shrink:0;}
+.detail-item .dd{color:var(--text-1);word-break:break-all;}
+
+.inner-table{width:100%;border-collapse:collapse;font-size:13px;border:1px solid var(--border-light);border-radius:8px;overflow:hidden;}
+.inner-table thead th{background:#F8FAFC;color:var(--text-2);font-weight:500;text-align:left;padding:10px 14px;font-size:12px;border-bottom:1px solid var(--border-light);}
+.inner-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border-light);color:var(--text-1);}
+.inner-table tbody tr:last-child td{border-bottom:none;}
+.inner-table tbody tr:hover{background:#FAFBFD;}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-4);font-size:13px;}
+
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#fff;border:1px solid var(--success-border);background:var(--success-bg);color:var(--success);
+  padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:8px;z-index:200;
+  opacity:0;pointer-events:none;transition:all .25s;
+  box-shadow:var(--shadow-lg);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.stars-display{display:inline-flex;gap:2px;}
+.stars-display svg{width:14px;height:14px;}
+
+.checkbox{width:16px;height:16px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;position:relative;transition:all .15s;flex-shrink:0;}
+.checkbox:hover{border-color:var(--primary);}
+.checkbox.checked{background:var(--primary);border-color:var(--primary);}
+.checkbox.checked::after{
+  content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);margin-top:-2px;
+}
+
+.sub-detail-mask{
+  position:fixed;inset:0;background:rgba(15,32,55,.5);z-index:150;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.preview-mask{
+  position:fixed;inset:0;background:rgba(15,32,55,.55);z-index:200;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.preview-mask.show{opacity:1;pointer-events:auto;}
+.preview-modal{
+  background:#fff;border-radius:14px;width:900px;max-width:96vw;max-height:90vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.94);transition:transform .2s;
+}
+.preview-mask.show .preview-modal{transform:scale(1);}
+.preview-head{
+  padding:16px 24px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.preview-head h3{font-size:16px;font-weight:600;}
+.preview-body{flex:1;overflow-y:auto;padding:0;background:#E8EAED;}
+.preview-foot{padding:14px 24px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end;gap:8px;}
+.sub-detail-mask.show{opacity:1;pointer-events:auto;}
+.sub-detail{
+  background:#fff;border-radius:14px;width:720px;max-width:92vw;max-height:85vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.94);transition:transform .2s;
+}
+.sub-detail-mask.show .sub-detail{transform:scale(1);}
+.sub-detail-head{
+  padding:18px 24px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sub-detail-head h3{font-size:16px;font-weight:600;}
+.sub-detail-body{padding:22px 24px;overflow-y:auto;flex:1;}
+.sub-detail-foot{
+  padding:14px 24px;border-top:1px solid var(--border-light);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+
+.info-hero{
+  background:linear-gradient(135deg,#3087CC,#006DAD);color:#fff;
+  border-radius:12px;padding:20px 24px;margin-bottom:18px;position:relative;overflow:hidden;
+}
+.info-hero::before{
+  content:"";position:absolute;width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.12),transparent 65%);right:-30px;top:-50px;
+}
+.info-hero h4{font-size:16px;font-weight:600;position:relative;}
+.info-hero .sub{font-size:12px;opacity:.85;margin-top:4px;position:relative;}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin-bottom:16px;}
+.info-grid .fi{display:flex;flex-direction:column;}
+.info-grid .fi .fl{font-size:12px;color:var(--text-3);margin-bottom:3px;}
+.info-grid .fi .fv{font-size:13px;color:var(--text-1);font-weight:500;}
+.info-grid .fi.full{grid-column:1/-1;}
+
+.info-block{background:var(--bg);border-radius:10px;padding:14px 16px;font-size:13px;line-height:1.8;color:var(--text-1);margin-bottom:14px;}
+
+.act-link{color:var(--primary);font-weight:500;cursor:pointer;font-size:12px;}
+.act-link:hover{text-decoration:underline;color:var(--primary-dark);}
+
+.detail-tab-btn{
+  height:34px;padding:0 18px;border-radius:7px;font-size:13px;color:var(--text-2);font-weight:500;
+  transition:all .15s;background:none;border:none;cursor:pointer;
+}
+.detail-tab-btn.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);}
+</style>
+</head>
+<body>
+
+<aside class="sidebar"></aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="crumb">
+      <a href="dashboard.html">首页</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      <span>辅学义工</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      <span style="color:var(--text-1);font-weight:500;">义工管理</span>
+    </div>
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="搜索义工姓名、学号…" />
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="red-dot"></span>
+      </button>
+      <div class="topbar-user">
+        <div class="ava">王</div>
+        <span>王老师</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>义工管理</h1>
+        <p>查看所有辅学义工的综合信息，包括上课记录、回答问题情况、上传资料情况</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" id="btnExportSelected" onclick="exportSelected()" style="display:none;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          导出选中 (<span id="selectedCount">0</span>)
+        </button>
+        <button class="btn btn-ghost" onclick="showToast('正在导出全部…')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          全部导出
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="blob blob-1"></div>
+        <div class="ic" style="background:var(--primary-light);color:var(--primary);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        </div>
+        <div class="label">义工总数</div>
+        <div class="num">86</div>
+      </div>
+      <div class="stat-card">
+        <div class="blob blob-2"></div>
+        <div class="ic" style="background:var(--warning-bg);color:var(--warning);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div class="label">总辅导时长</div>
+        <div class="num">2,456<small>小时</small></div>
+      </div>
+      <div class="stat-card">
+        <div class="blob blob-3"></div>
+        <div class="ic" style="background:var(--success-bg);color:var(--success);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="label">总回答问题</div>
+        <div class="num">1,832<small>次</small></div>
+      </div>
+      <div class="stat-card">
+        <div class="blob blob-4"></div>
+        <div class="ic" style="background:var(--danger-bg);color:var(--danger);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        </div>
+        <div class="label">总上传资料</div>
+        <div class="num">368<small>份</small></div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filterbar">
+      <div class="field">
+        <label>义工类别</label>
+        <select class="select" id="fCat" style="width:140px;" onchange="renderTable()">
+          <option value="">全部</option>
+          <option value="院级辅学义工">院级辅学义工</option>
+          <option value="知新馆辅学义工">知新馆辅学义工</option>
+          <option value="56度中南辅学义工">56度中南辅学义工</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>星级</label>
+        <select class="select" id="fStar" style="width:100px;" onchange="renderTable()">
+          <option value="">全部</option>
+          <option value="5">五星</option>
+          <option value="4">四星</option>
+          <option value="3">三星</option>
+          <option value="2">二星</option>
+          <option value="1">一星</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>状态</label>
+        <select class="select" id="fStatus" style="width:100px;" onchange="renderTable()">
+          <option value="">全部</option>
+          <option value="在任">在任</option>
+          <option value="离任">离任</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>关键字</label>
+        <input type="text" class="input" id="fKw" placeholder="姓名、学号" style="width:160px;" oninput="renderTable()">
+      </div>
+      <div class="spacer"></div>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button class="btn btn-ghost btn-sm" onclick="resetFilter()">重置</button>
+        <button class="btn btn-primary btn-sm" onclick="renderTable()">查询</button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:40px;"><span class="checkbox" id="checkAll" onclick="toggleAll()"></span></th>
+            <th>姓名</th>
+            <th>学号</th>
+            <th>院系/专业</th>
+            <th>义工类别</th>
+            <th>星级</th>
+            <th>辅导时长</th>
+            <th>回答问题</th>
+            <th>上传资料</th>
+            <th>AI 画像</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      </div>
+      <div class="table-foot">
+        <span class="count" id="tableCount">共 0 条，已选择 <strong id="footSelected">0</strong> 条</span>
+        <div class="pager">
+          <button disabled>&lt;</button>
+          <button class="active">1</button>
+          <button>2</button>
+          <button>3</button>
+          <button>&gt;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-mask" id="detailModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">义工详情</h3>
+      <button onclick="closeModal()" style="color:var(--text-3);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sub-Detail Modal (for class/qa/upload item detail) -->
+<div class="sub-detail-mask" id="subDetailModal" onclick="if(event.target===this)closeSubDetail()">
+  <div class="sub-detail">
+    <div class="sub-detail-head">
+      <h3 id="subDetailTitle">详情</h3>
+      <button onclick="closeSubDetail()" style="color:var(--text-3);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="sub-detail-body" id="subDetailBody"></div>
+    <div class="sub-detail-foot">
+      <button class="btn btn-ghost" onclick="closeSubDetail()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Preview Modal -->
+<div class="preview-mask" id="uploadPreviewModal" onclick="if(event.target===this)closeUploadPreview()">
+  <div class="preview-modal">
+    <div class="preview-head">
+      <h3 id="uploadPreviewTitle">资料预览</h3>
+      <button onclick="closeUploadPreview()" style="color:var(--text-3);background:none;border:none;cursor:pointer;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="preview-body" id="uploadPreviewBody"></div>
+    <div class="preview-foot">
+      <button class="btn btn-ghost" onclick="closeUploadPreview()">关闭预览</button>
+    </div>
+  </div>
+</div>
+
+<!-- Remove Volunteer Modal -->
+<div class="modal-mask" id="vmRemoveModal">
+  <div class="modal" style="width:520px;">
+    <div class="modal-head">
+      <h3>移出义工</h3>
+      <button class="icon-btn" onclick="closeVmModal('vmRemoveModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="vmRemoveId" />
+      <div style="background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:8px;padding:12px 14px;margin-bottom:18px;font-size:13px;color:var(--danger);display:flex;gap:8px;align-items:flex-start;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        确认将 <strong id="vmRemoveName" style="margin:0 2px;"></strong> 从义工名册中移出？移出后该义工将失去辅学相关操作权限。
+      </div>
+      <div class="form-item" style="margin-bottom:14px;">
+        <label style="font-size:13px;color:var(--text-2);display:block;margin-bottom:6px;">移出原因 <span style="color:var(--danger);">*</span></label>
+        <select class="select" id="vmRemoveReason" style="width:100%;">
+          <option value="">请选择移出原因</option>
+          <option>个人申请退出</option>
+          <option>长期未参与辅学活动</option>
+          <option>考核不合格</option>
+          <option>违反辅学义工管理规定</option>
+        </select>
+      </div>
+      <div class="form-item">
+        <label style="font-size:13px;color:var(--text-2);display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span>备注说明</span>
+          <button type="button" onclick="aiRemoveRemark()" style="padding:3px 9px;border-radius:5px;background:#fff;color:#5B3CA1;font-size:11px;font-weight:500;cursor:pointer;border:1px solid #D9D2F0;display:inline-flex;align-items:center;gap:4px;">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg>
+            AI 生成备注
+          </button>
+        </label>
+        <textarea id="vmRemoveRemark" class="input" style="height:80px;width:100%;padding:8px 12px;resize:none;" placeholder="可补充说明（选填）"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeVmModal('vmRemoveModal')">取消</button>
+      <button class="btn btn-primary" onclick="confirmVmRemove()" style="background:var(--danger);">确认移出</button>
+    </div>
+  </div>
+</div>
+
+<!-- Restore Volunteer Modal -->
+<div class="modal-mask" id="vmRestoreModal">
+  <div class="modal" style="width:520px;">
+    <div class="modal-head">
+      <h3>恢复义工身份</h3>
+      <button class="icon-btn" onclick="closeVmModal('vmRestoreModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="vmRestoreId" />
+      <div style="background:var(--primary-50);border:1px solid #BFDDF6;border-radius:8px;padding:12px 14px;margin-bottom:18px;font-size:13px;color:var(--primary-dark);display:flex;gap:8px;align-items:flex-start;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        确认恢复 <strong id="vmRestoreName" style="margin:0 2px;"></strong> 的义工身份？恢复后将重新获得辅学相关操作权限。
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;border:1px solid var(--border-light);">
+        <div style="font-size:13px;font-weight:600;color:var(--text-1);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          上次移出记录
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:10px 14px;font-size:13px;">
+          <span style="color:var(--text-3);">移出原因</span><span id="vmRestoreReason" style="font-weight:500;"></span>
+          <span style="color:var(--text-3);">备注说明</span><span id="vmRestoreRemark"></span>
+          <span style="color:var(--text-3);">移出日期</span><span id="vmRestoreDate"></span>
+          <span style="color:var(--text-3);">操作人</span><span id="vmRestoreOperator"></span>
+        </div>
+      </div>
+      <!-- AI 恢复评估 -->
+      <div id="vmRestoreAiBox" style="margin-top:12px;padding:12px 14px;background:linear-gradient(135deg,#F0FDF9,#F4FAFE);border:1px solid #A7F3D0;border-radius:8px;font-size:12px;color:var(--text-1);line-height:1.8;white-space:pre-line;display:none;"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeVmModal('vmRestoreModal')">取消</button>
+      <button class="btn btn-primary" onclick="confirmVmRestore()" style="background:var(--success);">确认恢复</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toastMsg">操作成功</span>
+</div>
+
+<script>
+const PC_NAV = [
+  {group:'首页',items:[
+    {id:'dashboard',name:'数据概览',href:'dashboard.html',icon:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'}
+  ]},
+  {group:'辅学义工',items:[
+    {id:'volunteers',name:'申请管理',href:'volunteers.html',badge:12,icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>'},
+    {id:'hours',name:'时长记录',href:'hours.html',icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'},
+    {id:'stars',name:'星级评定',href:'stars.html',badge:5,icon:'<polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/>'},
+    {id:'groups',name:'分组管理',href:'groups.html',icon:'<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="9" r="3"/><path d="M22 21v-1a3 3 0 0 0-2-2.83"/>'},
+    {id:'appeals',name:'意见反馈',href:'appeals.html',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/>'},
+    {id:'volunteer-manage',name:'义工管理',href:'volunteer-manage.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'}
+  ]},
+  {group:'知新选课',items:[
+    {id:'courses',name:'课程管理',href:'courses.html',badge:8,icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'},
+    {id:'course-categories',name:'课程分类',href:'course-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'venue-bookings',name:'场地预约',href:'venue-bookings.html',badge:6,icon:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'},
+    {id:'posters',name:'开屏海报',href:'posters.html',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'}
+  ]},
+  {group:'即问即答',items:[
+    {id:'qa-content',name:'内容管理',href:'qa-content.html',badge:3,icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+    {id:'qa-categories',name:'学科分类',href:'qa-categories.html',icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'},
+    {id:'qa-users',name:'用户管理',href:'qa-users.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+  ]},
+  {group:'宝藏资料库',items:[
+    {id:'library',name:'资料库管理',href:'library.html',badge:11,icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {id:'library-categories',name:'资料分类',href:'library-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'uploaders',name:'上传者管理',href:'uploaders.html',icon:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>'},
+    {id:'library-feedback',name:'反馈与需求池',href:'library-feedback.html',icon:'<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><line x1="7" y1="22" x2="7" y2="11"/>'}
+  ]},
+  {group:'系统配置',items:[
+    {id:'analytics',name:'数据分析',href:'analytics.html',icon:'<path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/>'},
+    {id:'settings',name:'系统配置',href:'settings.html',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+    {id:'ai-settings',name:'AI 助手配置',href:'ai-settings.html',icon:'<path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/><circle cx="19" cy="5" r="1.5"/>'}
+  ]}
+];
+
+function renderSidebar(activeId){
+  const sidebar = document.querySelector('.sidebar');
+  if(!sidebar) return;
+  const navHTML = PC_NAV.map((g,i)=>`
+    <div class="nav-group-title" ${i>0?'style="margin-top:14px;"':''}>${g.group}</div>
+    ${g.items.map(it=>`
+      <a class="nav-item ${it.id===activeId?'active':''}" href="${it.href}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg>
+        ${it.name}
+        ${it.badge?`<span class="badge">${it.badge}</span>`:''}
+      </a>
+    `).join('')}
+  `).join('');
+  sidebar.innerHTML = `
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="brand-text">
+        <strong>学风建设系统</strong>
+        <span>管理后台 v2.0</span>
+      </div>
+    </div>
+    <nav class="nav-group">${navHTML}</nav>
+    <div class="user-card">
+      <div class="ava">王</div>
+      <div class="info"><h5>王老师</h5><p>管理员</p></div>
+    </div>
+  `;
+}
+
+// Volunteer data
+const volunteerData = [
+  {id:'V001',name:'李明杰',sid:'2023110001',college:'计算机学院',major:'软件工程',category:'院级辅学义工',star:3,hours:48,qaCount:62,uploadCount:8,status:'在任',
+    classRecords:[
+      {date:'2026-05-12',course:'高等数学A',subject:'数学',venue:'B203',duration:'2h',students:18,topic:'极限与连续性'},
+      {date:'2026-05-09',course:'C语言程序设计',subject:'计算机',venue:'A106',duration:'1.5h',students:22,topic:'指针与数组'},
+      {date:'2026-05-05',course:'高等数学A',subject:'数学',venue:'B203',duration:'2h',students:16,topic:'导数应用'},
+      {date:'2026-04-28',course:'线性代数',subject:'数学',venue:'C301',duration:'1.5h',students:14,topic:'矩阵运算'},
+      {date:'2026-04-21',course:'高等数学A',subject:'数学',venue:'B203',duration:'2h',students:20,topic:'不定积分'}
+    ],
+    qaRecords:[
+      {date:'2026-05-13',question:'求解lim(x→0)(sinx/x)的极限过程',subject:'高等数学',likes:12,status:'已采纳'},
+      {date:'2026-05-11',question:'C语言指针和数组的区别是什么？',subject:'C语言',likes:8,status:'已采纳'},
+      {date:'2026-05-08',question:'如何判断矩阵是否可逆？',subject:'线性代数',likes:5,status:'已采纳'},
+      {date:'2026-05-03',question:'泰勒展开的余项如何理解？',subject:'高等数学',likes:15,status:'已采纳'},
+      {date:'2026-04-29',question:'递归和迭代的效率比较',subject:'C语言',likes:6,status:'已回答'}
+    ],
+    uploadRecords:[
+      {date:'2026-05-10',title:'高等数学期中复习知识点总结',type:'PDF',size:'2.3MB',downloads:156},
+      {date:'2026-05-01',title:'C语言指针专题习题解析',type:'PDF',size:'1.8MB',downloads:98},
+      {date:'2026-04-20',title:'线性代数公式速查表',type:'PDF',size:'0.5MB',downloads:234},
+      {date:'2026-04-10',title:'高数微积分思维导图',type:'PPT',size:'4.2MB',downloads:187}
+    ]},
+  {id:'V002',name:'王诗韵',sid:'2023110045',college:'外国语学院',major:'英语',category:'知新馆辅学义工',star:4,hours:182,qaCount:156,uploadCount:24,status:'在任',
+    classRecords:[
+      {date:'2026-05-13',course:'大学英语四级',subject:'英语',venue:'知新馆201',duration:'2h',students:25,topic:'阅读理解技巧'},
+      {date:'2026-05-10',course:'英语写作',subject:'英语',venue:'知新馆201',duration:'1.5h',students:18,topic:'议论文写作框架'},
+      {date:'2026-05-06',course:'大学英语四级',subject:'英语',venue:'知新馆201',duration:'2h',students:28,topic:'听力训练方法'},
+      {date:'2026-04-30',course:'大学英语六级',subject:'英语',venue:'知新馆303',duration:'2h',students:15,topic:'翻译技巧'},
+      {date:'2026-04-25',course:'英语写作',subject:'英语',venue:'知新馆201',duration:'1.5h',students:20,topic:'学术写作规范'}
+    ],
+    qaRecords:[
+      {date:'2026-05-12',question:'四级作文万能模板有哪些？',subject:'大学英语',likes:32,status:'已采纳'},
+      {date:'2026-05-09',question:'如何提高英语听力水平？',subject:'大学英语',likes:28,status:'已采纳'},
+      {date:'2026-05-05',question:'六级阅读理解的做题顺序建议',subject:'大学英语',likes:19,status:'已采纳'},
+      {date:'2026-05-01',question:'英语长难句分析方法',subject:'大学英语',likes:24,status:'已采纳'}
+    ],
+    uploadRecords:[
+      {date:'2026-05-11',title:'四级高频词汇2000词',type:'PDF',size:'3.1MB',downloads:432},
+      {date:'2026-05-03',title:'六级阅读真题解析合集',type:'PDF',size:'5.6MB',downloads:287},
+      {date:'2026-04-22',title:'英语写作高分范文50篇',type:'DOC',size:'2.8MB',downloads:356},
+      {date:'2026-04-15',title:'听力场景词汇分类整理',type:'PDF',size:'1.2MB',downloads:198}
+    ]},
+  {id:'V003',name:'陈思远',sid:'2022110023',college:'数学与统计学院',major:'数学',category:'知新馆辅学义工',star:3,hours:62,qaCount:89,uploadCount:12,status:'离任',
+    classRecords:[
+      {date:'2026-03-15',course:'数学分析',subject:'数学',venue:'知新馆102',duration:'2h',students:12,topic:'级数收敛判别'},
+      {date:'2026-03-08',course:'概率统计',subject:'数学',venue:'知新馆102',duration:'1.5h',students:16,topic:'假设检验'},
+      {date:'2026-03-01',course:'高等代数',subject:'数学',venue:'知新馆102',duration:'2h',students:10,topic:'特征值与特征向量'}
+    ],
+    qaRecords:[
+      {date:'2026-03-14',question:'级数的Dirichlet判别法怎么用？',subject:'数学分析',likes:7,status:'已采纳'},
+      {date:'2026-03-10',question:'如何理解贝叶斯公式？',subject:'概率统计',likes:11,status:'已采纳'},
+      {date:'2026-03-05',question:'Jordan标准形的计算步骤',subject:'高等代数',likes:4,status:'已回答'}
+    ],
+    uploadRecords:[
+      {date:'2026-03-12',title:'概率论期末复习笔记',type:'PDF',size:'3.5MB',downloads:145},
+      {date:'2026-03-01',title:'高等代数期末真题汇编',type:'PDF',size:'2.1MB',downloads:189}
+    ]},
+  {id:'V004',name:'周泽宇',sid:'2023110066',college:'物理学院',major:'应用物理',category:'知新馆辅学义工',star:3,hours:88,qaCount:104,uploadCount:15,status:'在任',
+    classRecords:[
+      {date:'2026-05-12',course:'大学物理',subject:'物理',venue:'知新馆305',duration:'2h',students:22,topic:'电磁学基础'},
+      {date:'2026-05-08',course:'大学物理',subject:'物理',venue:'知新馆305',duration:'2h',students:19,topic:'光学干涉'},
+      {date:'2026-05-01',course:'力学',subject:'力学',venue:'知新馆305',duration:'1.5h',students:15,topic:'刚体转动'},
+      {date:'2026-04-24',course:'大学物理',subject:'物理',venue:'知新馆305',duration:'2h',students:24,topic:'热力学第一定律'}
+    ],
+    qaRecords:[
+      {date:'2026-05-11',question:'麦克斯韦方程组的物理意义',subject:'大学物理',likes:18,status:'已采纳'},
+      {date:'2026-05-07',question:'杨氏双缝干涉实验的条纹计算',subject:'大学物理',likes:9,status:'已采纳'},
+      {date:'2026-05-02',question:'转动惯量的平行轴定理推导',subject:'力学',likes:6,status:'已回答'}
+    ],
+    uploadRecords:[
+      {date:'2026-05-09',title:'大学物理电磁学公式汇总',type:'PDF',size:'1.6MB',downloads:267},
+      {date:'2026-04-28',title:'力学习题精选100道',type:'PDF',size:'3.2MB',downloads:178},
+      {date:'2026-04-15',title:'物理实验数据处理方法',type:'DOC',size:'0.8MB',downloads:95}
+    ]},
+  {id:'V005',name:'刘子轩',sid:'2022110134',college:'计算机学院',major:'计算机科学',category:'知新馆辅学义工',star:3,hours:96,qaCount:132,uploadCount:18,status:'在任',
+    classRecords:[
+      {date:'2026-05-11',course:'数据结构',subject:'计算机',venue:'知新馆401',duration:'2h',students:20,topic:'图的遍历算法'},
+      {date:'2026-05-07',course:'操作系统',subject:'计算机',venue:'知新馆401',duration:'1.5h',students:16,topic:'进程调度'},
+      {date:'2026-05-02',course:'数据结构',subject:'计算机',venue:'知新馆401',duration:'2h',students:22,topic:'排序算法比较'},
+      {date:'2026-04-25',course:'计算机网络',subject:'计算机',venue:'知新馆401',duration:'1.5h',students:18,topic:'TCP协议'}
+    ],
+    qaRecords:[
+      {date:'2026-05-10',question:'BFS和DFS的适用场景有什么区别？',subject:'数据结构',likes:14,status:'已采纳'},
+      {date:'2026-05-06',question:'操作系统死锁的四个必要条件',subject:'操作系统',likes:10,status:'已采纳'},
+      {date:'2026-05-01',question:'快排最坏情况如何避免？',subject:'数据结构',likes:8,status:'已采纳'}
+    ],
+    uploadRecords:[
+      {date:'2026-05-08',title:'数据结构期末复习思维导图',type:'PDF',size:'2.4MB',downloads:312},
+      {date:'2026-04-30',title:'操作系统核心概念汇总',type:'PDF',size:'1.9MB',downloads:145},
+      {date:'2026-04-20',title:'计算机网络协议栈图解',type:'PPT',size:'5.8MB',downloads:198}
+    ]},
+  {id:'V006',name:'黄怡然',sid:'2023110212',college:'化学化工学院',major:'化学',category:'知新馆辅学义工',star:2,hours:42,qaCount:56,uploadCount:6,status:'在任',
+    classRecords:[
+      {date:'2026-05-10',course:'有机化学',subject:'化学',venue:'知新馆202',duration:'2h',students:14,topic:'亲核取代反应'},
+      {date:'2026-05-03',course:'无机化学',subject:'化学',venue:'知新馆202',duration:'1.5h',students:12,topic:'配位化学'},
+      {date:'2026-04-26',course:'有机化学',subject:'化学',venue:'知新馆202',duration:'2h',students:16,topic:'消除反应机理'}
+    ],
+    qaRecords:[
+      {date:'2026-05-09',question:'SN1和SN2反应如何判断？',subject:'有机化学',likes:9,status:'已采纳'},
+      {date:'2026-05-02',question:'配位化合物的命名规则',subject:'无机化学',likes:5,status:'已回答'}
+    ],
+    uploadRecords:[
+      {date:'2026-05-06',title:'有机化学反应机理总结',type:'PDF',size:'4.1MB',downloads:123},
+      {date:'2026-04-22',title:'无机化学期中考点梳理',type:'PDF',size:'1.5MB',downloads:87}
+    ]},
+  {id:'V007',name:'林楠',sid:'2024110078',college:'数学与统计学院',major:'信息与计算科学',category:'院级辅学义工',star:1,hours:18,qaCount:23,uploadCount:3,status:'在任',
+    classRecords:[
+      {date:'2026-05-08',course:'高等数学B',subject:'数学',venue:'D102',duration:'1.5h',students:25,topic:'定积分应用'},
+      {date:'2026-04-28',course:'高等数学B',subject:'数学',venue:'D102',duration:'1.5h',students:22,topic:'微分方程入门'}
+    ],
+    qaRecords:[
+      {date:'2026-05-07',question:'定积分求旋转体体积的方法',subject:'高等数学',likes:6,status:'已采纳'},
+      {date:'2026-04-27',question:'一阶线性微分方程的通解公式',subject:'高等数学',likes:4,status:'已回答'}
+    ],
+    uploadRecords:[
+      {date:'2026-05-05',title:'高数B期中复习要点',type:'PDF',size:'1.2MB',downloads:67}
+    ]},
+  {id:'V008',name:'吴鸿涛',sid:'2022110056',college:'机电工程学院',major:'力学',category:'知新馆辅学义工',star:2,hours:36,qaCount:41,uploadCount:5,status:'离任',
+    classRecords:[
+      {date:'2026-01-10',course:'理论力学',subject:'力学',venue:'知新馆106',duration:'2h',students:12,topic:'拉格朗日方程'},
+      {date:'2025-12-20',course:'材料力学',subject:'力学',venue:'知新馆106',duration:'1.5h',students:10,topic:'应力应变分析'}
+    ],
+    qaRecords:[
+      {date:'2026-01-08',question:'拉格朗日方程的适用条件',subject:'理论力学',likes:5,status:'已采纳'},
+      {date:'2025-12-18',question:'莫尔圆的画法步骤',subject:'材料力学',likes:3,status:'已回答'}
+    ],
+    uploadRecords:[
+      {date:'2026-01-05',title:'理论力学期末速查手册',type:'PDF',size:'2.0MB',downloads:56},
+      {date:'2025-12-15',title:'材料力学典型题解析',type:'PDF',size:'1.8MB',downloads:43}
+    ]}
+];
+
+let currentData = [...volunteerData];
+let selectedIds = new Set();
+
+function renderStars(n){
+  let html = '<span class="stars-display">';
+  for(let i=0;i<5;i++){
+    html += `<svg viewBox="0 0 24 24" fill="${i<n?'#FFC53D':'#E5E8EE'}" stroke="none"><polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/></svg>`;
+  }
+  return html+'</span>';
+}
+
+function getStatusTag(s){
+  if(s==='在任') return '<span class="tag tag-success">在任</span>';
+  return '<span class="tag tag-grey">离任</span>';
+}
+
+function resetFilter(){
+  document.getElementById('fCat').value='';
+  document.getElementById('fStar').value='';
+  document.getElementById('fStatus').value='';
+  document.getElementById('fKw').value='';
+  renderTable();
+}
+
+function toggleCheck(id){
+  if(selectedIds.has(id)) selectedIds.delete(id);
+  else selectedIds.add(id);
+  updateCheckboxUI();
+}
+
+function toggleAll(){
+  const allEl = document.getElementById('checkAll');
+  if(selectedIds.size === currentData.length){
+    selectedIds.clear();
+  } else {
+    currentData.forEach(d=>selectedIds.add(d.id));
+  }
+  updateCheckboxUI();
+}
+
+function updateCheckboxUI(){
+  const count = selectedIds.size;
+  document.querySelectorAll('#tableBody .checkbox').forEach(cb=>{
+    const id = cb.dataset.id;
+    cb.classList.toggle('checked', selectedIds.has(id));
+  });
+  const allEl = document.getElementById('checkAll');
+  allEl.classList.toggle('checked', count>0 && count===currentData.length);
+  document.getElementById('footSelected').textContent = count;
+  document.getElementById('selectedCount').textContent = count;
+  document.getElementById('btnExportSelected').style.display = count>0?'inline-flex':'none';
+}
+
+function exportSelected(){
+  showToast(`已导出 ${selectedIds.size} 条义工数据`);
+}
+
+function _aiPortrait(d){
+  var tags = [];
+  var subjs = d.category || '';
+  if(subjs) tags.push(subjs);
+  if(d.hours >= 100) tags.push('百小时+');
+  else if(d.hours >= 60) tags.push(d.hours+'h');
+  else if(d.hours >= 30) tags.push(d.hours+'h');
+  if(d.qaCount >= 50) tags.push('答疑达人');
+  else if(d.qaCount >= 20) tags.push('活跃答疑');
+  if(d.uploadCount >= 10) tags.push('资料贡献者');
+  if(d.star >= 4) tags.push('核心骨干');
+  else if(d.star >= 2) tags.push('稳定输出');
+  var colors = ['#3087CC','#7C5BC1','#1BB975','#F29100','#0EA5E9'];
+  return tags.slice(0,3).map(function(t,i){
+    var c = colors[i % colors.length];
+    return '<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:'+c+'12;color:'+c+';border:1px solid '+c+'30;margin-right:4px;">'+t+'</span>';
+  }).join('') || '<span style="color:var(--text-4);font-size:11px;">暂无</span>';
+}
+
+function renderTable(){
+  const cat = document.getElementById('fCat').value;
+  const star = document.getElementById('fStar').value;
+  const status = document.getElementById('fStatus').value;
+  const kw = document.getElementById('fKw').value.trim().toLowerCase();
+
+  currentData = volunteerData.filter(d=>{
+    if(cat && d.category!==cat) return false;
+    if(star && d.star!==parseInt(star)) return false;
+    if(status && d.status!==status) return false;
+    if(kw && !d.name.toLowerCase().includes(kw) && !d.sid.includes(kw)) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = currentData.map(d=>`
+    <tr>
+      <td><span class="checkbox ${selectedIds.has(d.id)?'checked':''}" data-id="${d.id}" onclick="toggleCheck('${d.id}')"></span></td>
+      <td style="font-weight:500;">${d.name}</td>
+      <td style="color:var(--text-2);">${d.sid}</td>
+      <td>${d.college} / ${d.major}</td>
+      <td><span class="tag">${d.category}</span></td>
+      <td>${renderStars(d.star)}</td>
+      <td style="font-weight:500;">${d.hours}<small style="color:var(--text-3);font-weight:400;"> h</small></td>
+      <td style="font-weight:500;">${d.qaCount}<small style="color:var(--text-3);font-weight:400;"> 次</small></td>
+      <td style="font-weight:500;">${d.uploadCount}<small style="color:var(--text-3);font-weight:400;"> 份</small></td>
+      <td>${_aiPortrait(d)}</td>
+      <td>${getStatusTag(d.status)}</td>
+      <td style="display:flex;align-items:center;gap:14px;">
+        <a href="javascript:void(0)" onclick="openDetail('${d.id}')" style="color:var(--primary);font-weight:500;">详情</a>
+        ${d.status==='在任'?`<a href="javascript:void(0)" onclick="vmRemove('${d.id}')" style="color:var(--danger);font-weight:500;">移出</a>`:''}
+        ${d.status==='离任'?`<a href="javascript:void(0)" onclick="vmRestore('${d.id}')" style="color:var(--success);font-weight:500;">恢复</a>`:''}
+      </td>
+    </tr>
+  `).join('');
+
+  document.getElementById('tableCount').innerHTML = `共 ${currentData.length} 条，已选择 <strong id="footSelected">${selectedIds.size}</strong> 条`;
+  updateCheckboxUI();
+}
+
+let _currentDetailId = '';
+
+function openDetail(id){
+  const d = volunteerData.find(x=>x.id===id);
+  if(!d) return;
+  _currentDetailId = id;
+
+  document.getElementById('modalTitle').textContent = `义工详情 - ${d.name}`;
+  const body = document.getElementById('modalBody');
+
+  const classTableHTML = d.classRecords.length ? d.classRecords.map((r,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td>${r.date}</td>
+      <td style="font-weight:500;">${r.course}</td>
+      <td>${r.venue}</td>
+      <td>${r.duration}</td>
+      <td>${r.students} 人</td>
+      <td>${r.subject||'其他'}</td>
+      <td><a class="act-link" onclick="openClassDetail('${id}',${i})">详情</a></td>
+    </tr>
+  `).join('') : '<tr><td colspan="8" class="empty-state">暂无上课记录</td></tr>';
+
+  const qaTableHTML = d.qaRecords.length ? d.qaRecords.map((r,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td>${r.date}</td>
+      <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.question}</td>
+      <td><span class="tag">${r.subject}</span></td>
+      <td>${r.likes}</td>
+      <td><span class="tag ${r.status==='已采纳'?'tag-success':'tag-warning'}">${r.status}</span></td>
+      <td><a class="act-link" onclick="openQaDetail('${id}',${i})">详情</a></td>
+    </tr>
+  `).join('') : '<tr><td colspan="7" class="empty-state">暂无回答记录</td></tr>';
+
+  const uploadTableHTML = d.uploadRecords.length ? d.uploadRecords.map((r,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td>${r.date}</td>
+      <td style="font-weight:500;">${r.title}</td>
+      <td><span class="tag ${r.type==='PDF'?'tag-danger':r.type==='PPT'?'tag-warning':'tag'}">${r.type}</span></td>
+      <td>${r.size}</td>
+      <td>${r.downloads}</td>
+      <td><a class="act-link" onclick="openUploadDetail('${id}',${i})">详情</a></td>
+    </tr>
+  `).join('') : '<tr><td colspan="7" class="empty-state">暂无上传记录</td></tr>';
+
+  body.innerHTML = `
+    <!-- Banner -->
+    <div class="detail-banner">
+      <h2>${d.name}</h2>
+      <div class="sub">${d.college} · ${d.major} · ${d.sid}</div>
+      <div class="meta-row">
+        <div class="item"><div class="lbl">义工类别</div><div class="val">${d.category}</div></div>
+        <div class="item"><div class="lbl">星级</div><div class="val">${d.star} 星</div></div>
+        <div class="item"><div class="lbl">辅导时长</div><div class="val">${d.hours} h</div></div>
+        <div class="item"><div class="lbl">回答问题</div><div class="val">${d.qaCount} 次</div></div>
+        <div class="item"><div class="lbl">上传资料</div><div class="val">${d.uploadCount} 份</div></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div id="vmAiSummaryPanel" style="margin:14px 0 0;padding:12px 14px;background:linear-gradient(135deg,#F4F0FF,#F4FAFE);border:1px solid #E0D8F6;border-radius:10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+        <span style="font-size:12px;font-weight:600;color:#3B2670;display:flex;align-items:center;gap:6px;">
+          <span style="width:18px;height:18px;border-radius:5px;background:linear-gradient(135deg,#7C5BC1,#3087CC);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg></span>
+          AI 履职小结
+        </span>
+        <button id="vmAiSumBtn" onclick="aiVolSummary('${d.id}')" style="padding:4px 10px;border-radius:5px;background:#fff;color:#5B3CA1;font-size:11px;font-weight:500;cursor:pointer;border:1px solid #D9D2F0;">生成小结</button>
+      </div>
+      <div id="vmAiSumText" style="font-size:12px;color:var(--text-2);line-height:1.8;white-space:pre-line;">点击"生成小结"，AI 将汇总上课、问答、资料上传数据给出履职评价。</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="detail-tabs" id="detailTabs">
+      <button class="active" onclick="switchDetailTab('class')">上课记录</button>
+      <button onclick="switchDetailTab('qa')">回答问题</button>
+      <button onclick="switchDetailTab('upload')">上传资料</button>
+    </div>
+
+    <!-- Tab: 上课记录 -->
+    <div class="detail-panel active" id="panel-class">
+      <div class="detail-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          上课记录（共 ${d.classRecords.length} 次）
+        </h4>
+        <table class="inner-table">
+          <thead>
+            <tr><th>序号</th><th>日期</th><th>课程</th><th>教室</th><th>时长</th><th>人数</th><th>所属科目</th><th>操作</th></tr>
+          </thead>
+          <tbody>${classTableHTML}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab: 回答问题 -->
+    <div class="detail-panel" id="panel-qa">
+      <div class="detail-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          回答问题情况（共 ${d.qaRecords.length} 条）
+        </h4>
+        <table class="inner-table">
+          <thead>
+            <tr><th>序号</th><th>日期</th><th>回答内容</th><th>学科</th><th>点赞</th><th>状态</th><th>操作</th></tr>
+          </thead>
+          <tbody>${qaTableHTML}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab: 上传资料 -->
+    <div class="detail-panel" id="panel-upload">
+      <div class="detail-section">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          上传资料情况（共 ${d.uploadRecords.length} 份）
+        </h4>
+        <table class="inner-table">
+          <thead>
+            <tr><th>序号</th><th>日期</th><th>资料名称</th><th>类型</th><th>大小</th><th>下载量</th><th>操作</th></tr>
+          </thead>
+          <tbody>${uploadTableHTML}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function switchDetailTab(tab){
+  document.querySelectorAll('#detailTabs button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.detail-panel').forEach(p=>p.classList.remove('active'));
+
+  const tabs = document.querySelectorAll('#detailTabs button');
+  const panels = ['class','qa','upload'];
+  const idx = panels.indexOf(tab);
+  if(idx>=0){
+    tabs[idx].classList.add('active');
+    document.getElementById('panel-'+tab).classList.add('active');
+  }
+}
+
+function closeModal(){
+  document.getElementById('detailModal').classList.remove('show');
+}
+
+function closeSubDetail(){
+  document.getElementById('subDetailModal').classList.remove('show');
+}
+
+let _classDetailTab = 'info';
+
+function openClassDetail(volId, idx){
+  const d = volunteerData.find(x=>x.id===volId);
+  if(!d) return;
+  const r = d.classRecords[idx];
+  if(!r) return;
+
+  document.getElementById('subDetailTitle').textContent = '课程详情';
+  _classDetailTab = 'info';
+  renderClassDetailContent(d, r, 'info');
+  document.getElementById('subDetailModal').classList.add('show');
+}
+
+function switchClassTab(tab, btn){
+  _classDetailTab = tab;
+  document.querySelectorAll('#classTabNav .detail-tab-btn').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  const volId = _currentDetailId;
+  const d = volunteerData.find(x=>x.id===volId);
+  if(!d) return;
+  const wrap = document.querySelector('#subDetailBody [data-idx]');
+  const idx = parseInt(wrap?wrap.dataset.idx:'0');
+  const r = d.classRecords[idx];
+  if(!r) return;
+  renderClassTabContent(d, r, tab);
+}
+
+function renderClassDetailContent(d, r, tab){
+  const idx = d.classRecords.indexOf(r);
+  const enrollPct = r.students > 0 ? Math.round(r.students / (r.students + 5) * 100) : 0;
+
+  document.getElementById('subDetailBody').innerHTML = `
+    <div data-idx="${idx}">
+      <!-- Tab Nav -->
+      <div class="detail-tabs" id="classTabNav" style="margin-bottom:18px;">
+        <button class="detail-tab-btn active" onclick="switchClassTab('info',this)">课程信息</button>
+        <button class="detail-tab-btn" onclick="switchClassTab('audit',this)">审核记录</button>
+        <button class="detail-tab-btn" onclick="switchClassTab('enroll',this)">报名情况</button>
+      </div>
+      <div id="classTabContent"></div>
+    </div>
+  `;
+  renderClassTabContent(d, r, tab);
+}
+
+function renderClassTabContent(d, r, tab){
+  const container = document.getElementById('classTabContent');
+  if(!container) return;
+
+  if(tab==='info'){
+    const enrollPct = Math.round(r.students / (r.students + 5) * 100);
+    container.innerHTML = `
+      <!-- Hero Banner -->
+      <div style="background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);color:#fff;border-radius:12px;padding:18px 22px;margin-bottom:18px;position:relative;overflow:hidden;">
+        <div style="position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 60%);right:-40px;top:-60px;pointer-events:none;"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+          <span style="background:rgba(255,255,255,.2);padding:3px 10px;border-radius:4px;font-size:11px;">辅学辅导</span>
+          <span class="tag tag-success" style="font-size:11px;">已完成</span>
+        </div>
+        <h2 style="font-size:17px;font-weight:600;line-height:1.4;">${r.course} · ${r.topic}</h2>
+        <p style="font-size:12px;opacity:.85;margin-top:6px;">${r.date} ${r.duration} &nbsp;·&nbsp; ${r.venue}</p>
+      </div>
+
+      <!-- Form Grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div>
+          <label style="font-size:12px;color:var(--text-2);display:block;margin-bottom:6px;">授课义工</label>
+          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.name}（${d.sid}）</div>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-2);display:block;margin-bottom:6px;">参与人数</label>
+          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">
+            <strong>${r.students}</strong> / ${r.students + 5} 人
+            <span style="margin-left:8px;font-size:11px;color:var(--text-3);">已报名 ${enrollPct}%</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div>
+          <label style="font-size:12px;color:var(--text-2);display:block;margin-bottom:6px;">上课时间</label>
+          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${r.date} ${r.duration}</div>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-2);display:block;margin-bottom:6px;">上课地点</label>
+          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${r.venue}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div>
+          <label style="font-size:12px;color:var(--text-2);display:block;margin-bottom:6px;">所属科目</label>
+          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${r.subject||'其他'}</div>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-2);display:block;margin-bottom:6px;">义工类别</label>
+          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">知新馆辅学义工</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div>
+          <label style="font-size:12px;color:var(--text-2);display:block;margin-bottom:6px;">辅导组别</label>
+          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${(r.subject||'其他')==='数学'?'知新馆数学辅导组':(r.subject==='英语'?'知新馆英语辅导组':(r.subject==='物理'?'知新馆物理辅导组':(r.subject==='化学'?'知新馆化学辅导组':(r.subject==='计算机'?'知新馆计算机辅导组':(r.subject==='力学'?'知新馆力学辅导组':'知新馆综合辅导组')))))}
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-2);display:block;margin-bottom:6px;">奖励积分</label>
+          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;"><strong style="color:var(--primary);">+${Math.round(parseFloat(r.duration)*10)} 积分</strong></div>
+        </div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12px;color:var(--text-2);display:block;margin-bottom:6px;">课程内容</label>
+        <div style="padding:12px;background:var(--bg);border-radius:8px;font-size:13px;color:var(--text-2);line-height:1.8;">本次辅导围绕"${r.topic}"主题展开，义工 ${d.name} 通过讲解知识要点、例题演练及现场答疑等方式进行辅导，帮助学生掌握核心知识点，突破学习难点。</div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:100px;background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:var(--primary);">${r.students}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">已报名</div>
+        </div>
+        <div style="flex:1;min-width:100px;background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:var(--text-1);">5</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">剩余名额</div>
+        </div>
+        <div style="flex:1;min-width:100px;background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:${enrollPct>=90?'var(--danger)':enrollPct>=60?'var(--warning)':'var(--success)'};">${enrollPct}%</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">报名率</div>
+        </div>
+        <div style="flex:1;min-width:100px;background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:var(--success);">${r.students}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">已签到</div>
+        </div>
+      </div>
+    `;
+  } else if(tab==='audit'){
+    container.innerHTML = `
+      <div style="padding:4px 0;">
+        <div style="display:flex;align-items:flex-start;gap:14px;position:relative;padding-bottom:18px;">
+          <div style="position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--border-light);"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--primary-light);color:var(--primary);">提交</span>
+              <h6 style="font-size:13px;font-weight:500;">义工提交开课申请</h6>
+            </div>
+            <p style="font-size:12px;color:var(--text-3);margin-top:4px;">操作人：${d.name} &nbsp;·&nbsp; ${r.date} 08:30</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px;position:relative;padding-bottom:18px;">
+          <div style="position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--border-light);"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--success-bg);color:var(--success);">通过</span>
+              <h6 style="font-size:13px;font-weight:500;">指导老师审核通过</h6>
+            </div>
+            <p style="font-size:12px;color:var(--text-3);margin-top:4px;">操作人：王老师（知新馆） &nbsp;·&nbsp; ${r.date} 09:15</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px;position:relative;padding-bottom:18px;">
+          <div style="position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--border-light);"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--success-bg);color:var(--success);">通过</span>
+              <h6 style="font-size:13px;font-weight:500;">课程已发布，开始接受报名</h6>
+            </div>
+            <p style="font-size:12px;color:var(--text-3);margin-top:4px;">操作人：系统自动 &nbsp;·&nbsp; ${r.date} 09:16</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px;position:relative;">
+          <div style="width:24px;height:24px;border-radius:50%;background:#F1F2F3;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:4px;font-size:11px;font-weight:600;background:#F1F2F3;color:var(--text-3);">结束</span>
+              <h6 style="font-size:13px;font-weight:500;">课程已结束，签到统计完成</h6>
+            </div>
+            <p style="font-size:12px;color:var(--text-3);margin-top:4px;">操作人：系统自动 &nbsp;·&nbsp; ${r.date} ${r.duration.replace('h','').trim().includes('.')?'':'17:00'}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if(tab==='enroll'){
+    const signedCount = r.students;
+    const totalCount = r.students + 5;
+    const fakeStudents = [];
+    const surnames = ['张','李','王','刘','陈','杨','赵','黄','周','吴','徐','孙','胡','朱','高','林','何','郭','马','罗'];
+    const names2 = ['伟','芳','秀英','敏','静','丽','强','磊','洋','艳','勇','军','杰','娟','涛','超','明','霞','秀兰','燕'];
+    for(let i=0;i<totalCount;i++){
+      fakeStudents.push({
+        name: surnames[i%20] + names2[i%20],
+        sid: '202311' + String(1000+i*7).padStart(4,'0'),
+        dept: ['计算机学院','外国语学院','数学与统计学院','物理学院','化学化工学院'][i%5],
+        major: ['软件工程','英语','数学','应用物理','化学'][i%5],
+        enrollTime: r.date + ' ' + String(8+i%3).padStart(2,'0') + ':' + String(10+i*3%50).padStart(2,'0'),
+        signed: i < signedCount
+      });
+    }
+
+    container.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;gap:12px;font-size:13px;color:var(--text-2);">
+          <span>共 <strong style="color:var(--text-1);">${totalCount}</strong> 人报名</span>
+          <span>已签到 <strong style="color:var(--success);">${signedCount}</strong> 人</span>
+          <span>未签到 <strong style="color:var(--text-3);">${totalCount - signedCount}</strong> 人</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="showToast('已导出报名名单')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          导出名单
+        </button>
+      </div>
+      <div style="border-radius:10px;overflow:hidden;border:1px solid var(--border-light);">
+        <table class="inner-table">
+          <thead>
+            <tr>
+              <th style="width:46px;">序号</th>
+              <th>姓名</th>
+              <th>学号</th>
+              <th>学院</th>
+              <th>专业</th>
+              <th>报名时间</th>
+              <th>签到状态</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${fakeStudents.map((s,i)=>`
+              <tr>
+                <td style="color:var(--text-3);text-align:center;">${i+1}</td>
+                <td><strong>${s.name}</strong></td>
+                <td style="color:var(--text-2);">${s.sid}</td>
+                <td style="color:var(--text-2);font-size:12px;">${s.dept}</td>
+                <td style="color:var(--text-2);font-size:12px;">${s.major}</td>
+                <td style="color:var(--text-3);font-size:12px;">${s.enrollTime}</td>
+                <td><span class="tag ${s.signed?'tag-success':'tag-grey'}" style="border-radius:999px;">${s.signed?'已签到':'未签到'}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+}
+
+function openQaDetail(volId, idx){
+  const d = volunteerData.find(x=>x.id===volId);
+  if(!d) return;
+  const r = d.qaRecords[idx];
+  if(!r) return;
+
+  const avatarColors = ['#3087CC','#F29100','#1BB975','#7C5BC1','#DF2027','#0EA5E9'];
+  const fileIconCfg = {
+    pdf:{bg:'linear-gradient(135deg,#DF2027,#FF6B6B)',label:'PDF'},
+    doc:{bg:'linear-gradient(135deg,#3087CC,#5BA8DE)',label:'DOC'},
+    xls:{bg:'linear-gradient(135deg,#1BB975,#34D399)',label:'XLS'},
+    ppt:{bg:'linear-gradient(135deg,#F29100,#FFAA33)',label:'PPT'},
+  };
+
+  const answerContent = generateAnswerContent(r);
+  const questionBody = generateQuestionBody(r);
+  const questionAttachments = generateQuestionAttachments(r);
+  const answerAttachments = generateAnswerAttachments(r, d);
+
+  document.getElementById('subDetailTitle').textContent = '问题详情';
+  document.getElementById('subDetailBody').innerHTML = `
+    <!-- Question Header Card -->
+    <div style="background:linear-gradient(135deg,#F4FAFE,#E3F1F9);border-radius:12px;padding:16px 18px;margin-bottom:16px;border:1px solid #BFDDF6;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+        <span class="tag">${r.subject}</span>
+        <span class="tag ${r.status==='已采纳'?'tag-success':'tag-warning'}">${r.status==='已采纳'?'已回答':'待回答'}</span>
+      </div>
+      <h3 style="font-size:16px;font-weight:600;line-height:1.5;color:var(--text-1);">${r.question}</h3>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #BFDDF6;font-size:12px;color:var(--text-3);display:flex;gap:18px;flex-wrap:wrap;">
+        <span>提问者：<strong style="color:var(--text-1);">学生用户</strong>（2023XXXXXX）</span>
+        <span>${r.date} 10:14</span>
+        <span>指定义工：<strong style="color:var(--text-1);">${d.name}</strong>（${d.sid}）</span>
+        <span>👍 ${r.likes} 点赞</span>
+      </div>
+    </div>
+
+    <!-- Question Body Card -->
+    <div style="background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:16px 18px;margin-bottom:16px;">
+      <h5 style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:8px;">问题描述</h5>
+      <p style="font-size:14px;color:var(--text-1);line-height:1.8;">${questionBody}</p>
+      ${questionAttachments}
+    </div>
+
+    <!-- Answers Section -->
+    <h4 style="font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+      全部回答 <span style="font-size:12px;font-weight:400;color:var(--text-3);">共 1 条</span>
+    </h4>
+
+    <!-- Answer Card -->
+    <div style="border:1px solid var(--border-light);border-radius:12px;overflow:hidden;margin-bottom:14px;">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--border-light);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:50%;background:${avatarColors[0]};color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;">${d.name[0]}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span style="font-size:14px;font-weight:600;">${d.name}</span>
+              <span style="font-size:11px;color:var(--text-3);">${d.sid}</span>
+            </div>
+          </div>
+          ${r.status==='已采纳'?'<span style="font-size:11px;padding:3px 10px;border-radius:4px;background:var(--success);color:#fff;font-weight:500;display:inline-flex;align-items:center;gap:4px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>最佳回答</span>':''}
+          <span style="font-size:12px;color:var(--text-3);">${r.date} 11:30</span>
+        </div>
+      </div>
+      <div style="padding:14px 18px;">
+        <p style="font-size:13px;color:var(--text-1);line-height:1.8;">${answerContent}</p>
+        ${answerAttachments}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('subDetailModal').classList.add('show');
+}
+
+function generateQuestionBody(r){
+  const bodies = {
+    '高等数学': '在学习相关知识点时遇到一些困惑，希望能得到详细解答。特别是涉及到的核心概念和解题方法，希望能结合具体例子来说明。',
+    'C语言': '编程学习中遇到了概念理解上的问题，书上的解释不太好懂，希望义工能用通俗的语言解释一下，最好能给出代码示例。',
+    '线性代数': '在做作业时遇到了相关题型，不知道该怎么入手，希望能提供解题思路和判断方法。',
+    '大学英语': '想提升英语学习效果，特别是在考试技巧和学习方法方面，希望有经验的义工能分享一些实用建议。',
+    '大学物理': '物理课程的概念比较抽象，特别是公式的物理意义不太理解，希望能结合实际例子进行讲解。',
+    '有机化学': '有机反应机理种类繁多，容易混淆，希望能总结一下常见反应类型的判断方法和技巧。',
+    '无机化学': '配位化学部分的命名规则和结构判断比较复杂，希望能系统地梳理一下。',
+    '数据结构': '算法的时间复杂度分析和适用场景不太确定，希望能对比讲解一下不同算法的优劣。',
+    '操作系统': '进程管理和内存管理的概念容易混淆，希望能通过实际案例来加深理解。',
+    '理论力学': '分析力学部分的方程建立步骤不太清楚，希望能通过具体例题来演示。',
+    '材料力学': '应力分析中的一些特殊情况不太理解，希望能系统地讲解判断方法。',
+  };
+  return bodies[r.subject] || '在学习过程中遇到了一些疑问，希望辅学义工能给予详细的解答和指导。';
+}
+
+function generateQuestionAttachments(r){
+  const hasAttach = Math.random() > 0.4;
+  if(!hasAttach) return '';
+  const fileName = r.subject + '相关笔记.pdf';
+  return `
+    <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-light);">
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        附件（1）
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--border-light);border-radius:8px;background:#FAFBFD;min-width:180px;max-width:240px;">
+          <div style="width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#3087CC,#5BA8DE);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:#fff;">DOC</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-1);">${fileName}</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:2px;">89 KB</div>
+          </div>
+          <button onclick="showToast('附件预览功能开发中')" title="查看" style="width:26px;height:26px;border-radius:6px;background:var(--primary-light);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function generateAnswerContent(r){
+  const answers = {
+    '高等数学': '针对该问题，核心要点如下：首先需要掌握基本定义和定理，理解其数学本质；其次通过典型例题加深理解，注意不同题型的解题套路；最后要注意常见的计算陷阱和易错点。建议配合教材课后习题进行巩固练习。',
+    'C语言': '这个问题涉及C语言的核心概念。简单来说，需要从内存模型的角度来理解——每个变量在内存中都有对应的地址和空间。建议通过画内存图的方式来辅助理解，再结合调试工具观察变量的实际存储情况。',
+    '线性代数': '判断方法主要有以下几种：①通过行列式是否为零判断；②通过化简为行阶梯形观察秩；③利用特征值进行分析。实际做题时根据已知条件选择最简便的方法，不需要每种都用。',
+    '大学英语': '建议从以下方面入手：①词汇积累推荐使用词根词缀法，每天坚持背诵高频词汇；②阅读理解注意先看题目再看文章，把握段落主旨；③写作建议积累高级句型和过渡词，平时多读范文。',
+    '大学物理': '要理解物理公式背后的物理图像：每个公式都对应着特定的物理过程和边界条件。建议先理解公式的推导过程，再通过实际问题来应用，这样比单纯记公式有效得多。',
+    '有机化学': '常见反应类型的判断可以从以下角度入手：①看底物的结构特征（伯/仲/叔碳）；②看试剂的亲核/亲电性质；③考虑反应条件（温度、溶剂等）。建议整理一张反应类型对照表方便复习。',
+    '无机化学': '配位化合物的命名遵循IUPAC命名法：先命名配体（按字母顺序），再命名中心原子，最后标注氧化态。结构判断需要考虑配位数和几何构型的关系。',
+    '数据结构': '不同算法的选择取决于数据规模和特点：小规模数据可选简单算法，大规模有序数据优先考虑高效算法。建议理解每种算法的核心思想和适用场景，而不是死记时间复杂度。',
+    '操作系统': '进程管理的核心是资源分配和调度策略。可以把操作系统比作交通管理系统：进程是车辆，CPU是道路，内存是停车场。死锁就像十字路口的交通堵塞，需要预防和检测机制。',
+    '理论力学': '建立拉格朗日方程的步骤：①选择广义坐标；②写出动能T和势能V的表达式；③代入拉格朗日方程求解。关键是正确选择广义坐标，这直接决定了计算的复杂度。',
+    '材料力学': '应力分析的关键是正确画出截面受力图。先判断构件的受力类型（拉压、剪切、弯曲、扭转），再根据平衡条件和变形协调条件建立方程组求解。',
+  };
+  return answers[r.subject] || '根据问题描述，进行了详细的分析和解答，覆盖了核心概念、解题方法和常见注意事项，希望对学习有所帮助。';
+}
+
+function generateAnswerAttachments(r, d){
+  const types = [
+    {type:'xls',bg:'linear-gradient(135deg,#1BB975,#34D399)',label:'XLS',name:'知识点整理表.xlsx',size:'56 KB'},
+    {type:'pdf',bg:'linear-gradient(135deg,#DF2027,#FF6B6B)',label:'PDF',name:'解题方法总结.pdf',size:'178 KB'},
+  ];
+  return `
+    <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-light);">
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        附件（2）
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        ${types.map(t=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--border-light);border-radius:8px;background:#FAFBFD;min-width:180px;max-width:240px;">
+            <div style="width:34px;height:34px;border-radius:8px;background:${t.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:#fff;">${t.label}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-1);">${t.name}</div>
+              <div style="font-size:11px;color:var(--text-3);margin-top:2px;">${t.size}</div>
+            </div>
+            <button onclick="showToast('附件预览功能开发中')" title="查看" style="width:26px;height:26px;border-radius:6px;background:var(--primary-light);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+function openUploadDetail(volId, idx){
+  const d = volunteerData.find(x=>x.id===volId);
+  if(!d) return;
+  const r = d.uploadRecords[idx];
+  if(!r) return;
+
+  const ftypeBg = {
+    'PDF':'linear-gradient(135deg,#DF2027,#FF6B6B)',
+    'PPT':'linear-gradient(135deg,#F29100,#FFAA33)',
+    'DOC':'linear-gradient(135deg,#3087CC,#5BA8DE)',
+    'XLS':'linear-gradient(135deg,#1BB975,#34D399)',
+  };
+  const bg = ftypeBg[r.type] || 'linear-gradient(135deg,#9096A2,#C0C5CD)';
+
+  const uploadMeta = getUploadMeta(r, d);
+
+  document.getElementById('subDetailTitle').textContent = '资料详情';
+  document.getElementById('subDetailBody').innerHTML = `
+    <!-- Hero Block (same as library.html) -->
+    <div style="background:linear-gradient(135deg,#F4FAFE,#E3F1F9);border-radius:12px;padding:16px 18px;margin-bottom:14px;display:flex;gap:14px;align-items:flex-start;">
+      <div style="width:54px;height:54px;border-radius:12px;background:${bg};color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">${r.type}</div>
+      <div style="flex:1;min-width:0;">
+        <h2 style="font-size:16px;font-weight:600;line-height:1.45;margin:0;color:var(--text-1);">${r.title}</h2>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:10px;">
+          <div><span style="display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:5px;font-size:11px;font-weight:600;background:var(--success-bg);color:var(--success);border:1px solid var(--success-border);">已发布</span></div>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:12px;color:var(--text-2);">
+            <span>文件大小 <b style="font-weight:600;color:var(--text-1);">${r.size}</b></span>
+            <span style="color:var(--text-4);">·</span>
+            <span>点赞 <b style="font-weight:600;color:var(--text-1);">${uploadMeta.likes}</b></span>
+            <span style="color:var(--text-4);">·</span>
+            <span>下载 <b style="font-weight:600;color:var(--text-1);">${r.downloads}</b></span>
+          </div>
+          <button onclick="openUploadPreview('${volId}',${idx})" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:8px;font-size:12px;font-weight:500;background:var(--primary);color:#fff;border:none;cursor:pointer;font-family:inherit;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            查看
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Grid (same as library.html dl grid) -->
+    <dl style="display:grid;grid-template-columns:minmax(100px,130px) 1fr;gap:10px 20px;font-size:13px;background:#FAFBFD;border:1px solid var(--border-light);border-radius:12px;padding:18px 20px;margin-bottom:16px;">
+      <dt style="color:var(--text-3);font-weight:500;padding-top:2px;">资料名称</dt>
+      <dd style="margin:0;color:var(--text-1);line-height:1.55;">${r.title}</dd>
+
+      <dt style="color:var(--text-3);font-weight:500;padding-top:2px;">所属分类</dt>
+      <dd style="margin:0;color:var(--text-1);line-height:1.55;">${uploadMeta.major}</dd>
+
+      <dt style="color:var(--text-3);font-weight:500;padding-top:2px;">所属资料小类</dt>
+      <dd style="margin:0;color:var(--text-1);line-height:1.55;">${uploadMeta.minor}</dd>
+
+      <dt style="color:var(--text-3);font-weight:500;padding-top:2px;">所属课程</dt>
+      <dd style="margin:0;color:var(--text-1);line-height:1.55;">${uploadMeta.course}</dd>
+
+      <dt style="color:var(--text-3);font-weight:500;padding-top:2px;">上传者</dt>
+      <dd style="margin:0;color:var(--text-1);line-height:1.55;">${d.name} · ${uploadMeta.role}</dd>
+
+      <dt style="color:var(--text-3);font-weight:500;padding-top:2px;">上传时间</dt>
+      <dd style="margin:0;color:var(--text-1);line-height:1.55;">${r.date} ${uploadMeta.time}</dd>
+
+      <dt style="color:var(--text-3);font-weight:500;padding-top:2px;">文件来源</dt>
+      <dd style="margin:0;color:var(--text-1);line-height:1.55;">${uploadMeta.source}</dd>
+
+      <dt style="color:var(--text-3);font-weight:500;padding-top:2px;">版本信息</dt>
+      <dd style="margin:0;color:var(--text-1);line-height:1.55;">${uploadMeta.version}</dd>
+
+      <dt style="color:var(--text-3);font-weight:500;padding-top:2px;">关键词标签</dt>
+      <dd style="margin:0;color:var(--text-1);line-height:1.55;">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${uploadMeta.keywords.map(k=>'<span class="tag">'+k+'</span>').join('')}
+        </div>
+      </dd>
+
+      <dt style="color:var(--text-3);font-weight:500;padding-top:2px;">文件介绍</dt>
+      <dd style="margin:0;color:var(--text-1);line-height:1.55;white-space:pre-wrap;">${uploadMeta.intro}</dd>
+
+      <dt style="color:var(--text-3);font-weight:500;padding-top:2px;">备注</dt>
+      <dd style="margin:0;color:var(--text-1);line-height:1.55;"><span style="color:var(--text-4);">—</span></dd>
+    </dl>
+  `;
+  document.getElementById('subDetailModal').classList.add('show');
+}
+
+function getUploadMeta(r, d){
+  const courseMap = {
+    'PDF': {major:'课程科目类',minor:'复习资料 PDF',course:'高等数学A',keywords:['高数','期末','复习'],intro:'系统梳理课程重点知识，涵盖核心公式推导与典型例题解析，适合期末复习使用。'},
+    'PPT': {major:'课程科目类',minor:'课件 PPT',course:'大学英语六级',keywords:['六级','写作','模版'],intro:'六级写作结构与常用句式模版，附真题范文解析。'},
+    'DOC': {major:'学习方法类',minor:'笔记文档 DOC',course:'线性代数',keywords:['线代','笔记','总结'],intro:'课堂笔记精编，包含知识框架、定理证明及典型题型归纳。'},
+    'XLS': {major:'工具资源类',minor:'数据表格 XLS',course:'概率论与数理统计',keywords:['概率','公式','速查'],intro:'概率论常用公式与分布表速查，方便考试复习与日常查阅。'},
+  };
+  const meta = courseMap[r.type] || {major:'其他资料',minor:r.type+' 文档',course:'通识课程',keywords:['学习','资料'],intro:'辅学义工整理的学习参考资料。'};
+  const roleLabel = d.category || '知新馆辅学义工';
+  const srcGroup = d.college ? d.college.replace('学院','组') : '知新馆学习组';
+  return {
+    major: meta.major,
+    minor: meta.minor,
+    course: meta.course,
+    role: roleLabel,
+    time: '14:05',
+    source: srcGroup,
+    version: 'v2026.03',
+    keywords: meta.keywords,
+    intro: meta.intro,
+    likes: Math.floor(r.downloads * 0.21 + 10),
+  };
+}
+
+function openUploadPreview(volId, idx){
+  const d = volunteerData.find(x=>x.id===volId);
+  if(!d) return;
+  const r = d.uploadRecords[idx];
+  if(!r) return;
+  const meta = getUploadMeta(r, d);
+  const fileName = r.title + '.' + r.type.toLowerCase();
+
+  document.getElementById('uploadPreviewTitle').textContent = '资料预览';
+  document.getElementById('uploadPreviewBody').innerHTML = `
+    <div style="padding:20px;max-height:72vh;overflow-y:auto;background:#E8EAED;">
+      <div style="max-width:720px;margin:0 auto;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.1);border-radius:6px;padding:40px 44px;min-height:380px;">
+        <div style="font-size:11px;color:#888;margin-bottom:18px;">${fileName} · ${meta.version} · ${r.size}</div>
+        <h1 style="font-size:18px;font-weight:600;margin:0 0 12px;line-height:1.45;color:#1a1a1a;">${r.title}</h1>
+        <p style="font-size:12px;color:#64748b;margin:0 0 20px;">当前预览文件：<strong style="color:#1a1a1a;">${fileName}</strong></p>
+        <div style="font-size:14px;line-height:1.9;color:#333;white-space:pre-wrap;">${meta.intro}</div>
+        <div style="margin-top:28px;padding:14px;background:#F8FAFC;border-radius:8px;font-size:13px;color:#475569;">
+          <strong>资料信息：</strong>所属课程「${meta.course}」，分类「${meta.major} / ${meta.minor}」，由 ${d.name}（${meta.role}）上传于 ${r.date}。
+          共获得 ${meta.likes} 个点赞，${r.downloads} 次下载。
+        </div>
+        <div style="margin-top:32px;padding-top:20px;border-top:1px dashed #ddd;font-size:13px;color:#64748b;">
+          <p style="margin:0;line-height:1.65;">（演示）此处为「${fileName}」的在线预览占位。正式环境可对接 PDF.js、Word 在线预览或对象存储直链。</p>
+          <p style="margin:12px 0 0;">当前文件格式：${r.type} · 上传者：${d.name} · ${meta.role}</p>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('uploadPreviewModal').classList.add('show');
+}
+
+function closeUploadPreview(){
+  document.getElementById('uploadPreviewModal').classList.remove('show');
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ===== 移出 / 恢复 =====
+const vmRemovalRecords = {};
+
+function openVmModal(id){ document.getElementById(id).classList.add('show'); }
+function closeVmModal(id){ document.getElementById(id).classList.remove('show'); }
+
+function vmRemove(id){
+  const d = volunteerData.find(x=>x.id===id);
+  if(!d) return;
+  document.getElementById('vmRemoveId').value = id;
+  document.getElementById('vmRemoveName').textContent = d.name + '（' + d.sid + '）';
+  document.getElementById('vmRemoveReason').value = '';
+  document.getElementById('vmRemoveRemark').value = '';
+  openVmModal('vmRemoveModal');
+}
+
+function confirmVmRemove(){
+  const id = document.getElementById('vmRemoveId').value;
+  const reason = document.getElementById('vmRemoveReason').value;
+  const remark = document.getElementById('vmRemoveRemark').value.trim();
+  if(!reason){ showToast('请选择移出原因'); return; }
+  const d = volunteerData.find(x=>x.id===id);
+  if(d){
+    d.status = '离任';
+    vmRemovalRecords[id] = {reason, remark: remark||'无', date: new Date().toISOString().slice(0,10), operator:'管理员'};
+  }
+  closeVmModal('vmRemoveModal');
+  showToast('已移出该义工');
+  renderTable();
+}
+
+function vmRestore(id){
+  const d = volunteerData.find(x=>x.id===id);
+  if(!d) return;
+  const rec = vmRemovalRecords[id] || {reason:'长期未活跃', remark:'由系统自动标记为离任', date:'2026-03-01', operator:'系统'};
+  document.getElementById('vmRestoreId').value = id;
+  document.getElementById('vmRestoreName').textContent = d.name + '（' + d.sid + '）';
+  document.getElementById('vmRestoreReason').textContent = rec.reason;
+  document.getElementById('vmRestoreRemark').textContent = rec.remark;
+  document.getElementById('vmRestoreDate').textContent = rec.date;
+  document.getElementById('vmRestoreOperator').textContent = rec.operator;
+
+  // AI 恢复评估
+  const aiBox = document.getElementById('vmRestoreAiBox');
+  if(aiBox){
+    aiBox.style.display = 'block';
+    aiBox.textContent = '⏳ AI 正在评估恢复条件…';
+    const removeDate = new Date(rec.date + 'T00:00:00');
+    const days = isNaN(removeDate.getTime()) ? null : Math.floor((Date.now() - removeDate.getTime()) / 864e5);
+    const daysText = days !== null ? `距今已 ${days} 天` : '离任日期未知';
+    const reasonMap = {
+      '长期未参与辅学活动':'建议确认近期是否恢复参与意愿，可要求义工签署承诺书后再行恢复。',
+      '考核不合格':'建议确认义工已针对考核问题进行整改，建议恢复后纳入重点关注名单。',
+      '违反辅学义工管理规定':'需谨慎评估，建议确认当事人已了解并承诺遵守管理规定后方可恢复。',
+      '个人申请退出':'义工曾主动退出，本次恢复需本人再次确认意愿，建议留存书面说明。',
+    };
+    const hint = reasonMap[rec.reason] || '请综合评估义工近期表现后再作决定。';
+    setTimeout(()=>{
+      const text = `该义工因"${rec.reason}"于 ${rec.date} 离任，${daysText}。\n\n${hint}`;
+      _typewriteVm(text, aiBox, 14, null);
+    }, 500);
+  }
+  openVmModal('vmRestoreModal');
+}
+
+function confirmVmRestore(){
+  const id = document.getElementById('vmRestoreId').value;
+  const d = volunteerData.find(x=>x.id===id);
+  if(d){ d.status = '在任'; }
+  closeVmModal('vmRestoreModal');
+  showToast('义工身份已恢复，相关权限已开启');
+  renderTable();
+}
+
+// ====== AI 功能 ======
+function _typewriteVm(text, el, speed, onDone){
+  let i = 0; el.textContent = '';
+  function tick(){ if(i<text.length){ el.textContent += text[i++]; setTimeout(tick,speed); } else if(onDone) onDone(); }
+  tick();
+}
+
+function aiVolSummary(id){
+  const btn    = document.getElementById('vmAiSumBtn');
+  const textEl = document.getElementById('vmAiSumText');
+  if(!textEl) return;
+  const d = volunteerData.find(x=>x.id===id);
+  if(!d){ textEl.textContent='暂无数据'; return; }
+
+  if(btn){ btn.disabled=true; btn.textContent='生成中…'; }
+  textEl.textContent = '⏳ AI 正在汇总数据…';
+
+  setTimeout(()=>{
+    const totalClassHours = d.classRecords ? d.classRecords.reduce((a,r)=>{
+      const m = parseFloat(r.duration); return a+(isNaN(m)?0:m);
+    },0) : 0;
+    const subjects = d.classRecords ? [...new Set(d.classRecords.map(r=>r.subject||'其他'))].join('、') : '—';
+    const adoptedQA = d.qaRecords ? d.qaRecords.filter(r=>r.status==='已采纳').length : 0;
+    const totalQA = d.qaRecords ? d.qaRecords.length : 0;
+    const adoptRate = totalQA ? Math.round(adoptedQA/totalQA*100) : 0;
+    const level = d.hours >= 100 ? '优秀' : d.hours >= 60 ? '良好' : d.hours >= 30 ? '正常' : '待提升';
+    const risk = d.hours < 10 ? '⚠ 累计时长偏低，建议关注。' : d.star <= 1 && d.hours > 30 ? '💡 时长已达标，可引导义工申请升星。' : '';
+
+    const text = [
+      `【上课情况】已累计辅导 ${d.hours}h，共 ${d.classRecords?d.classRecords.length:0} 次课程，主要覆盖${subjects}学科。`,
+      `\n【问答情况】共回答问题 ${d.qaCount} 次，本页记录采纳率约 ${adoptRate}%，问答活跃度${d.qaCount>50?'高':'一般'}。`,
+      `\n【资料贡献】共上传资料 ${d.uploadCount} 份，对资料库的贡献度${d.uploadCount>10?'突出':d.uploadCount>4?'正常':'偏少'}。`,
+      `\n【综合评定】整体履职表现${level}，星级为 ${d.star} 星。${risk}`
+    ].join('');
+
+    _typewriteVm(text, textEl, 13, ()=>{
+      if(btn){ btn.disabled=false; btn.textContent='重新生成'; }
+    });
+  }, 700);
+}
+
+function aiRemoveRemark(){
+  const reasonEl = document.getElementById('vmRemoveReason');
+  const remarkEl = document.getElementById('vmRemoveRemark');
+  if(!remarkEl) return;
+  const reason = reasonEl ? reasonEl.value : '';
+  if(!reason){ showToast('请先选择移出原因'); return; }
+  const id = document.getElementById('vmRemoveId').value;
+  const d = volunteerData.find(x=>x.id===id);
+
+  const templates = {
+    '个人申请退出': `义工本人已提交书面退出申请，确认本人意愿真实，予以批准并办理离任手续。`,
+    '长期未参与辅学活动': `经系统记录核查，该义工${d?'（'+d.name+'）':''} 近三个月内无辅学签到记录，辅导时长持续为零，视同长期未履职，依规予以移出。`,
+    '考核不合格': `本学期考核结果未达标，综合评分低于最低要求，按照辅学义工管理规定，做出移出处理，建议义工整改后重新申请。`,
+    '违反辅学义工管理规定': `经核实，该义工存在违规行为，依据《辅学义工管理规定》相关条款，决定将其移出义工名册，后续如需恢复需经重新审批。`,
+  };
+  const draft = templates[reason] || `因"${reason}"原因，经审核确认，决定将该义工移出义工名册。`;
+  remarkEl.value = '';
+  let i = 0;
+  function tick(){ if(i<draft.length){ remarkEl.value += draft[i++]; setTimeout(tick,18); } }
+  tick();
+}
+
+renderSidebar('volunteer-manage');
+renderTable();
+</script>
+
+<!-- AI 学工助手 -->
+<link rel="stylesheet" href="../assets/ai/ai-widget-pc.css">
+<script src="../assets/ai/ai-knowledge.js"></script>
+<script src="../assets/ai/ai-core.js"></script>
+<script src="../assets/ai/ai-widget-pc.js"></script>
+<script>
+  AIWidget.init({
+    pageId: 'volunteer-manage',
+    pageName: '义工管理',
+    pageContext: '管理员正在查看在任/离任义工，可查看上课记录、问答、上传资料，并执行移出/恢复操作。',
+    end: 'PC管理'
+  });
+</script>
+</body>
+</html>

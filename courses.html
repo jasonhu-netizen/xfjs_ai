@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>课程管理审核 · 学风建设系统</title>
+<style>
+:root{
+  --primary:#3087CC;
+  --primary-light:#E3F1F9;
+  --primary-dark:#006DAD;
+  --primary-50:#F4FAFE;
+  --text-1:#3C444F;
+  --text-2:#696F7D;
+  --text-3:#9096A2;
+  --text-4:#ABB0BA;
+  --border:#E5E8EE;
+  --border-light:#EFF1F5;
+  --bg:#F4F6FA;
+  --bg-card:#FFFFFF;
+  --success:#1BB975;
+  --success-bg:#E8FCF4;
+  --success-border:#A7F3D0;
+  --warning:#F29100;
+  --warning-bg:#FFF5E5;
+  --warning-border:#FFE0B3;
+  --danger:#DF2027;
+  --danger-bg:#FCE8EA;
+  --danger-border:#F6BCBE;
+  --shadow-sm:0 1px 3px rgba(15,32,55,.05);
+  --shadow-md:0 4px 14px rgba(15,32,55,.06);
+  --shadow-lg:0 12px 32px rgba(15,32,55,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:"OPPOSans","PingFang SC","Microsoft YaHei",-apple-system,sans-serif;color:var(--text-1);background:var(--bg);-webkit-font-smoothing:antialiased;font-size:14px;}
+body{min-height:100vh;display:flex;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+svg{display:block;flex-shrink:0;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:#D9DDE3;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#C0C5CD;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ====== Sidebar ====== */
+.sidebar{
+  width:232px;flex-shrink:0;background:#fff;
+  border-right:1px solid var(--border-light);
+  height:100vh;position:sticky;top:0;display:flex;flex-direction:column;
+}
+.brand{
+  padding:20px 20px 16px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border-light);
+}
+.brand-logo{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(48,135,204,.28);
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text strong{font-size:14px;font-weight:600;}
+.brand-text span{font-size:10px;color:var(--text-3);letter-spacing:.4px;margin-top:3px;}
+
+.nav-group{padding:16px 12px 8px;flex:1;overflow-y:auto;}
+.nav-group-title{
+  padding:8px 12px 6px;font-size:11px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;color:var(--text-2);
+  font-size:13px;cursor:pointer;transition:all .15s;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:var(--primary-50);color:var(--text-1);}
+.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:500;}
+.nav-item.active svg{color:var(--primary);}
+.nav-item .badge{
+  margin-left:auto;background:var(--danger);color:#fff;font-size:10px;
+  padding:1px 6px;border-radius:8px;font-weight:500;
+}
+.nav-item.active .badge{background:var(--primary);}
+
+.user-card{
+  margin:12px;padding:12px;border-radius:10px;
+  background:linear-gradient(135deg,#F4FAFE 0%,#E3F1F9 100%);
+  display:flex;align-items:center;gap:10px;
+}
+.user-card .ava{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:600;font-size:13px;
+}
+.user-card .info{flex:1;min-width:0;}
+.user-card .info h5{font-size:13px;font-weight:500;}
+.user-card .info p{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+/* ====== Main ====== */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{
+  height:60px;background:#fff;border-bottom:1px solid var(--border-light);
+  padding:0 28px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:10;
+}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--text-2);font-size:13px;}
+.crumb svg{color:var(--text-4);}
+.crumb a{color:var(--text-2);transition:color .15s;}
+.crumb a:hover{color:var(--primary);}
+.search{
+  margin-left:24px;width:320px;height:36px;border-radius:8px;
+  background:#F4F6FA;display:flex;align-items:center;padding:0 12px;gap:8px;
+  border:1px solid transparent;transition:all .15s;
+}
+.search:focus-within{background:#fff;border-color:var(--primary);}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:13px;color:var(--text-1);}
+.search input::placeholder{color:var(--text-4);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;position:relative;
+}
+.icon-btn:hover{background:#F4F6FA;color:var(--text-1);}
+.icon-btn .red-dot{
+  position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;
+  background:var(--danger);border:2px solid #fff;
+}
+.topbar-user{
+  display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;
+  border-radius:999px;cursor:pointer;
+}
+.topbar-user:hover{background:#F4F6FA;}
+.topbar-user .ava{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#3087CC,#006DAD);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
+}
+.topbar-user span{font-size:13px;color:var(--text-1);}
+
+/* ====== Page Content ====== */
+.page{flex:1;padding:24px 28px;overflow-y:auto;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.page-head h1{font-size:22px;font-weight:600;}
+.page-head p{color:var(--text-3);font-size:13px;margin-top:6px;}
+.page-actions{display:flex;gap:8px;}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:500;
+  transition:all .15s;
+}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 12px rgba(48,135,204,.28);}
+.btn-secondary{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+.btn-secondary:hover{background:var(--primary-light);}
+.btn-ghost{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{height:30px;padding:0 10px;font-size:12px;}
+
+/* ====== Stat Cards ====== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.stats-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.stat-card{
+  background:#fff;border-radius:14px;padding:20px 22px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.stat-card .blob{
+  position:absolute;width:140px;height:140px;border-radius:50%;
+  right:-40px;top:-40px;opacity:.35;
+}
+.stat-card .blob-1{background:radial-gradient(circle,#BFDDF6,transparent 65%);}
+.stat-card .blob-2{background:radial-gradient(circle,#FFE0B3,transparent 65%);}
+.stat-card .blob-3{background:radial-gradient(circle,#A7F3D0,transparent 65%);}
+.stat-card .blob-4{background:radial-gradient(circle,#F6BCBE,transparent 65%);}
+.stat-card .ic{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.stat-card .label{font-size:13px;color:var(--text-2);}
+.stat-card .num{
+  font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.5px;
+  display:flex;align-items:baseline;gap:6px;
+}
+.stat-card .num small{font-size:13px;color:var(--text-3);font-weight:400;}
+.stat-card .delta{
+  font-size:12px;margin-top:8px;display:flex;align-items:center;gap:4px;
+}
+.delta.up{color:var(--success);}
+.delta.down{color:var(--danger);}
+.delta.neutral{color:var(--text-3);}
+
+/* ====== Layout grids ====== */
+.row-2{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:20px;}
+.row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+
+.panel{
+  background:#fff;border-radius:14px;padding:22px 24px;
+  box-shadow:var(--shadow-sm);
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;
+}
+.panel-head h3{font-size:16px;font-weight:600;}
+.panel-head p{font-size:12px;color:var(--text-3);margin-top:2px;}
+.panel-tabs{display:flex;gap:4px;background:#F4F6FA;border-radius:8px;padding:3px;}
+.panel-tabs button{
+  height:28px;padding:0 12px;border-radius:6px;font-size:12px;color:var(--text-2);transition:all .15s;
+}
+.panel-tabs button.active{background:#fff;color:var(--primary);font-weight:500;box-shadow:var(--shadow-sm);}
+
+/* ====== Chart ====== */
+.chart-wrap{height:280px;position:relative;}
+
+/* ====== Approval list ====== */
+.approval-list{display:flex;flex-direction:column;gap:10px;}
+.approval-item{
+  padding:14px;border:1px solid var(--border-light);border-radius:10px;
+  display:flex;align-items:center;gap:12px;transition:all .15s;
+}
+.approval-item:hover{border-color:var(--primary);background:var(--primary-50);}
+.approval-item .ava{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;
+  flex-shrink:0;
+}
+.approval-item .text{flex:1;min-width:0;}
+.approval-item .text h5{font-size:14px;font-weight:500;}
+.approval-item .text p{font-size:12px;color:var(--text-3);margin-top:3px;}
+.approval-item .actions{display:flex;gap:6px;}
+
+/* ====== Tag ====== */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500;
+  background:var(--primary-light);color:var(--primary);border:1px solid #BFDDF6;
+}
+.tag-success{background:var(--success-bg);color:var(--success);border-color:var(--success-border);}
+.tag-warning{background:var(--warning-bg);color:var(--warning);border-color:var(--warning-border);}
+.tag-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border);}
+.tag-grey{background:#F1F2F3;color:var(--text-3);border-color:var(--border);}
+
+/* ====== Star ====== */
+.stars{display:inline-flex;gap:2px;}
+.stars svg{width:14px;height:14px;color:#FFC53D;}
+.stars.empty svg{color:#E5E8EE;}
+
+/* ====== Filter Bar ====== */
+.filterbar{
+  background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:16px;
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+  box-shadow:var(--shadow-sm);
+}
+.filterbar .field{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.filterbar label{font-size:13px;color:var(--text-2);white-space:nowrap;}
+.input,.select{
+  height:34px;padding:0 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:13px;color:var(--text-1);background:#fff;outline:none;min-width:140px;
+  transition:all .15s;font-family:inherit;
+}
+.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(48,135,204,.12);}
+.filterbar .spacer{flex:1;}
+
+/* ====== Course Type Tabs ====== */
+.course-type-tabs{display:flex;gap:4px;margin-bottom:16px;}
+.ct-tab{
+  height:36px;padding:0 20px;border-radius:8px;font-size:13px;font-weight:500;
+  color:var(--text-2);background:#fff;border:1px solid var(--border);
+  cursor:pointer;transition:all .15s;
+}
+.ct-tab:hover{border-color:var(--primary);color:var(--primary);}
+.ct-tab.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 12px rgba(48,135,204,.25);}
+
+/* ====== Table ====== */
+.table-wrap{
+  background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{
+  background:#F8FAFC;color:var(--text-2);font-weight:500;
+  text-align:left;padding:14px 16px;font-size:12px;
+  border-bottom:1px solid var(--border-light);
+}
+tbody td{padding:14px 16px;border-bottom:1px solid var(--border-light);color:var(--text-1);white-space:nowrap;}
+tbody tr:hover{background:#FAFBFD;}
+tbody tr:last-child td{border-bottom:none;}
+.checkbox{width:14px;height:14px;border:1.5px solid var(--border);border-radius:3px;cursor:pointer;display:inline-block;vertical-align:middle;position:relative;}
+.checkbox.checked{background:var(--primary);border-color:var(--primary);}
+.checkbox.checked::after{
+  content:"";position:absolute;left:3px;top:0;width:5px;height:9px;
+  border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);
+}
+.row-action{display:inline-flex;gap:4px;align-items:center;}
+.row-action button{
+  width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all .15s;
+}
+.row-action button:hover{background:var(--primary-light);color:var(--primary);}
+.row-action button.danger:hover{background:var(--danger-bg);color:var(--danger);}
+
+/* ====== Text Action Buttons ====== */
+.act-btn{
+  display:inline-flex;align-items:center;justify-content:center;height:26px;padding:0 20px;
+  border-radius:5px;font-size:12px;font-weight:500;white-space:nowrap;
+  transition:all .15s;color:var(--text-2);
+  border:1px solid var(--border);background:#fff;cursor:pointer;
+  font-family:inherit;
+}
+.act-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-50);}
+.act-btn.act-info{color:var(--primary);border-color:var(--primary);background:var(--primary-50);}
+.act-btn.act-info:hover{background:var(--primary);color:#fff;}
+.act-btn.act-secondary{color:var(--warning);border-color:var(--warning-border);background:var(--warning-bg);}
+.act-btn.act-secondary:hover{background:var(--warning);color:#fff;border-color:var(--warning);}
+.act-btn.act-success{color:var(--success);border-color:var(--success-border);background:var(--success-bg);}
+.act-btn.act-success:hover{background:var(--success);color:#fff;border-color:var(--success);}
+.act-btn.act-warning{color:var(--warning);border-color:var(--warning-border);background:var(--warning-bg);}
+.act-btn.act-warning:hover{background:var(--warning);color:#fff;border-color:var(--warning);}
+.act-btn.act-danger{color:var(--danger);border-color:var(--danger-border);background:var(--danger-bg);}
+.act-btn.act-danger:hover{background:var(--danger);color:#fff;border-color:var(--danger);}
+.row-action{flex-wrap:nowrap;gap:4px;}
+
+/* ====== Detail Modal Tabs ====== */
+.detail-tabs{
+  display:flex;gap:0;padding:0 24px;border-bottom:1px solid var(--border-light);
+  background:#fff;
+}
+.detail-tab{
+  height:42px;padding:0 18px;font-size:13px;color:var(--text-2);
+  border-bottom:2px solid transparent;border-radius:0;transition:all .15s;
+  background:none;cursor:pointer;font-family:inherit;
+}
+.detail-tab:hover{color:var(--text-1);background:var(--bg);}
+.detail-tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:500;}
+.detail-section{display:none;}
+.detail-section.show{display:block;}
+
+/* ====== Enroll Table ====== */
+.enroll-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;}
+.enroll-table thead th{
+  background:#F8FAFC;color:var(--text-2);font-weight:500;font-size:12px;
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--border-light);
+}
+.enroll-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border-light);}
+.enroll-table tbody tr:hover{background:#FAFBFD;}
+.enroll-table tbody tr:last-child td{border-bottom:none;}
+.signed-dot{
+  display:inline-flex;align-items:center;gap:4px;font-size:12px;
+}
+.signed-dot::before{
+  content:"";width:7px;height:7px;border-radius:50%;
+}
+.signed-dot.yes{color:var(--success);}
+.signed-dot.yes::before{background:var(--success);}
+.signed-dot.no{color:var(--text-3);}
+.signed-dot.no::before{background:var(--text-4);}
+
+.table-foot{
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border-light);
+}
+.table-foot .count{color:var(--text-3);font-size:12px;}
+.pager{display:flex;align-items:center;gap:4px;}
+.pager button{
+  min-width:30px;height:30px;padding:0 8px;border-radius:6px;font-size:12px;color:var(--text-2);
+}
+.pager button:hover:not(:disabled){background:#F4F6FA;color:var(--text-1);}
+.pager button.active{background:var(--primary);color:#fff;}
+.pager button:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ====== Tab nav inside page ====== */
+.seg{
+  display:inline-flex;background:#F4F6FA;border-radius:10px;padding:4px;margin-bottom:18px;flex-wrap:wrap;gap:4px;
+}
+.seg button{
+  height:34px;padding:0 18px;border-radius:7px;font-size:13px;color:var(--text-2);font-weight:500;
+  transition:all .15s;
+}
+.seg button.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);}
+
+/* ====== Schedule cards ====== */
+.sch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.sch-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;
+}
+.sch-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.sch-card .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;}
+.sch-card h5{font-size:14px;font-weight:600;}
+.sch-card .meta{font-size:12px;color:var(--text-3);margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sch-card .meta span{display:inline-flex;align-items:center;gap:4px;}
+
+/* ====== Group cards ====== */
+.group-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.group-card{
+  background:#fff;border-radius:14px;padding:20px;
+  box-shadow:var(--shadow-sm);position:relative;overflow:hidden;
+  transition:all .2s;cursor:pointer;
+}
+.group-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.group-card::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:4px;
+}
+.group-card.math::before{background:linear-gradient(90deg,#3087CC,#9CBFDA);}
+.group-card.physics::before{background:linear-gradient(90deg,#7C5BC1,#B59CE5);}
+.group-card.chem::before{background:linear-gradient(90deg,#1BB975,#A7F3D0);}
+.group-card.eng::before{background:linear-gradient(90deg,#F29100,#FFD68F);}
+.group-card.mech::before{background:linear-gradient(90deg,#DF2027,#F6BCBE);}
+.group-card.cs::before{background:linear-gradient(90deg,#0EA5E9,#7DD3FC);}
+.group-card .group-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.group-card .gi{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+}
+.group-card .gname{font-size:15px;font-weight:600;}
+.group-card .gleader{font-size:12px;color:var(--text-3);margin-top:2px;}
+.group-card .gstats{
+  display:flex;justify-content:space-between;padding:12px 0;
+  border-top:1px dashed var(--border-light);border-bottom:1px dashed var(--border-light);margin-bottom:12px;
+}
+.group-card .gstats div{text-align:center;flex:1;}
+.group-card .gstats div strong{font-size:18px;display:block;}
+.group-card .gstats div span{font-size:11px;color:var(--text-3);}
+.group-card .gmembers{display:flex;align-items:center;}
+.group-card .gmembers .ava{
+  width:26px;height:26px;border-radius:50%;border:2px solid #fff;
+  background:linear-gradient(135deg,#9CBFDA,#3087CC);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;
+  margin-left:-6px;
+}
+.group-card .gmembers .ava:first-child{margin-left:0;}
+.group-card .gmembers .more{margin-left:8px;font-size:12px;color:var(--text-3);}
+
+/* ====== Star milestone ====== */
+.star-track{
+  background:#fff;border-radius:14px;padding:24px;margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+}
+.star-bar{position:relative;height:8px;background:#F1F2F3;border-radius:4px;margin:32px 0 24px;}
+.star-bar .fill{
+  position:absolute;left:0;top:0;height:100%;border-radius:4px;
+  background:linear-gradient(90deg,#3087CC,#1BB975);
+}
+.star-bar .marker{
+  position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:#fff;
+  border:3px solid #E5E8EE;transform:translateX(-50%);
+}
+.star-bar .marker.done{border-color:var(--primary);}
+.star-bar .marker.current{border-color:var(--success);box-shadow:0 0 0 6px rgba(27,185,117,.18);}
+.star-bar .marker .lbl{
+  position:absolute;top:24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-2);
+  white-space:nowrap;
+}
+.star-bar .marker .lbl strong{display:block;font-size:13px;color:var(--text-1);font-weight:600;}
+
+/* ====== Library cards ====== */
+.lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.lib-card{
+  background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border-light);
+  transition:all .2s;cursor:pointer;
+}
+.lib-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.lib-card .ftype{
+  width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;font-size:11px;font-weight:600;color:#fff;
+}
+.ftype.pdf{background:linear-gradient(135deg,#DF2027,#FF6B6B);}
+.ftype.ppt{background:linear-gradient(135deg,#F29100,#FFAA33);}
+.ftype.doc{background:linear-gradient(135deg,#3087CC,#5BA8DE);}
+.ftype.xls{background:linear-gradient(135deg,#1BB975,#34D399);}
+.lib-card h5{font-size:13px;font-weight:500;margin-bottom:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.lib-card .meta{font-size:11px;color:var(--text-3);display:flex;justify-content:space-between;}
+.lib-card .stats{
+  margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-light);
+  display:flex;gap:12px;font-size:11px;color:var(--text-3);
+}
+.lib-card .stats span{display:inline-flex;align-items:center;gap:3px;}
+
+/* ====== Modal ====== */
+.modal-mask{
+  position:fixed;inset:0;background:rgba(15,32,55,.42);z-index:100;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-mask.show{opacity:1;pointer-events:auto;}
+.modal{
+  background:#fff;border-radius:14px;width:680px;max-width:92vw;max-height:88vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  transform:scale(.94);transition:transform .2s;
+}
+.modal-mask.show .modal{transform:scale(1);}
+.modal-head{
+  padding:18px 24px;border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h3{font-size:16px;font-weight:600;}
+.modal-body{padding:22px 24px;overflow-y:auto;flex:1;}
+.modal-foot{
+  padding:14px 24px;border-top:1px solid var(--border-light);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+.cn-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;
+  border:2px solid var(--border);border-radius:10px;background:#FAFBFD;
+  font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;font-family:inherit;
+  transition:all .15s;
+}
+.cn-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-50);}
+.cn-btn.active{
+  border-color:var(--primary);color:var(--primary);background:var(--primary-light);
+  box-shadow:0 0 0 1px var(--primary);
+}
+.cn-btn.active svg{stroke:var(--primary);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;}
+.form-item{display:flex;flex-direction:column;}
+.form-item label{font-size:12px;color:var(--text-2);margin-bottom:6px;}
+.form-item label .req{color:var(--danger);}
+.form-item .input,.form-item textarea,.form-item .select{width:100%;}
+.form-item textarea{
+  padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;
+  font-family:inherit;outline:none;transition:all .15s;resize:vertical;
+}
+.form-item textarea:focus{border-color:var(--primary);}
+
+/* ====== Toast ====== */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#fff;border:1px solid var(--success-border);background:var(--success-bg);color:var(--success);
+  padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:8px;z-index:200;
+  opacity:0;pointer-events:none;transition:all .25s;
+  box-shadow:var(--shadow-lg);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Donut ring */
+.ring-row{display:flex;gap:18px;margin-top:16px;flex-wrap:wrap;}
+.ring-item{
+  flex:1;min-width:180px;background:#FAFBFD;border-radius:10px;padding:14px;
+  display:flex;align-items:center;gap:12px;
+}
+.ring-item .label{font-size:12px;color:var(--text-2);}
+.ring-item .val{font-size:18px;font-weight:600;margin-top:2px;}
+.ring-item .val small{font-size:11px;color:var(--text-3);font-weight:400;margin-left:4px;}
+
+/* Calendar */
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-day{
+  aspect-ratio:1.1;background:#FAFBFD;border-radius:8px;padding:8px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  transition:all .15s;cursor:pointer;border:1px solid transparent;
+  position:relative;
+}
+.cal-day:hover{background:var(--primary-light);}
+.cal-day .d{font-size:13px;font-weight:500;}
+.cal-day .t{font-size:10px;color:var(--text-3);text-align:right;}
+.cal-day.has-event::after{
+  content:"";position:absolute;bottom:6px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--primary);
+}
+.cal-day.today{background:var(--primary);color:#fff;}
+.cal-day.today .t{color:rgba(255,255,255,.8);}
+.cal-day.today.has-event::after{background:#fff;}
+.cal-day.muted{opacity:.35;}
+
+/* Approval timeline */
+.timeline{padding:8px 0;}
+.tl-item{display:flex;gap:14px;position:relative;padding-bottom:18px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{
+  content:"";position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--border-light);
+}
+.tl-item:last-child::before{display:none;}
+.tl-item .dot{
+  width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;
+}
+.tl-item.done .dot{background:var(--success);border-color:var(--success);color:#fff;}
+.tl-item.current .dot{background:#fff;border-color:var(--primary);}
+.tl-item.current .dot::after{
+  content:"";width:8px;height:8px;border-radius:50%;background:var(--primary);
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(1.4);}}
+.tl-item .tl-content{flex:1;}
+.tl-item .tl-content h6{font-size:13px;font-weight:500;}
+.tl-item .tl-content p{font-size:12px;color:var(--text-3);margin-top:3px;}
+
+/* Charts inside */
+.horiz-bar{margin-top:8px;}
+.hb-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.hb-row .name{width:84px;font-size:12px;color:var(--text-2);}
+.hb-row .track{flex:1;height:8px;background:#F1F2F3;border-radius:4px;overflow:hidden;position:relative;}
+.hb-row .track .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#3087CC,#5BA8DE);transition:width .8s ease;}
+.hb-row .val{width:50px;text-align:right;font-size:12px;font-weight:600;color:var(--text-1);}
+
+/* Star levels grid */
+.star-levels{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:48px;}
+.sl{border-radius:10px;padding:14px;text-align:center;}
+.sl-1{background:#F4FAFE;border:1px solid #BFDDF6;}
+.sl-2{background:#FFF8E6;border:1px solid #FFE0B3;}
+.sl-3{background:#FFF5E5;border:1px solid #FFE0B3;}
+.sl-4{background:#E8FCF4;border:1px solid #A7F3D0;}
+.sl-5{background:linear-gradient(135deg,#FFE0B3,#FFD68F);border:1px solid #F29100;color:#fff;}
+.sl strong{font-size:20px;font-weight:700;display:block;margin-top:6px;}
+.sl span{font-size:11px;color:var(--text-3);}
+.sl-5 strong, .sl-5 span{color:#fff;}
+.sl-5 span{opacity:.85;}
+
+@media(max-width:1280px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .row-2{grid-template-columns:1fr;}
+  .lib-grid{grid-template-columns:repeat(3,1fr);}
+  .group-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:980px){
+  .lib-grid{grid-template-columns:repeat(2,1fr);}
+  .group-grid{grid-template-columns:1fr;}
+  .star-levels{grid-template-columns:repeat(5,1fr);}
+}
+
+/* ====== Action buttons in table ====== */
+.act-btn{white-space:nowrap;}
+.act-btn svg{vertical-align:middle;margin-right:2px;}
+
+</style>
+</head>
+<body>
+<aside class="sidebar"></aside>
+<main class="main">
+  <header class="topbar"></header>
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>课程管理审核</h1>
+        <p>义工申报课程需审核 · 管理员可发布任意类型课程</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" onclick="openModal('newCourseModal')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          管理员发布课程
+        </button>
+      </div>
+    </div>
+
+    <!-- 课程类型 Tab -->
+    <div class="course-type-tabs">
+      <button class="ct-tab active" onclick="switchCourseType('activity',this)">活动课程</button>
+      <button class="ct-tab" onclick="switchCourseType('onetime',this)">单节课程</button>
+    </div>
+
+    <!-- 单节课程面板（原有表格） -->
+    <div id="onetimePanel" style="display:none;">
+      <div class="filterbar" style="flex-wrap:nowrap;overflow-x:auto;">
+      <div class="field">
+        <label>课程</label>
+        <input class="input" style="width:120px;" placeholder="课程名称" />
+      </div>
+      <div class="field">
+        <label>申报人</label>
+        <input class="input" style="width:90px;" placeholder="姓名/学号" />
+      </div>
+      <div class="field">
+        <label>分类</label>
+        <select class="select" style="width:80px;"><option>全部</option><option>答疑坊</option><option>荟知坊</option><option>志趣坊</option></select>
+      </div>
+      <div class="field">
+        <label>科目</label>
+        <select class="select" style="width:80px;"><option>全部</option><option>数学</option><option>物理</option><option>化学</option><option>英语</option><option>力学</option><option>计算机</option><option>其他</option></select>
+      </div>
+      <div class="field">
+        <label>来源</label>
+        <select class="select" style="width:80px;"><option>全部</option><option>义工</option><option>管理员</option></select>
+      </div>
+      <div class="field">
+        <label>状态</label>
+        <select class="select" style="width:80px;"><option>全部</option><option>待发布</option><option>审核中</option><option>已通过</option><option>报名中</option><option>已发布</option><option>已驳回</option><option>已结束</option><option>待受理</option><option>已排课</option></select>
+      </div>
+      <div style="flex:1;min-width:8px;"></div>
+      <button class="btn btn-ghost btn-sm" style="flex-shrink:0;">重置</button>
+      <button class="btn btn-primary btn-sm" style="flex-shrink:0;">查询</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>课程名称</th>
+            <th>分类</th>
+            <th>申报人</th>
+            <th>来源</th>
+            <th>科目</th>
+            <th>上课时间</th>
+            <th>状态</th>
+            <th style="width:20%;">操作</th>
+          </tr>
+        </thead>
+        <tbody id="courseTable"></tbody>
+      </table>
+      <div class="table-foot">
+        <div class="count">共 <span id="courseCount">0</span> 条课程记录</div>
+        <div class="pager">
+          <button disabled>‹</button>
+          <button class="active">1</button><button>2</button><button>3</button><button>...</button><button>10</button>
+          <button>›</button>
+        </div>
+      </div>
+      </div>
+    </div><!-- /#onetimePanel -->
+
+    <!-- 活动课程面板 -->
+    <div id="activityPanel">
+      <div class="filterbar" style="flex-wrap:nowrap;overflow-x:auto;">
+        <div class="field"><label>课程</label><input class="input" style="width:120px;" placeholder="课程名称" /></div>
+        <div class="field"><label>类型</label><select class="select" style="width:80px;"><option>全部</option><option>答疑坊</option><option>荟知坊</option><option>志趣坊</option></select></div>
+        <div class="field"><label>科目</label><select class="select" style="width:80px;"><option>全部</option><option>数学</option><option>物理</option><option>化学</option><option>英语</option><option>计算机</option><option>力学</option><option>其他</option></select></div>
+        <div class="field"><label>状态</label><select class="select" style="width:80px;"><option>全部</option><option>已发布</option><option>未发布</option></select></div>
+        <div style="flex:1;min-width:8px;"></div>
+        <button class="btn btn-ghost btn-sm" style="flex-shrink:0;">重置</button>
+        <button class="btn btn-primary btn-sm" style="flex-shrink:0;">查询</button>
+      </div>
+      <div class="table-wrap" style="overflow-x:auto;">
+        <table style="min-width:1000px;">
+          <thead>
+            <tr>
+              <th style="white-space:nowrap;">课程名称</th>
+              <th style="white-space:nowrap;">课程类型</th>
+              <th style="white-space:nowrap;">发布者</th>
+              <th style="white-space:nowrap;">所属科目</th>
+              <th style="white-space:nowrap;">单节限报</th>
+              <th style="white-space:nowrap;">上课时间段</th>
+              <th style="white-space:nowrap;">课程内容</th>
+              <th style="white-space:nowrap;">报课进度</th>
+              <th style="white-space:nowrap;">状态</th>
+              <th style="white-space:nowrap;width:100px;">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>高等数学A · 微分方程专题</strong></td>
+              <td><span class="tag">答疑坊</span></td>
+              <td>管理员</td>
+              <td>数学</td>
+              <td>30 人</td>
+              <td style="font-size:12px;color:var(--text-2);">2026-05-14 ~ 2026-06-25</td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text-2);">微分方程求解方法专题辅导</td>
+              <td><span style="font-weight:600;">8/10</span></td>
+              <td><span class="tag tag-success">已发布</span></td>
+              <td><div class="row-action" style="gap:5px;"><button class="act-btn act-info" onclick="openActDetail(0)">详情</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>大学英语六级 · 真题精讲</strong></td>
+              <td><span class="tag">答疑坊</span></td>
+              <td>管理员</td>
+              <td>英语</td>
+              <td>30 人</td>
+              <td style="font-size:12px;color:var(--text-2);">2026-05-13 ~ 2026-06-24</td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text-2);">六级真题分段精讲与策略分析</td>
+              <td><span style="font-weight:600;">10/10</span></td>
+              <td><span class="tag tag-success">已发布</span></td>
+              <td><div class="row-action" style="gap:5px;"><button class="act-btn act-info" onclick="openActDetail(1)">详情</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>线性代数 · 矩阵与行列式</strong></td>
+              <td><span class="tag">答疑坊</span></td>
+              <td>管理员</td>
+              <td>数学</td>
+              <td>25 人</td>
+              <td style="font-size:12px;color:var(--text-2);">2026-05-15 ~ 2026-06-26</td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text-2);">矩阵运算与行列式计算技巧</td>
+              <td><span style="font-weight:600;">7/10</span></td>
+              <td><span class="tag tag-success">已发布</span></td>
+              <td><div class="row-action" style="gap:5px;"><button class="act-btn act-info" onclick="openActDetail(2)">详情</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>大学物理 · 电磁学专题</strong></td>
+              <td><span class="tag">答疑坊</span></td>
+              <td>管理员</td>
+              <td>物理</td>
+              <td>30 人</td>
+              <td style="font-size:12px;color:var(--text-2);">2026-05-16 ~ 2026-06-27</td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text-2);">电磁感应与麦克斯韦方程组</td>
+              <td><span style="font-weight:600;">6/10</span></td>
+              <td><span class="tag tag-success">已发布</span></td>
+              <td><div class="row-action" style="gap:5px;"><button class="act-btn act-info" onclick="openActDetail(3)">详情</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>有机化学 · 反应机理</strong></td>
+              <td><span class="tag">答疑坊</span></td>
+              <td>管理员</td>
+              <td>化学</td>
+              <td>20 人</td>
+              <td style="font-size:12px;color:var(--text-2);">2026-05-12 ~ 2026-06-23</td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text-2);">亲电取代与亲核加成反应</td>
+              <td><span style="font-weight:600;">5/10</span></td>
+              <td><span class="tag tag-success">已发布</span></td>
+              <td><div class="row-action" style="gap:5px;"><button class="act-btn act-info" onclick="openActDetail(4)">详情</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>Python 实战编程入门</strong></td>
+              <td><span class="tag">志趣坊</span></td>
+              <td>管理员</td>
+              <td>计算机</td>
+              <td>30 人</td>
+              <td style="font-size:12px;color:var(--text-2);">2026-05-14 ~ 2026-06-25</td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text-2);">Python 基础语法与项目实战</td>
+              <td><span style="font-weight:600;">9/10</span></td>
+              <td><span class="tag tag-success">已发布</span></td>
+              <td><div class="row-action" style="gap:5px;"><button class="act-btn act-info" onclick="openActDetail(5)">详情</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>考研经验分享会</strong></td>
+              <td><span class="tag">荟知坊</span></td>
+              <td>管理员</td>
+              <td>其他</td>
+              <td>50 人</td>
+              <td style="font-size:12px;color:var(--text-2);">2026-05-18 ~ 2026-05-18</td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text-2);">研究生经验分享与学习方法交流</td>
+              <td><span style="font-weight:600;">4/10</span></td>
+              <td><span class="tag tag-success">已发布</span></td>
+              <td><div class="row-action" style="gap:5px;"><button class="act-btn act-info" onclick="openActDetail(6)">详情</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>摄影艺术 · 构图基础</strong></td>
+              <td><span class="tag">志趣坊</span></td>
+              <td>管理员</td>
+              <td>其他</td>
+              <td>20 人</td>
+              <td style="font-size:12px;color:var(--text-2);">2026-05-17 ~ 2026-06-28</td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text-2);">摄影构图技巧与实拍练习</td>
+              <td><span style="font-weight:600;">3/10</span></td>
+              <td><span class="tag tag-warning">未发布</span></td>
+              <td><div class="row-action" style="gap:5px;"><button class="act-btn" onclick="editActCourse(7)">编辑</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>PPT 演示与排版技巧</strong></td>
+              <td><span class="tag">志趣坊</span></td>
+              <td>管理员</td>
+              <td>其他</td>
+              <td>25 人</td>
+              <td style="font-size:12px;color:var(--text-2);">2026-05-15 ~ 2026-06-26</td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text-2);">PPT 设计排版与演示技巧</td>
+              <td><span style="font-weight:600;">2/10</span></td>
+              <td><span class="tag tag-warning">未发布</span></td>
+              <td><div class="row-action" style="gap:5px;"><button class="act-btn" onclick="editActCourse(8)">编辑</button></div></td>
+            </tr>
+            <tr>
+              <td><strong>概率统计 · 假设检验</strong></td>
+              <td><span class="tag">答疑坊</span></td>
+              <td>管理员</td>
+              <td>数学</td>
+              <td>30 人</td>
+              <td style="font-size:12px;color:var(--text-2);">2026-05-13 ~ 2026-06-24</td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--text-2);">概率分布与假设检验方法</td>
+              <td><span style="font-weight:600;">6/10</span></td>
+              <td><span class="tag tag-success">已发布</span></td>
+              <td><div class="row-action" style="gap:5px;"><button class="act-btn act-info" onclick="openActDetail(9)">详情</button></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-foot">
+          <div class="count">共 10 条活动课程</div>
+          <div class="pager">
+            <button disabled>‹</button>
+            <button class="active">1</button>
+            <button>›</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /#activityPanel -->
+
+  </div>
+</main>
+
+<!-- Detail Modal -->
+<div class="modal-mask" id="detailModal">
+  <div class="modal" style="width:820px;max-height:90vh;">
+    <div class="modal-head">
+      <div>
+        <h3 id="detailTitle">课程详情</h3>
+        <p id="detailSubtitle" style="font-size:12px;color:var(--text-3);margin-top:3px;"></p>
+      </div>
+      <button class="icon-btn" onclick="closeModal('detailModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="detail-tabs" id="detailTabNav">
+      <button class="detail-tab active" onclick="switchDetailTab('info',this)">课程信息</button>
+      <button class="detail-tab" onclick="switchDetailTab('audit',this)">审核记录</button>
+      <button class="detail-tab" onclick="switchDetailTab('enroll',this)">报名情况</button>
+    </div>
+    <div class="modal-body" id="detailBody" style="padding:22px 24px;"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('detailModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- QR Code Modal -->
+<div class="modal-mask" id="qrcodeModal">
+  <div class="modal" style="width:420px;">
+    <div class="modal-head">
+      <div>
+        <h3>课程二维码</h3>
+        <p id="qrcodeSubtitle" style="font-size:12px;color:var(--text-3);margin-top:3px;"></p>
+      </div>
+      <button class="icon-btn" onclick="closeModal('qrcodeModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="qrcodeBody" style="padding:22px 24px;"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('qrcodeModal')">关闭</button>
+      <button class="btn btn-secondary" onclick="showToast('正在调用打印…');window.print()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        打印二维码
+      </button>
+      <button class="btn btn-primary" onclick="showToast('二维码已保存到本地')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        下载二维码
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Schedule Modal (个人排课) -->
+<div class="modal-mask" id="scheduleModal">
+  <div class="modal" style="width:780px;max-height:92vh;">
+    <div class="modal-head">
+      <h3 id="scheduleTitle">个人排课</h3>
+      <button class="icon-btn" onclick="closeModal('scheduleModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="scheduleBody" style="padding:22px 24px;overflow-y:auto;">
+      <!-- 基本信息 -->
+      <h4 style="font-size:15px;font-weight:600;margin-bottom:16px;">基本信息</h4>
+      <div class="form-row">
+        <div class="form-item">
+          <label>申报人</label>
+          <input class="input" id="sch_applier" value="" readonly style="background:var(--bg);" />
+        </div>
+        <div class="form-item">
+          <label>申报人学号</label>
+          <input class="input" id="sch_sid" value="" readonly style="background:var(--bg);" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-item">
+          <label>申报人所在学院</label>
+          <input class="input" id="sch_dept" value="" readonly style="background:var(--bg);" />
+        </div>
+        <div class="form-item">
+          <label>申报人专业</label>
+          <input class="input" id="sch_major" value="" readonly style="background:var(--bg);" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-item">
+          <label>所需课程</label>
+          <input class="input" id="sch_course" value="" readonly style="background:var(--bg);" />
+        </div>
+        <div class="form-item">
+          <label>所属科目</label>
+          <input class="input" id="sch_subject" value="" readonly style="background:var(--bg);" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-item">
+          <label>辅导类型</label>
+          <input class="input" id="sch_tutorType" value="" readonly style="background:var(--bg);" />
+        </div>
+        <div class="form-item">
+          <label>上课时间段</label>
+          <input class="input" id="sch_timeslot" value="" readonly style="background:var(--bg);" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-item">
+          <label>上课次数</label>
+          <input class="input" id="sch_frequency" value="一次性" readonly style="background:var(--bg);" />
+        </div>
+        <div class="form-item"></div>
+      </div>
+      <div class="form-item" style="margin-bottom:0;">
+        <label>具体需求</label>
+        <textarea id="sch_needs" rows="3" readonly style="background:var(--bg);padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;outline:none;resize:vertical;"></textarea>
+      </div>
+
+      <!-- 分割线 -->
+      <hr style="border:none;border-top:1px solid var(--border-light);margin:24px 0;" />
+
+      <!-- 义工信息 -->
+      <h4 style="font-size:15px;font-weight:600;margin-bottom:16px;">义工信息</h4>
+      <div class="form-row">
+        <div class="form-item">
+          <label>义工姓名/学号</label>
+          <input class="input" id="sch_volName" placeholder="请搜索姓名/学号" />
+        </div>
+        <div class="form-item">
+          <label>所属组别</label>
+          <input class="input" id="sch_volGroup" value="知新馆计算机组" readonly style="background:var(--bg);" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-item">
+          <label>义工星级</label>
+          <input class="input" id="sch_volStar" value="三星级" readonly style="background:var(--bg);" />
+        </div>
+        <div class="form-item">
+          <label>上课地点</label>
+          <select class="select" id="sch_volLoc">
+            <option value="">请选择上课地点</option>
+            <option>知新馆 301</option>
+            <option>知新馆 205</option>
+            <option>知新馆 408</option>
+            <option>知新馆 102</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-item">
+        <label>备注说明</label>
+        <input class="input" id="sch_remark" placeholder="选填" />
+      </div>
+    </div>
+    <div class="modal-foot" id="scheduleFoot" style="justify-content:flex-end;gap:8px;">
+      <button class="btn btn-ghost" onclick="closeModal('scheduleModal')">保存草稿</button>
+      <button class="btn btn-primary" onclick="closeModal('scheduleModal');showToast('排课信息已提交')">保存并提交</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Course Modal -->
+<div class="modal-mask" id="newCourseModal">
+  <div class="modal" style="width:640px;">
+    <div class="modal-head">
+      <h3>管理员发布课程</h3>
+      <button class="icon-btn" onclick="closeModal('newCourseModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Step 1: Course Nature Selector -->
+      <div style="margin-bottom:18px;">
+        <label style="font-size:12px;color:var(--text-2);margin-bottom:8px;display:block;">课程性质 <span class="req">*</span></label>
+        <div id="courseNatureBtns" style="display:flex;gap:10px;">
+          <button type="button" class="cn-btn active" data-nature="activity" onclick="switchCourseNature('activity')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            活动课程
+          </button>
+          <button type="button" class="cn-btn" data-nature="onetime" onclick="switchCourseNature('onetime')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            一次性课程
+          </button>
+        </div>
+      </div>
+
+      <!-- Dynamic Fields Container -->
+      <div id="courseFieldsContainer"></div>
+    </div>
+    <div class="modal-foot" style="justify-content:space-between;">
+      <span style="font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:4px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        注：发布成功后，自动生成本课程签到二维码
+      </span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="closeModal('newCourseModal')">取消</button>
+        <button class="btn btn-primary" onclick="submitNewCourse()">直接发布</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== PC 管理端公共脚本（侧边栏渲染、Toast、Modal、Checkbox、Pager 交互） ======
+
+const PC_NAV = [
+  {group:'首页',items:[
+    {id:'dashboard',name:'数据概览',href:'dashboard.html',icon:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'}
+  ]},
+  {group:'辅学义工',items:[
+    {id:'volunteers',name:'申请管理',href:'volunteers.html',badge:12,icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8"/>'},
+    {id:'hours',name:'时长记录',href:'hours.html',icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'},
+    {id:'stars',name:'星级评定',href:'stars.html',badge:5,icon:'<polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.7 5.5 21 7 14 2 9.3 9 8.5"/>'},
+    {id:'groups',name:'分组管理',href:'groups.html',icon:'<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="9" r="3"/><path d="M22 21v-1a3 3 0 0 0-2-2.83"/>'},
+    {id:'appeals',name:'意见反馈',href:'appeals.html',icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/>'},
+    {id:'volunteer-manage',name:'义工管理',href:'volunteer-manage.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>'}
+  ]},
+  {group:'知新选课',items:[
+    {id:'courses',name:'课程管理',href:'courses.html',badge:8,icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'},
+    {id:'course-categories',name:'课程分类',href:'course-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'venue-bookings',name:'场地预约',href:'venue-bookings.html',badge:6,icon:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'},
+    {id:'posters',name:'开屏海报',href:'posters.html',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'}
+  ]},
+  {group:'即问即答',items:[
+    {id:'qa-content',name:'内容管理',href:'qa-content.html',badge:3,icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+    {id:'qa-categories',name:'学科分类',href:'qa-categories.html',icon:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'},
+    {id:'qa-users',name:'用户管理',href:'qa-users.html',icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+  ]},
+  {group:'宝藏资料库',items:[
+    {id:'library',name:'资料库管理',href:'library.html',badge:11,icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+    {id:'library-categories',name:'资料分类',href:'library-categories.html',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'},
+    {id:'uploaders',name:'上传者管理',href:'uploaders.html',icon:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>'},
+    {id:'library-feedback',name:'反馈与需求池',href:'library-feedback.html',icon:'<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><line x1="7" y1="22" x2="7" y2="11"/>'}
+  ]},
+  {group:'系统配置',items:[
+    {id:'analytics',name:'数据分析',href:'analytics.html',icon:'<path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/>'},
+    {id:'settings',name:'系统配置',href:'settings.html',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+    {id:'ai-settings',name:'AI 助手配置',href:'ai-settings.html',icon:'<path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/><circle cx="19" cy="5" r="1.5"/>'}
+  ]}
+];
+
+function renderSidebar(activeId){
+  const sidebar = document.querySelector('.sidebar');
+  if(!sidebar) return;
+  const navHTML = PC_NAV.map((g,i)=>`
+    <div class="nav-group-title" ${i>0?'style="margin-top:14px;"':''}>${g.group}</div>
+    ${g.items.map(it=>`
+      <a class="nav-item ${it.id===activeId?'active':''}" href="${it.href}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg>
+        ${it.name}
+        ${it.badge?`<span class="badge">${it.badge}</span>`:''}
+      </a>
+    `).join('')}
+  `).join('');
+  sidebar.innerHTML = `
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="brand-text">
+        <strong>学风建设系统</strong>
+        <span>管理后台 v2.0</span>
+      </div>
+    </div>
+    <nav class="nav-group">${navHTML}</nav>
+    <div class="user-card">
+      <div class="ava">王</div>
+      <div class="info"><h5>王老师</h5><p>学工部管理员</p></div>
+      <button class="icon-btn" style="width:24px;height:24px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function renderTopbar(crumb){
+  const tb = document.querySelector('.topbar');
+  if(!tb) return;
+  tb.innerHTML = `
+    <button class="icon-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="crumb">
+      <a href="../index.html">学风建设</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span style="color:var(--text-1);font-weight:500;">${crumb}</span>
+    </div>
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input placeholder="搜索学生、课程、资料..." />
+      <span style="font-size:11px;color:var(--text-4);background:#fff;padding:2px 6px;border-radius:4px;border:1px solid var(--border);">⌘K</span>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="刷新">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
+      <button class="icon-btn" title="消息">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="red-dot"></span>
+      </button>
+      <button class="icon-btn" title="帮助">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+      <div class="topbar-user">
+        <div class="ava">王</div>
+        <span>王老师</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  `;
+}
+
+// ============= Toast =============
+function showToast(msg){
+  let toast = document.getElementById('toast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id='toast';toast.className='toast';
+    toast.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span></span>`;
+    document.body.appendChild(toast);
+  }
+  toast.querySelector('span').textContent=msg;
+  toast.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>toast.classList.remove('show'),2400);
+}
+
+// ============= Modal =============
+function openModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.add('show');
+}
+function closeModal(id){
+  const mask=document.getElementById(id);if(mask)mask.classList.remove('show');
+}
+
+// ============= Checkbox =============
+document.addEventListener('click',e=>{
+  if(e.target.classList && e.target.classList.contains('checkbox')){
+    e.target.classList.toggle('checked');
+  }
+});
+
+// ============= Segments / Panel tabs =============
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.seg, .panel-tabs').forEach(g=>{
+    g.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        g.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        // Show corresponding tab content if exists
+        const tab=b.getAttribute('data-tab');
+        if(tab){
+          const wrap=g.closest('.panel,.page,.tab-wrap')||document;
+          wrap.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+          const target=wrap.querySelector('.tab-content[data-tab="'+tab+'"]');
+          if(target)target.style.display='';
+        }
+      });
+    });
+  });
+  document.querySelectorAll('.modal-mask').forEach(m=>{
+    m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');});
+  });
+});
+
+</script>
+<script>
+// ============= Course Nature Switching =============
+let _courseNature = 'activity';
+
+function switchCourseNature(nature){
+  if(_courseNature === nature) return;
+  _courseNature = nature;
+  document.querySelectorAll('#courseNatureBtns .cn-btn').forEach(b=>{
+    b.classList.toggle('active', b.getAttribute('data-nature') === nature);
+  });
+  renderCourseFields(nature);
+}
+
+function renderCourseFields(nature){
+  const container = document.getElementById('courseFieldsContainer');
+  if(!container) return;
+
+  const typeOptions = '<option value="">请选择课程类型</option><option>答疑坊</option><option>荟知坊</option><option>志趣坊</option>';
+  const subjectOptions = '<option value="">请选择所属科目</option><option>数学</option><option>物理</option><option>化学</option><option>英语</option><option>力学</option><option>计算机</option><option>其他</option>';
+
+  if(nature === 'activity'){
+    container.innerHTML = `
+      <div class="form-row">
+        <div class="form-item"><label>课程名称 <span class="req">*</span></label><input id="nc_name" class="input" placeholder="请输入课程名称" /></div>
+        <div class="form-item"><label>课程类型 <span class="req">*</span></label><select id="nc_type" class="select">${typeOptions}</select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-item"><label>所属科目 <span class="req">*</span></label><select id="nc_subject" class="select">${subjectOptions}</select></div>
+        <div class="form-item"><label>单节课限报人数 <span class="req">*</span></label><input id="nc_cap" class="input" type="number" placeholder="请输入限报人数" /></div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12px;color:var(--text-2);margin-bottom:6px;display:block;">上课时间段 <span class="req">*</span></label>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input id="nc_time_start" class="input" type="date" style="flex:1;" />
+          <span style="color:var(--text-3);font-size:13px;flex-shrink:0;">至</span>
+          <input id="nc_time_end" class="input" type="date" style="flex:1;" />
+        </div>
+      </div>
+      <div class="form-item" style="margin-bottom:0;">
+        <label style="display:flex;align-items:center;justify-content:space-between;">
+          <span>课程内容 <span class="req">*</span></span>
+          <button type="button" class="xfjs-ai-inline-btn" onclick="aiGenCourseDesc()">
+            <svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg>
+            AI 一键生成简介
+          </button>
+        </label>
+        <textarea id="nc_content" rows="3" placeholder="请描述课程主要内容..."></textarea>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `
+      <div class="form-row">
+        <div class="form-item"><label>课程名称 <span class="req">*</span></label><input id="nc_name" class="input" placeholder="请输入课程名称" /></div>
+        <div class="form-item"><label>课程类型 <span class="req">*</span></label><select id="nc_type" class="select">${typeOptions}</select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-item"><label>所属科目 <span class="req">*</span></label><select id="nc_subject" class="select">${subjectOptions}</select></div>
+        <div class="form-item"><label>关联讲师/义工 <span class="req">*</span></label><input id="nc_teacher" class="input" placeholder="请输入姓名或学号" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-item"><label>限报人数 <span class="req">*</span></label><input id="nc_cap" class="input" type="number" placeholder="请输入限报人数" /></div>
+        <div class="form-item"><label>上课日期 <span class="req">*</span></label><input id="nc_date" class="input" type="date" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-item">
+          <label>上课时间 <span class="req">*</span></label>
+          <select id="nc_time" class="select">
+            <option value="">请选择上课时间</option>
+            <option>08:00 - 10:00</option><option>10:00 - 12:00</option>
+            <option>14:00 - 16:00</option><option>16:30 - 18:30</option><option>19:00 - 21:00</option>
+          </select>
+        </div>
+        <div class="form-item" style="visibility:hidden;"></div>
+      </div>
+      <div class="form-item" style="margin-bottom:0;">
+        <label style="display:flex;align-items:center;justify-content:space-between;">
+          <span>课程内容 <span class="req">*</span></span>
+          <button type="button" class="xfjs-ai-inline-btn" onclick="aiGenCourseDesc()">
+            <svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg>
+            AI 一键生成简介
+          </button>
+        </label>
+        <textarea id="nc_content" rows="3" placeholder="请描述课程主要内容..."></textarea>
+      </div>
+    `;
+  }
+}
+
+// AI 一键生成课程简介
+function aiGenCourseDesc(){
+  const nameEl = document.getElementById('nc_name');
+  const subjEl = document.getElementById('nc_subject');
+  const typeEl = document.getElementById('nc_type');
+  const contentEl = document.getElementById('nc_content');
+  if(!contentEl) return;
+  const name = nameEl ? nameEl.value.trim() : '';
+  const subj = subjEl ? subjEl.value : '';
+  const type = typeEl ? typeEl.value : '';
+  if(!name){ if(window.showToast) showToast('请先填写课程名称'); else alert('请先填写课程名称'); return; }
+  contentEl.value = '⏳ AI 正在生成...';
+  contentEl.disabled = true;
+  let full = '';
+  AICore.chat({
+    messages: [{ role:'user', content:`请为下面这节面向学生的辅学课程生成一段简洁、热情、120-180 字的课程简介。要点：突出收获、明确受众、点出讲解风格。不要寒暄，直接输出简介。\n课程名称：${name}\n所属科目：${subj||'未指定'}\n课程类型：${type||'未指定'}` }],
+    pageContext: { pageId:'courses', pageName:'课程管理', pageContext:'管理员正在发布课程，请帮助生成课程简介。' },
+    onChunk: (c)=>{ if(full==='') contentEl.value=''; full += c; contentEl.value = full; },
+    onDone: ()=>{ contentEl.disabled = false; if(window.showToast) showToast('AI 已生成简介，可继续修改'); },
+    onError: (e)=>{ contentEl.disabled = false; contentEl.value = ''; if(window.showToast) showToast('生成失败：'+ (e&&e.message||e)); }
+  });
+}
+
+function submitNewCourse(){
+  const name = document.getElementById('nc_name');
+  const type = document.getElementById('nc_type');
+  const subject = document.getElementById('nc_subject');
+  const cap = document.getElementById('nc_cap');
+  const content = document.getElementById('nc_content');
+
+  if(!name||!name.value.trim()){ showToast('请填写课程名称'); return; }
+  if(!type||!type.value){ showToast('请选择课程类型'); return; }
+  if(!subject||!subject.value){ showToast('请选择所属科目'); return; }
+  if(!cap||!cap.value){ showToast('请填写限报人数'); return; }
+
+  if(_courseNature === 'activity'){
+    const ts = document.getElementById('nc_time_start');
+    const te = document.getElementById('nc_time_end');
+    if(!ts||!ts.value||!te||!te.value){ showToast('请选择上课时间段（开始日期与结束日期）'); return; }
+    if(ts.value >= te.value){ showToast('结束日期须晚于开始日期'); return; }
+  } else {
+    const teacher = document.getElementById('nc_teacher');
+    const date = document.getElementById('nc_date');
+    const time = document.getElementById('nc_time');
+    if(!teacher||!teacher.value.trim()){ showToast('请填写关联讲师/义工'); return; }
+    if(!date||!date.value){ showToast('请选择上课日期'); return; }
+    if(!time||!time.value){ showToast('请选择上课时间'); return; }
+  }
+
+  if(!content||!content.value.trim()){ showToast('请填写课程内容'); return; }
+
+  closeModal('newCourseModal');
+  const label = _courseNature === 'activity' ? '活动课程' : '一次性课程';
+  showToast(label + '已发布（管理员发布无需审核）');
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  renderCourseFields('activity');
+});
+
+  renderSidebar('courses');
+  renderTopbar('知新选课 / 课程管理');
+
+function switchCourseType(type, btn){
+  document.querySelectorAll('.ct-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('activityPanel').style.display = type==='activity' ? '' : 'none';
+  document.getElementById('onetimePanel').style.display = type==='onetime' ? '' : 'none';
+}
+
+  const courseData=[
+    {
+      n:'高等数学A · 微分方程专题',type:'答疑坊',subtype:'朋辈辅导',applier:'陈思远（义工）',source:'义工',teacher:'陈思远',volStar:'三星级',volGroup:'知新馆数学组',subject:'数学',
+      time:'2026-04-30 10:00-12:00',loc:'知新馆 301',signed:24,cap:30,status:'审核中',
+      desc:'本课程系统讲解一阶/二阶常微分方程的求解方法，配合期末真题精讲，重点突破学习难点。',
+      auditLog:[
+        {action:'提交申报',by:'陈思远',time:'2026-04-28 20:14',type:'submit',note:''},
+        {action:'进入审核队列',by:'系统自动',time:'2026-04-28 20:14',type:'pending',note:''},
+      ],
+      students:[
+        {name:'王诗韵',sid:'2023141101',dept:'外国语学院',major:'英语',enrollTime:'2026-04-29 09:15',signed:false},
+        {name:'李明远',sid:'2023020234',dept:'数学与统计学院',major:'数学',enrollTime:'2026-04-29 10:32',signed:false},
+        {name:'张慧',sid:'2022030112',dept:'物理与天文学院',major:'物理',enrollTime:'2026-04-29 11:08',signed:false},
+      ]
+    },
+    {
+      n:'大学英语六级真题精讲',type:'答疑坊',subtype:'语言类',applier:'王老师（管理员）',source:'管理员',teacher:'外院教学中心',subject:'英语',
+      time:'2026-04-29 14:00-16:00',loc:'知新馆 205',signed:30,cap:30,status:'已发布',
+      desc:'针对大学英语六级考试，系统讲解历年真题，涵盖听力、阅读、翻译和写作，帮助学生快速提升应试能力。',
+      auditLog:[
+        {action:'管理员直接发布',by:'王老师',time:'2026-04-25 14:32',type:'done',note:'管理员发布无需审核'},
+      ],
+      students:[
+        {name:'林佳佳',sid:'2023141088',dept:'外国语学院',major:'日语',enrollTime:'2026-04-25 15:00',signed:true},
+        {name:'陈思远',sid:'2022020011',dept:'数学与统计学院',major:'数学',enrollTime:'2026-04-25 16:22',signed:true},
+        {name:'徐晓丹',sid:'2023080044',dept:'化学化工学院',major:'化学',enrollTime:'2026-04-26 09:10',signed:true},
+      ]
+    },
+    {
+      n:'Python 实战编程入门',type:'答疑坊',subtype:'朋辈辅导',applier:'刘子轩（义工）',source:'义工',teacher:'刘子轩',volStar:'二星级',volGroup:'知新馆计算机组',subject:'计算机',
+      time:'2026-04-28 16:30-18:30',loc:'知新馆 408',signed:30,cap:30,status:'已发布',
+      desc:'从零开始学习Python编程，覆盖基础语法、数据结构、文件操作、爬虫入门等内容。',
+      auditLog:[
+        {action:'提交申报',by:'刘子轩',time:'2026-04-22 18:30',type:'submit',note:''},
+        {action:'审核通过，课程已发布',by:'王老师',time:'2026-04-23 10:05',type:'done',note:'内容符合要求，义工经验充足'},
+      ],
+      students:[
+        {name:'刘思源',sid:'2023050021',dept:'计算机学院',major:'软件工程',enrollTime:'2026-04-23 11:00',signed:true},
+        {name:'朱晓萌',sid:'2024141012',dept:'外国语学院',major:'英语',enrollTime:'2026-04-23 12:20',signed:true},
+      ]
+    },
+    {
+      n:'摄影艺术 · 构图基础',type:'志趣坊',subtype:'艺术类',applier:'王老师（管理员）',source:'管理员',teacher:'王老师',subject:'其他',
+      time:'2026-05-02 19:00-21:00',loc:'知新馆 102',signed:0,cap:25,status:'待发布',
+      desc:'探索摄影构图的基本法则，包括三分法、对称构图、引导线等技巧，配合实拍案例分析。',
+      auditLog:[],
+      students:[]
+    },
+    {
+      n:'考研经验分享会',type:'荟知坊',subtype:'经验分享',applier:'张三（个人）',source:'个人',teacher:'多位考研学长学姐',subject:'其他',
+      time:'2026-05-04 19:00-21:00',loc:'知新馆 102',signed:0,cap:80,status:'待受理',
+      desc:'邀请多位考研成功学长学姐分享备考经验，涵盖数学、英语、政治及各专业课的复习策略，答疑互动。',
+      auditLog:[
+        {action:'管理员创建课程',by:'王老师',time:'2026-05-01 10:44',type:'done',note:''},
+      ],
+      students:[]
+    },
+    {
+      n:'线性代数行列式专题',type:'答疑坊',subtype:'朋辈辅导',applier:'张力（义工）',source:'义工',teacher:'张力',volStar:'二星级',volGroup:'知新馆数学组',subject:'数学',
+      time:'2026-05-05 10:00-12:00',loc:'知新馆 301',signed:0,cap:30,status:'审核中',
+      desc:'专项讲解行列式的计算方法与性质，结合期末高频考点。',
+      auditLog:[
+        {action:'提交申报',by:'张力',time:'2026-05-02 21:05',type:'submit',note:''},
+        {action:'进入审核队列',by:'系统自动',time:'2026-05-02 21:05',type:'pending',note:''},
+      ],
+      students:[]
+    },
+    {
+      n:'有机化学反应机理',type:'答疑坊',subtype:'朋辈辅导',applier:'黄怡然（义工）',source:'义工',teacher:'黄怡然',volStar:'一星级',volGroup:'知新馆化学组',subject:'化学',
+      time:'2026-05-06 14:00-16:00',loc:'知新馆 205',signed:0,cap:30,status:'已驳回',
+      desc:'讲解有机化学常见反应机理，包括亲核取代、消除、加成、氧化还原等。',
+      auditLog:[
+        {action:'提交申报',by:'黄怡然',time:'2026-05-01 18:20',type:'submit',note:''},
+        {action:'审核驳回',by:'王老师',time:'2026-05-02 09:15',type:'reject',note:'申报时间距上课时间不足72小时，请重新申报'},
+      ],
+      students:[]
+    },
+    {
+      n:'PPT 演示与排版',type:'志趣坊',subtype:'技能类',applier:'王老师（管理员）',source:'管理员',teacher:'王老师',subject:'其他',
+      time:'2026-04-25 14:00-16:00',loc:'知新馆 408',signed:25,cap:30,status:'已结束',
+      desc:'从零掌握PowerPoint高效排版技巧，学习配色、字体、图表设计等。',
+      auditLog:[
+        {action:'管理员直接发布',by:'王老师',time:'2026-04-20 10:00',type:'done',note:'管理员发布无需审核'},
+        {action:'课程已结束',by:'系统自动',time:'2026-04-25 16:00',type:'finish',note:''},
+      ],
+      students:[
+        {name:'王诗韵',sid:'2023141101',dept:'外国语学院',major:'英语',enrollTime:'2026-04-20 11:00',signed:true},
+        {name:'李明远',sid:'2023020234',dept:'数学与统计学院',major:'数学',enrollTime:'2026-04-21 09:30',signed:true},
+      ]
+    },
+    {
+      n:'大学物理 · 力学专题复习',type:'答疑坊',subtype:'理工类',applier:'赵子昂（义工）',source:'义工',teacher:'赵子昂',volStar:'四星级',volGroup:'知新馆物理组',subject:'力学',
+      time:'2026-05-08 10:00-12:00',loc:'知新馆 301',signed:12,cap:30,status:'已排课',
+      desc:'系统复习大学物理力学部分，涵盖牛顿运动定律、动量守恒、能量守恒等核心考点。',
+      auditLog:[
+        {action:'审核通过',by:'王老师',time:'2026-05-03 09:00',type:'done',note:''},
+        {action:'已排课',by:'系统自动',time:'2026-05-03 10:00',type:'done',note:''},
+      ],
+      students:[
+        {name:'张慧',sid:'2022030112',dept:'物理与天文学院',major:'物理',enrollTime:'2026-05-03 11:00',signed:false},
+      ]
+    },
+    {
+      n:'大学物理 · 电磁学答疑',type:'答疑坊',subtype:'朋辈辅导',applier:'李佳明（个人）',source:'个人',teacher:'李佳明',volStar:'三星级',volGroup:'知新馆物理组',subject:'物理',
+      time:'2026-05-10 14:00-16:00',loc:'知新馆 205',signed:0,cap:20,status:'待发布',
+      desc:'针对电磁学部分的疑难问题进行集中答疑，含库仑定律、高斯定理、安培力等核心内容。',
+      auditLog:[],
+      students:[]
+    },
+  ];
+
+  const statusTagMap={
+    '待发布':'tag-grey','审核中':'tag-warning','已通过':'tag-success','报名中':'tag',
+    '已发布':'tag-success','已驳回':'tag-danger','已结束':'tag-grey','待受理':'tag-warning','已排课':'tag'
+  };
+  const sourceTagMap={'义工':'tag','管理员':'tag-success','个人':'tag-warning'};
+
+  function renderCourseActions(d, i){
+    let actions='';
+    switch(d.status){
+      case '待发布':
+        actions+=`<button class="act-btn" onclick="showToast('编辑课程功能')">编辑</button>`;
+        actions+=`<button class="act-btn act-danger" onclick="if(confirm('确定删除该课程？'))showToast('已删除课程')">删除</button>`;
+        break;
+      case '审核中':
+        actions+=`<button class="act-btn act-info" onclick="openDetail(${i})">详情</button>`;
+        actions+=`<button class="act-btn" onclick="openQRCode(${i})">二维码</button>`;
+        actions+=`<button class="act-btn act-warning" onclick="showToast('请前往待办中心完成审核')">去审核</button>`;
+        break;
+      case '已发布':
+        actions+=`<button class="act-btn act-info" onclick="openDetail(${i})">详情</button>`;
+        actions+=`<button class="act-btn" onclick="openQRCode(${i})">二维码</button>`;
+        break;
+      case '待受理':
+        actions+=`<button class="act-btn act-info" onclick="openScheduleModal(${i},true)">详情</button>`;
+        actions+=`<button class="act-btn act-success" onclick="openScheduleModal(${i},false)">去排课</button>`;
+        actions+=`<button class="act-btn" onclick="openQRCode(${i})">二维码</button>`;
+        break;
+      case '已通过':
+      case '报名中':
+      case '已排课':
+        actions+=`<button class="act-btn act-info" onclick="openDetail(${i})">详情</button>`;
+        actions+=`<button class="act-btn" onclick="openQRCode(${i})">二维码</button>`;
+        break;
+      case '已驳回':
+        actions+=`<button class="act-btn act-info" onclick="openDetail(${i})">详情</button>`;
+        break;
+      case '已结束':
+        actions+=`<button class="act-btn act-info" onclick="openDetail(${i})">详情</button>`;
+        break;
+      default:
+        actions+=`<button class="act-btn act-info" onclick="openDetail(${i})">详情</button>`;
+    }
+    return actions;
+  }
+
+  document.getElementById('courseTable').innerHTML=courseData.map((d,i)=>{
+    const stTag=statusTagMap[d.status]||'tag';
+    const srcTag=sourceTagMap[d.source]||'tag-grey';
+    const actions=renderCourseActions(d,i);
+    return `
+    <tr>
+      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;"><strong title="${d.n}">${d.n}</strong></td>
+      <td><span class="tag">${d.type}</span></td>
+      <td>${d.applier}</td>
+      <td><span class="tag ${srcTag}">${d.source}</span></td>
+      <td>${d.subject}</td>
+      <td style="color:var(--text-2);font-size:12px;">${d.time}</td>
+      <td><span class="tag ${stTag}">${d.status}</span></td>
+      <td><div class="row-action" style="gap:6px;flex-wrap:wrap;">${actions}</div></td>
+    </tr>
+  `}).join('');
+  document.getElementById('courseCount').textContent=courseData.length;
+
+  // ===== Detail Modal =====
+  let _detailIdx = -1;
+
+  function openDetail(i){
+    _detailIdx = i;
+    const d = courseData[i];
+    document.getElementById('detailTitle').textContent = '课程详情';
+    document.getElementById('detailSubtitle').textContent = '';
+    // reset to info tab
+    document.querySelectorAll('#detailTabNav .detail-tab').forEach((t,idx)=>{
+      t.classList.toggle('active', idx===0);
+    });
+    renderDetailTab('info', d);
+    openModal('detailModal');
+  }
+
+  function switchDetailTab(tab, btn){
+    document.querySelectorAll('#detailTabNav .detail-tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    renderDetailTab(tab, courseData[_detailIdx]);
+  }
+
+  function renderDetailTab(tab, d){
+    const body = document.getElementById('detailBody');
+    if(tab==='info'){
+      const stStyle={'待审核':'tag-warning','已发布':'tag-success','已驳回':'tag-danger','已结束':'tag-grey'};
+      const enrollPct = d.cap>0 ? Math.round(d.signed/d.cap*100) : 0;
+      body.innerHTML=`
+        <div style="background:linear-gradient(135deg,#3087CC 0%,#006DAD 100%);color:#fff;border-radius:12px;padding:18px 22px;margin-bottom:18px;position:relative;overflow:hidden;">
+          <div style="position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 60%);right:-40px;top:-60px;pointer-events:none;"></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+            <span style="background:rgba(255,255,255,.2);padding:3px 10px;border-radius:4px;font-size:11px;">${d.type}</span>
+            <span class="tag ${stStyle[d.status]||'tag'}" style="font-size:11px;">${d.status}</span>
+          </div>
+          <h2 style="font-size:17px;font-weight:600;line-height:1.4;">${d.n}</h2>
+          <p style="font-size:12px;opacity:.85;margin-top:6px;">${d.time} &nbsp;·&nbsp; ${d.loc}</p>
+        </div>
+        <div class="form-row">
+          <div class="form-item">
+            <label>发起人</label>
+            <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.applier}</div>
+          </div>
+          <div class="form-item">
+            <label>限报人数</label>
+            <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">
+              <strong>${d.signed}</strong> / ${d.cap} 人
+              <span style="margin-left:8px;font-size:11px;color:var(--text-3);">已报名 ${enrollPct}%</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-item">
+            <label>上课讲师 / 义工</label>
+            <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.teacher||d.applier}</div>
+          </div>
+          <div class="form-item">
+            <label>义工星级</label>
+            <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">
+              <span style="color:#F5A623;margin-right:4px;">${'★'.repeat(d.volStar?({'一星级':1,'二星级':2,'三星级':3,'四星级':4,'五星级':5}[d.volStar]||3):3)}</span>${d.volStar||'三星级'}
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-item">
+            <label>所属科目</label>
+            <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.subject||'—'}</div>
+          </div>
+          <div class="form-item">
+            <label>奖励积分</label>
+            <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">
+              <strong style="color:var(--primary);">+${d.points||30}</strong> 积分
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-item">
+            <label>义工类别</label>
+            <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.volType||'知新馆辅学义工'}</div>
+          </div>
+          <div class="form-item">
+            <label>辅导组别</label>
+            <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:13px;">${d.volGroup||'—'}</div>
+          </div>
+        </div>
+        <div class="form-item">
+          <label>课程内容</label>
+          <div style="padding:12px;background:var(--bg);border-radius:8px;font-size:13px;color:var(--text-2);line-height:1.8;">${d.desc||'暂无课程内容描述。'}</div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:120px;background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:22px;font-weight:700;color:var(--primary);">${d.signed}</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:4px;">已报名</div>
+          </div>
+          <div style="flex:1;min-width:120px;background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:22px;font-weight:700;color:var(--text-1);">${d.cap - d.signed}</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:4px;">剩余名额</div>
+          </div>
+          <div style="flex:1;min-width:120px;background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:22px;font-weight:700;color:${enrollPct>=90?'var(--danger)':enrollPct>=60?'var(--warning)':'var(--success)'};">${enrollPct}%</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:4px;">报名率</div>
+          </div>
+          <div style="flex:1;min-width:120px;background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:22px;font-weight:700;color:var(--success);">${d.students.filter(s=>s.signed).length}</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:4px;">已签到</div>
+          </div>
+        </div>
+      `;
+    } else if(tab==='audit'){
+      const logColors={submit:'var(--primary)',pending:'var(--warning)',done:'var(--success)',reject:'var(--danger)',finish:'var(--text-3)'};
+      const logLabels={submit:'提交',pending:'待审',done:'通过',reject:'驳回',finish:'结束'};
+      if(!d.auditLog || d.auditLog.length===0){
+        body.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text-3);">暂无审核记录</div>`;
+        return;
+      }
+      body.innerHTML=`
+        <div class="timeline" style="padding:8px 4px;">
+          ${d.auditLog.map((log,idx)=>`
+            <div class="tl-item ${idx===d.auditLog.length-1 && log.type==='done'?'done':idx===d.auditLog.length-1?'current':'done'}">
+              <div class="dot">
+                ${idx<d.auditLog.length-1||log.type==='done'||log.type==='finish'
+                  ?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+                  :log.type==='reject'
+                    ?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
+                    :`<div style="width:8px;height:8px;border-radius:50%;background:var(--warning);"></div>`
+                }
+              </div>
+              <div class="tl-content">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <span style="display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:4px;font-size:11px;font-weight:600;background:${log.type==='reject'?'var(--danger-bg)':log.type==='done'?'var(--success-bg)':log.type==='finish'?'#F1F2F3':'var(--warning-bg)'};color:${log.type==='reject'?'var(--danger)':log.type==='done'?'var(--success)':log.type==='finish'?'var(--text-3)':'var(--warning)'};">${logLabels[log.type]||''}</span>
+                  <h6 style="font-size:13px;font-weight:500;">${log.action}</h6>
+                </div>
+                <p style="font-size:12px;color:var(--text-3);margin-top:4px;">操作人：${log.by} &nbsp;·&nbsp; ${log.time}</p>
+                ${log.note?`<div style="margin-top:8px;padding:8px 12px;background:var(--danger-bg);border-radius:6px;font-size:12px;color:var(--danger);border-left:3px solid var(--danger);">${log.note}</div>`:''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } else if(tab==='enroll'){
+      if(!d.students || d.students.length===0){
+        body.innerHTML=`
+          <div style="text-align:center;padding:48px 0;color:var(--text-3);">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 12px;display:block;opacity:.4;"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+            <p style="font-size:13px;">暂无报名学生</p>
+          </div>
+        `;
+        return;
+      }
+      const signedCount = d.students.filter(s=>s.signed).length;
+      body.innerHTML=`
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;gap:12px;font-size:13px;color:var(--text-2);">
+            <span>共 <strong style="color:var(--text-1);">${d.students.length}</strong> 人报名</span>
+            <span>已签到 <strong style="color:var(--success);">${signedCount}</strong> 人</span>
+            <span>未签到 <strong style="color:var(--text-3);">${d.students.length-signedCount}</strong> 人</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('已导出报名名单')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            导出名单
+          </button>
+        </div>
+        <div style="border-radius:10px;overflow:hidden;border:1px solid var(--border-light);">
+          <table class="enroll-table">
+            <thead>
+              <tr>
+                <th style="width:36px;">序号</th>
+                <th>姓名</th>
+                <th>学号</th>
+                <th>学院</th>
+                <th>专业</th>
+                <th>报名时间</th>
+                <th>签到状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${d.students.map((s,idx)=>`
+                <tr>
+                  <td style="color:var(--text-3);text-align:center;">${idx+1}</td>
+                  <td><strong>${s.name}</strong></td>
+                  <td style="font-family:monospace;color:var(--text-2);">${s.sid}</td>
+                  <td style="color:var(--text-2);font-size:12px;">${s.dept}</td>
+                  <td style="color:var(--text-2);font-size:12px;">${s.major}</td>
+                  <td style="color:var(--text-3);font-size:12px;">${s.enrollTime}</td>
+                  <td><span class="signed-dot ${s.signed?'yes':'no'}">${s.signed?'已签到':'未签到'}</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+  }
+
+  // ===== QR Code Modal =====
+  function openQRCode(i){
+    const d = courseData[i];
+    // 签到码：包含课程ID与时间戳的验证令牌，不对外暴露可点击链接
+    const signToken = `SIGNIN:${i+1001}:${d.time.replace(/[^0-9]/g,'')}:XMU`;
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=12&color=1a1a1a&bgcolor=ffffff&data=${encodeURIComponent(signToken)}`;
+    const stStyle={'待审核':'tag-warning','已发布':'tag-success','已驳回':'tag-danger','已结束':'tag-grey'};
+
+    document.getElementById('qrcodeSubtitle').textContent = d.n;
+    document.getElementById('qrcodeBody').innerHTML = `
+      <div style="text-align:center;">
+        <!-- QR Code Area -->
+        <div style="display:inline-flex;flex-direction:column;align-items:center;background:linear-gradient(135deg,#F4FAFE 0%,#E3F1F9 100%);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #BFDDF6;width:100%;">
+          <div style="background:#fff;border-radius:12px;padding:12px;box-shadow:0 4px 14px rgba(48,135,204,.1);">
+            <img
+              src="${qrApiUrl}"
+              width="200" height="200"
+              alt="签到二维码"
+              style="display:block;border-radius:6px;"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+            />
+            <!-- Fallback when network unavailable -->
+            <div style="display:none;width:200px;height:200px;border-radius:6px;background:#F8FAFC;border:2px dashed var(--border);align-items:center;justify-content:center;flex-direction:column;gap:8px;">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-4)" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h2v2h-2zM18 14h3v2h-3zM14 18h2v2h-2zM18 18h1v1h-1zM20 20h1v1h-1z"/></svg>
+              <span style="font-size:11px;color:var(--text-3);">二维码加载中…</span>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--primary);margin-top:12px;font-weight:600;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px;"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            学生到场后扫码签到
+          </p>
+        </div>
+
+        <!-- Course Info Card -->
+        <div style="background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:16px;text-align:left;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+            <span class="tag">${d.type}</span>
+            ${d.subtype?`<span class="tag tag-grey">${d.subtype}</span>`:''}
+            <span class="tag ${stStyle[d.status]||'tag'}">${d.status}</span>
+          </div>
+          <h4 style="font-size:14px;font-weight:600;margin-bottom:8px;line-height:1.4;">${d.n}</h4>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--text-3);"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              ${d.time}
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--text-3);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${d.loc}
+            </div>
+          </div>
+        </div>
+
+        <!-- Notice -->
+        <div style="padding:10px 14px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:8px;display:flex;align-items:flex-start;gap:8px;text-align:left;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span style="font-size:12px;color:var(--warning);line-height:1.6;">此二维码仅供<strong>现场扫码签到</strong>使用，不支持通过链接远程签到，请讲师/义工在上课现场向学生出示。</span>
+        </div>
+      </div>
+    `;
+    openModal('qrcodeModal');
+  }
+
+  function openScheduleModal(i, isDetail){
+    const d = courseData[i];
+    const applierName = d.applier.replace(/[\(（].*[\)）]/,'').trim();
+
+    document.getElementById('sch_applier').value = applierName;
+    document.getElementById('sch_sid').value = '6524587';
+    document.getElementById('sch_dept').value = '计算机学院';
+    document.getElementById('sch_major').value = '计算机专业';
+    document.getElementById('sch_course').value = d.n || '计算机高深理论';
+    document.getElementById('sch_subject').value = d.subject || '计算机';
+    document.getElementById('sch_tutorType').value = '一对一辅导';
+    document.getElementById('sch_timeslot').value = '工作日下午';
+    document.getElementById('sch_needs').value = '学生自主报课的需求';
+
+    const volNameEl = document.getElementById('sch_volName');
+    const volLocEl = document.getElementById('sch_volLoc');
+    const remarkEl = document.getElementById('sch_remark');
+    const footEl = document.getElementById('scheduleFoot');
+    const titleEl = document.getElementById('scheduleTitle');
+
+    if(isDetail){
+      titleEl.textContent = '个人排课详情';
+      volNameEl.value = '陈思远 / 2022020011';
+      volNameEl.readOnly = true;
+      volNameEl.style.background = 'var(--bg)';
+      document.getElementById('sch_volGroup').value = '知新馆计算机组';
+      document.getElementById('sch_volStar').value = '三星级';
+      volLocEl.value = '知新馆 102';
+      volLocEl.disabled = true;
+      volLocEl.style.background = 'var(--bg)';
+      remarkEl.value = '学生希望工作日下午上课，请安排有经验的义工';
+      remarkEl.readOnly = true;
+      remarkEl.style.background = 'var(--bg)';
+      footEl.innerHTML = '<button class="btn btn-ghost" onclick="closeModal(\'scheduleModal\')">关闭</button>';
+    } else {
+      titleEl.textContent = '个人排课';
+      volNameEl.value = '';
+      volNameEl.readOnly = false;
+      volNameEl.style.background = '';
+      document.getElementById('sch_volGroup').value = '知新馆计算机组';
+      document.getElementById('sch_volStar').value = '三星级';
+      volLocEl.selectedIndex = 0;
+      volLocEl.disabled = false;
+      volLocEl.style.background = '';
+      remarkEl.value = '';
+      remarkEl.readOnly = false;
+      remarkEl.style.background = '';
+      footEl.innerHTML = '<button class="btn btn-ghost" onclick="closeModal(\'scheduleModal\')">保存草稿</button><button class="btn btn-primary" onclick="closeModal(\'scheduleModal\');showToast(\'排课信息已提交\')">保存并提交</button>';
+    }
+
+    openModal('scheduleModal');
+  }
+
+</script>
+
+<!-- 活动课程详情弹窗 -->
+<div class="modal-mask" id="actDetailModal">
+  <div class="modal" style="width:900px;max-height:92vh;">
+    <div class="modal-head">
+      <div>
+        <h3 id="actDetailTitle">活动课程详情</h3>
+        <p style="font-size:12px;color:var(--text-3);margin-top:3px;">管理员发布的活动课程信息及义工报课情况</p>
+      </div>
+      <button class="icon-btn" onclick="closeModal('actDetailModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="actDetailBody" style="padding:22px;overflow-y:auto;max-height:calc(92vh - 120px);"></div>
+    <div class="modal-foot" style="padding:14px 22px;border-top:1px solid var(--border-light);text-align:right;">
+      <button class="btn btn-ghost" onclick="closeModal('actDetailModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 义工报课-课程详情弹窗 -->
+<div class="modal-mask" id="volCourseDetailModal">
+  <div class="modal" style="width:780px;max-height:90vh;">
+    <div class="modal-head">
+      <div><h3 id="volCourseDetailTitle">课程详情</h3></div>
+      <button class="icon-btn" onclick="closeModal('volCourseDetailModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="volCourseDetailBody" style="padding:22px;overflow-y:auto;max-height:calc(90vh - 120px);"></div>
+    <div class="modal-foot" style="padding:14px 22px;border-top:1px solid var(--border-light);text-align:right;">
+      <button class="btn btn-ghost" onclick="closeModal('volCourseDetailModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== 活动课程数据 ======
+const ACT_COURSES = [
+  {name:'高等数学A · 微分方程专题',type:'答疑坊',subject:'数学',cap:30,time:'2026-05-14 ~ 2026-06-25',content:'微分方程求解方法专题辅导',progress:'8/10',status:'已发布'},
+  {name:'大学英语六级 · 真题精讲',type:'答疑坊',subject:'英语',cap:30,time:'2026-05-13 ~ 2026-06-24',content:'六级真题分段精讲与策略分析',progress:'10/10',status:'已发布'},
+  {name:'线性代数 · 矩阵与行列式',type:'答疑坊',subject:'数学',cap:25,time:'2026-05-15 ~ 2026-06-26',content:'矩阵运算与行列式计算技巧',progress:'7/10',status:'已发布'},
+  {name:'大学物理 · 电磁学专题',type:'答疑坊',subject:'物理',cap:30,time:'2026-05-16 ~ 2026-06-27',content:'电磁感应与麦克斯韦方程组',progress:'6/10',status:'已发布'},
+  {name:'有机化学 · 反应机理',type:'答疑坊',subject:'化学',cap:20,time:'2026-05-12 ~ 2026-06-23',content:'亲电取代与亲核加成反应',progress:'5/10',status:'已发布'},
+  {name:'Python 实战编程入门',type:'志趣坊',subject:'计算机',cap:30,time:'2026-05-14 ~ 2026-06-25',content:'Python 基础语法与项目实战',progress:'9/10',status:'已发布'},
+  {name:'考研经验分享会',type:'荟知坊',subject:'其他',cap:50,time:'2026-05-18 ~ 2026-05-18',content:'研究生经验分享与学习方法交流',progress:'4/10',status:'已发布'},
+  {name:'摄影艺术 · 构图基础',type:'志趣坊',subject:'其他',cap:20,time:'2026-05-17 ~ 2026-06-28',content:'摄影构图技巧与实拍练习',progress:'3/10',status:'未发布'},
+  {name:'PPT 演示与排版技巧',type:'志趣坊',subject:'其他',cap:25,time:'2026-05-15 ~ 2026-06-26',content:'PPT 设计排版与演示技巧',progress:'2/10',status:'未发布'},
+  {name:'概率统计 · 假设检验',type:'答疑坊',subject:'数学',cap:30,time:'2026-05-13 ~ 2026-06-24',content:'概率分布与假设检验方法',progress:'6/10',status:'已发布'}
+];
+
+const ACT_VOL_COURSES = [
+  [
+    {name:'微分方程 · 一阶常微分',vol:'陈思远 / 2023020011',star:'★★★ 三星级',volType:'知新馆辅学义工',volGroup:'知新馆数学组',time:'2026-05-14 10:00-12:00',loc:'知新馆 301',status:'已通过',desc:'讲解一阶常微分方程的分离变量法与常数变易法',subject:'数学',type:'答疑坊',applyTime:'2026-05-01 10:30',cap:30,signed:22,points:20,auditLog:[{op:'提交申报',user:'陈思远',time:'2026-05-01'},{op:'审核通过',user:'王老师',time:'2026-05-02',desc:'内容规范'}]},
+    {name:'微分方程 · 二阶线性',vol:'张慧 / 2022030112',star:'★★ 二星级',volType:'知新馆辅学义工',volGroup:'知新馆数学组',time:'2026-05-16 14:00-16:00',loc:'知新馆 205',status:'审核中',desc:'二阶齐次与非齐次线性微分方程的通解结构',subject:'数学',type:'答疑坊',applyTime:'2026-05-03 15:10',cap:25,signed:8,points:0,auditLog:[{op:'提交申报',user:'张慧',time:'2026-05-03'}]},
+    {name:'微分方程 · 拉普拉斯变换',vol:'李明远 / 2023020234',star:'★★★★ 四星级',volType:'知新馆辅学义工',volGroup:'知新馆数学组',time:'2026-05-20 10:00-12:00',loc:'知新馆 408',status:'已通过',desc:'用拉普拉斯变换方法求解微分方程',subject:'数学',type:'答疑坊',applyTime:'2026-05-02 09:00',cap:30,signed:18,points:25,auditLog:[{op:'提交申报',user:'李明远',time:'2026-05-02'},{op:'审核通过',user:'王老师',time:'2026-05-03',desc:'优秀义工'}]},
+  ],
+  [
+    {name:'六级听力 · 精听训练',vol:'王诗韵 / 2023141101',star:'★★★ 三星级',volType:'语言辅导',volGroup:'知新馆英语组',time:'2026-05-15 14:00-16:00',loc:'知新馆 301',status:'已通过',desc:'六级听力高频场景词汇与精听技巧训练',subject:'英语',type:'答疑坊',applyTime:'2026-05-01 14:00',cap:30,signed:28,points:20,auditLog:[{op:'提交申报',user:'王诗韵',time:'2026-05-01'},{op:'审核通过',user:'李老师',time:'2026-05-02'}]},
+    {name:'六级写作 · 模板精讲',vol:'林佳佳 / 2023141088',star:'★★ 二星级',volType:'语言辅导',volGroup:'知新馆英语组',time:'2026-05-18 14:00-16:00',loc:'知新馆 205',status:'审核中',desc:'六级写作高分模板与论证逻辑',subject:'英语',type:'答疑坊',applyTime:'2026-05-05 11:20',cap:30,signed:15,points:0,auditLog:[{op:'提交申报',user:'林佳佳',time:'2026-05-05'}]},
+  ],
+  [
+    {name:'行列式计算技巧',vol:'赵芸芸 / 2023030095',star:'★★★ 三星级',volType:'知新馆辅学义工',volGroup:'知新馆数学组',time:'2026-05-15 14:00-16:00',loc:'知新馆 408',status:'已通过',desc:'行列式展开定理与化三角形方法',subject:'数学',type:'答疑坊',applyTime:'2026-04-28 20:00',cap:25,signed:20,points:15,auditLog:[{op:'提交申报',user:'赵芸芸',time:'2026-04-28'},{op:'审核通过',user:'王老师',time:'2026-04-29'}]},
+  ],
+  [
+    {name:'电磁感应专题辅导',vol:'吴佳旭 / 2022050078',star:'★★★★ 四星级',volType:'知新馆辅学义工',volGroup:'知新馆物理组',time:'2026-05-16 10:00-12:00',loc:'知新馆 301',status:'已通过',desc:'法拉第电磁感应定律与楞次定律应用',subject:'物理',type:'答疑坊',applyTime:'2026-05-01 09:30',cap:30,signed:15,points:20,auditLog:[{op:'提交申报',user:'吴佳旭',time:'2026-05-01'},{op:'审核通过',user:'张老师',time:'2026-05-02'}]},
+    {name:'麦克斯韦方程组入门',vol:'黄泽宇 / 2023050122',star:'★★ 二星级',volType:'知新馆辅学义工',volGroup:'知新馆物理组',time:'2026-05-19 10:00-12:00',loc:'知新馆 205',status:'审核中',desc:'麦克斯韦方程组的物理意义与简单应用',subject:'物理',type:'答疑坊',applyTime:'2026-05-04 16:45',cap:25,signed:5,points:0,auditLog:[{op:'提交申报',user:'黄泽宇',time:'2026-05-04'}]},
+  ],
+  [{name:'有机反应 · 亲核取代',vol:'周静怡 / 2022141056',star:'★★★ 三星级',volType:'知新馆辅学义工',volGroup:'知新馆化学组',time:'2026-05-17 14:00-16:00',loc:'知新馆 301',status:'已通过',desc:'SN1与SN2亲核取代反应机理对比',subject:'化学',type:'答疑坊',applyTime:'2026-05-02 13:00',cap:20,signed:12,points:15,auditLog:[{op:'提交申报',user:'周静怡',time:'2026-05-02'},{op:'审核通过',user:'李老师',time:'2026-05-03'}]}],
+  [{name:'Python 爬虫实战',vol:'刘子轩 / 2023050088',star:'★★★★★ 五星级',volType:'技能拓展',volGroup:'知新馆计算机组',time:'2026-05-18 16:00-18:00',loc:'知新馆 408',status:'已通过',desc:'使用requests和BeautifulSoup进行网页数据爬取',subject:'计算机',type:'志趣坊',applyTime:'2026-05-01 08:30',cap:30,signed:25,points:30,auditLog:[{op:'提交申报',user:'刘子轩',time:'2026-05-01'},{op:'审核通过',user:'王老师',time:'2026-05-01',desc:'五星优秀义工'}]}],
+  [{name:'考研数学经验分享',vol:'徐晓丹 / 2023080044',star:'★★★ 三星级',volType:'经验分享',volGroup:'知新馆综合组',time:'2026-05-25 14:00-17:00',loc:'知新馆 301',status:'审核中',desc:'考研数学复习规划与高频考点梳理',subject:'其他',type:'荟知坊',applyTime:'2026-05-06 10:00',cap:50,signed:10,points:0,auditLog:[{op:'提交申报',user:'徐晓丹',time:'2026-05-06'}]}],
+  [],
+  [],
+  [{name:'假设检验 · t检验专题',vol:'林楠 / 2023020156',star:'★★★★ 四星级',volType:'学科辅导',volGroup:'知新馆数学组',time:'2026-05-20 10:00-12:00',loc:'知新馆 301',status:'已通过',desc:'t检验原理与SPSS实操演示',subject:'数学',type:'答疑坊',applyTime:'2026-05-03 11:00',cap:30,signed:20,points:20,auditLog:[{op:'提交申报',user:'林楠',time:'2026-05-03'},{op:'审核通过',user:'王老师',time:'2026-05-04'}]}],
+];
+
+function openActDetail(idx){
+  const c = ACT_COURSES[idx];
+  const vols = ACT_VOL_COURSES[idx] || [];
+  document.getElementById('actDetailTitle').textContent = c.name + ' — 详情';
+
+  const fieldBox = function(label, val){
+    return '<div><div style="font-size:11px;color:var(--text-3);margin-bottom:5px;">'+label+'</div><div style="height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border-light);background:var(--bg);font-size:13px;display:flex;align-items:center;color:var(--text-1);">'+(val||'—')+'</div></div>';
+  };
+
+  let html = '';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">';
+  html += fieldBox('课程类型',c.type);
+  html += fieldBox('所属科目',c.subject);
+  html += fieldBox('上课时间段',c.time);
+  html += fieldBox('单节限报',c.cap+' 人');
+  html += fieldBox('报课进度',c.progress);
+  var stColor = c.status==='已发布'?'background:#E8FCF4;color:#1BB975;':'background:#FFF5E5;color:#F29100;';
+  html += fieldBox('发布状态','<span style="font-size:12px;padding:2px 8px;border-radius:4px;'+stColor+'">'+c.status+'</span>');
+  html += '</div>';
+  html += '<div><div style="font-size:11px;color:var(--text-3);margin-bottom:5px;">课程内容</div><div style="min-height:48px;padding:10px 12px;border-radius:8px;border:1px solid var(--border-light);background:var(--bg);font-size:13px;color:var(--text-1);line-height:1.8;">'+c.content+'</div></div>';
+
+  html += '<div style="margin-top:24px;border-top:1px solid var(--border-light);padding-top:18px;">';
+  html += '<h4 style="font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px;">义工报课列表 <span style="font-size:12px;color:var(--text-3);font-weight:400;">共 '+vols.length+' 门</span></h4>';
+
+  if(vols.length === 0){
+    html += '<div style="text-align:center;padding:32px 0;color:var(--text-3);font-size:13px;">暂无义工报课</div>';
+  } else {
+    html += '<div style="overflow-x:auto;"><table class="cl-table" style="width:100%;border-collapse:collapse;font-size:13px;">';
+    html += '<thead><tr style="background:#F8FAFC;">';
+    html += '<th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;white-space:nowrap;">课程名称</th>';
+    html += '<th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;white-space:nowrap;">义工姓名/学号</th>';
+    html += '<th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;white-space:nowrap;">义工星级</th>';
+    html += '<th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;white-space:nowrap;">上课时间</th>';
+    html += '<th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;white-space:nowrap;">上课地点</th>';
+    html += '<th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;white-space:nowrap;">状态</th>';
+    html += '<th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;white-space:nowrap;">操作</th>';
+    html += '</tr></thead><tbody>';
+    for(var vi=0; vi<vols.length; vi++){
+      var v = vols[vi];
+      var stCls = v.status==='已通过'?'tag-success':'tag-warning';
+      html += '<tr style="border-bottom:1px solid var(--border-light);">';
+      html += '<td style="padding:10px 14px;font-weight:500;">'+v.name+'</td>';
+      html += '<td style="padding:10px 14px;">'+v.vol+'</td>';
+      html += '<td style="padding:10px 14px;color:var(--warning);">'+v.star+'</td>';
+      html += '<td style="padding:10px 14px;font-size:12px;color:var(--text-2);">'+v.time+'</td>';
+      html += '<td style="padding:10px 14px;font-size:12px;color:var(--text-2);">'+v.loc+'</td>';
+      html += '<td style="padding:10px 14px;"><span class="tag '+stCls+'">'+v.status+'</span></td>';
+      html += '<td style="padding:10px 14px;"><button class="act-btn act-info" onclick="openVolCourseDetail('+idx+','+vi+')">课程详情</button></td>';
+      html += '</tr>';
+    }
+    html += '</tbody></table></div>';
+  }
+  html += '</div>';
+
+  document.getElementById('actDetailBody').innerHTML = html;
+  openModal('actDetailModal');
+}
+
+function openVolCourseDetail(actIdx, volIdx){
+  var v = ACT_VOL_COURSES[actIdx][volIdx];
+  document.getElementById('volCourseDetailTitle').textContent = v.name + ' — 课程详情';
+
+  var fieldBox = function(label, val){
+    return '<div><div style="font-size:11px;color:var(--text-3);margin-bottom:5px;">'+label+'</div><div style="height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border-light);background:var(--bg);font-size:13px;display:flex;align-items:center;color:var(--text-1);">'+(val||'—')+'</div></div>';
+  };
+
+  var tabs = [{k:'info',l:'课程信息'},{k:'audit',l:'审核记录'},{k:'enroll',l:'报名情况'}];
+  var tabBar = '<div id="volDetailTabs" style="display:flex;gap:0;border-bottom:1px solid var(--border-light);margin:-22px -22px 18px;padding:0 22px;">';
+  tabs.forEach(function(t){
+    tabBar += '<button onclick="switchVolDetailTab(\''+t.k+'\','+actIdx+','+volIdx+')" style="height:42px;padding:0 18px;font-size:13px;font-weight:500;border:none;background:none;cursor:pointer;font-family:inherit;color:'+(t.k==='info'?'var(--primary)':'var(--text-2)')+';border-bottom:2px solid '+(t.k==='info'?'var(--primary)':'transparent')+';margin-bottom:-1px;transition:all .15s;">'+t.l+'</button>';
+  });
+  tabBar += '</div>';
+
+  var body = renderVolDetailInfo(v, fieldBox);
+  document.getElementById('volCourseDetailBody').innerHTML = tabBar + body;
+  openModal('volCourseDetailModal');
+}
+
+function switchVolDetailTab(tab, actIdx, volIdx){
+  var v = ACT_VOL_COURSES[actIdx][volIdx];
+  var fieldBox = function(label, val){
+    return '<div><div style="font-size:11px;color:var(--text-3);margin-bottom:5px;">'+label+'</div><div style="height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border-light);background:var(--bg);font-size:13px;display:flex;align-items:center;color:var(--text-1);">'+(val||'—')+'</div></div>';
+  };
+
+  var btns = document.querySelectorAll('#volDetailTabs button');
+  btns.forEach(function(b){
+    var isActive = (tab==='info' && b.textContent==='课程信息') || (tab==='audit' && b.textContent==='审核记录') || (tab==='enroll' && b.textContent==='报名情况');
+    b.style.color = isActive ? 'var(--primary)' : 'var(--text-2)';
+    b.style.borderBottomColor = isActive ? 'var(--primary)' : 'transparent';
+  });
+
+  var body = '';
+  if(tab === 'info'){
+    body = renderVolDetailInfo(v, fieldBox);
+  } else if(tab === 'audit'){
+    body = renderVolDetailAudit(v);
+  } else {
+    body = renderVolDetailEnroll(v);
+  }
+
+  var container = document.getElementById('volCourseDetailBody');
+  var tabBar = container.querySelector('#volDetailTabs').outerHTML;
+  container.innerHTML = tabBar + body;
+}
+
+function renderVolDetailInfo(v, fieldBox){
+  var srcStyle = 'background:#E8F4FF;color:#1a78c2;';
+  var pointsHtml = v.points > 0 ? '<strong style="color:var(--primary);">+'+v.points+' 积分</strong>' : '<span style="color:var(--text-4);">—</span>';
+
+  var html = '<div style="background:linear-gradient(135deg,#3087CC,#006DAD);color:#fff;border-radius:12px;padding:18px 20px;margin-bottom:16px;position:relative;overflow:hidden;">';
+  html += '<div style="position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.15),transparent 60%);right:-50px;top:-60px;pointer-events:none;"></div>';
+  html += '<div style="display:flex;gap:6px;font-size:11px;margin-bottom:8px;"><span style="background:rgba(255,255,255,.2);padding:3px 10px;border-radius:4px;">'+v.type+'</span></div>';
+  html += '<h2 style="font-size:17px;font-weight:600;line-height:1.4;">'+v.name+'</h2>';
+  html += '<p style="font-size:12px;opacity:.85;margin-top:5px;">'+v.time+' · '+v.loc+'</p></div>';
+
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">';
+  html += fieldBox('义工姓名/学号', v.vol);
+  html += fieldBox('义工星级', '<span style="color:var(--warning);">'+v.star+'</span>');
+  html += fieldBox('义工类别', v.volType || '—');
+  html += fieldBox('辅导组别', v.volGroup || '—');
+  html += fieldBox('所属学科', v.subject);
+  html += fieldBox('课程来源', '<span style="font-size:12px;padding:2px 8px;border-radius:4px;'+srcStyle+'">义工申报</span>');
+  html += fieldBox('申报时间', v.applyTime);
+  html += fieldBox('招生名额', v.cap + ' 人');
+  html += fieldBox('已报名人数', v.signed + ' 人');
+  html += '<div><div style="font-size:11px;color:var(--text-3);margin-bottom:5px;">积分奖励</div><div style="height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--border-light);background:var(--bg);font-size:13px;display:flex;align-items:center;">'+pointsHtml+'</div></div>';
+  html += '</div>';
+  html += '<div><div style="font-size:11px;color:var(--text-3);margin-bottom:5px;">课程简介</div><div style="min-height:48px;padding:10px 12px;border-radius:8px;border:1px solid var(--border-light);background:var(--bg);font-size:13px;color:var(--text-1);line-height:1.8;">'+v.desc+'</div></div>';
+  return html;
+}
+
+function renderVolDetailAudit(v){
+  var logs = v.auditLog || [];
+  if(logs.length === 0){
+    return '<div style="text-align:center;padding:40px;color:var(--text-3);">暂无审核记录</div>';
+  }
+  var html = '<h5 style="font-size:13px;font-weight:600;margin-bottom:12px;">审核记录</h5>';
+  html += '<div style="display:flex;flex-direction:column;gap:0;">';
+  logs.forEach(function(lg, i){
+    html += '<div style="display:flex;gap:14px;">';
+    html += '<div style="display:flex;flex-direction:column;align-items:center;gap:0;">';
+    html += '<div style="width:10px;height:10px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:4px;"></div>';
+    if(i < logs.length - 1) html += '<div style="width:2px;flex:1;background:var(--border-light);min-height:28px;"></div>';
+    html += '</div>';
+    html += '<div style="padding-bottom:16px;flex:1;">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">';
+    html += '<span style="font-size:13px;font-weight:600;">'+lg.op+'</span>';
+    html += '<span style="font-size:11px;color:var(--text-3);">'+lg.time+'</span></div>';
+    html += '<div style="font-size:12px;color:var(--text-2);">操作人：'+lg.user+(lg.desc?' · '+lg.desc:'')+'</div>';
+    html += '</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderVolDetailEnroll(v){
+  var students = [
+    {name:'王诗韵',sid:'2023141101',dept:'外国语学院',major:'英语',enrollTime:'2026-04-29 09:15',signed:false},
+    {name:'李明远',sid:'2023020234',dept:'数学与统计学院',major:'数学',enrollTime:'2026-04-29 10:32',signed:false},
+    {name:'张慧',sid:'2022030112',dept:'物理与天文学院',major:'物理',enrollTime:'2026-04-29 11:08',signed:false},
+  ];
+  var signedCount = students.filter(function(s){return s.signed;}).length;
+  var html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">';
+  html += '<div style="display:flex;gap:12px;font-size:13px;color:var(--text-2);">';
+  html += '<span>共 <strong style="color:var(--text-1);">'+students.length+'</strong> 人报名</span>';
+  html += '<span>已签到 <strong style="color:var(--success);">'+signedCount+'</strong> 人</span>';
+  html += '<span>未签到 <strong style="color:var(--text-3);">'+(students.length-signedCount)+'</strong> 人</span>';
+  html += '</div>';
+  html += '<button class="btn btn-ghost btn-sm" style="font-size:12px;gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>导出名单</button>';
+  html += '</div>';
+  html += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">';
+  html += '<thead><tr style="background:#F8FAFC;"><th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">序号</th><th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">姓名</th><th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">学号</th><th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">学院</th><th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">专业</th><th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">报名时间</th><th style="padding:10px 14px;text-align:left;font-size:12px;color:var(--text-2);font-weight:500;">签到状态</th></tr></thead>';
+  html += '<tbody>';
+  students.forEach(function(s,i){
+    var signStyle = s.signed ? 'color:var(--success);' : 'color:var(--text-3);';
+    html += '<tr style="border-bottom:1px solid var(--border-light);">';
+    html += '<td style="padding:10px 14px;color:var(--text-3);">'+(i+1)+'</td>';
+    html += '<td style="padding:10px 14px;font-weight:500;">'+s.name+'</td>';
+    html += '<td style="padding:10px 14px;color:var(--text-2);font-size:12px;">'+s.sid+'</td>';
+    html += '<td style="padding:10px 14px;font-size:12px;color:var(--text-2);">'+s.dept+'</td>';
+    html += '<td style="padding:10px 14px;font-size:12px;color:var(--text-2);">'+s.major+'</td>';
+    html += '<td style="padding:10px 14px;font-size:12px;color:var(--text-2);">'+s.enrollTime+'</td>';
+    html += '<td style="padding:10px 14px;"><span style="'+signStyle+'">● '+(s.signed?'已签到':'未签到')+'</span></td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  return html;
+}
+
+function editActCourse(idx){
+  openModal('newCourseModal');
+  var c = ACT_COURSES[idx];
+  setTimeout(function(){
+    var nameEl = document.getElementById('nc_name');
+    var typeEl = document.getElementById('nc_type');
+    var subjectEl = document.getElementById('nc_subject');
+    var capEl = document.getElementById('nc_cap');
+    var contentEl = document.getElementById('nc_content');
+    if(nameEl) nameEl.value = c.name;
+    if(typeEl) typeEl.value = c.type;
+    if(subjectEl) subjectEl.value = c.subject;
+    if(capEl) capEl.value = c.cap;
+    if(contentEl) contentEl.value = c.content;
+  }, 100);
+}
+</script>
+
+<!-- AI 学工助手 -->
+<link rel="stylesheet" href="../assets/ai/ai-widget-pc.css">
+<script src="../assets/ai/ai-knowledge.js"></script>
+<script src="../assets/ai/ai-core.js"></script>
+<script src="../assets/ai/ai-widget-pc.js"></script>
+<script>
+  AIWidget.init({
+    pageId: 'courses',
+    pageName: '课程管理',
+    pageContext: '管理员正在管理活动课程/单节课程（答疑坊/荟知坊/志趣坊）。',
+    end: 'PC管理'
+  });
+</script>
+</body>
+</html>
